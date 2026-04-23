@@ -21,6 +21,16 @@ dist-ssr
 /src/generated/prisma
 prisma/.env
 
+# Database files
+*.db
+**/*.db
+
+# Build artifacts
+*.tsbuildinfo
+
+# Test results
+testResults_*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
