@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 226 100% 97%;
+    --foreground: 221 32% 26%;
+    --card: 0 0% 100%;
+    --card-foreground: 221 32% 26%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 221 32% 26%;
+    --primary: 222 87% 72%;
+    --primary-foreground: 0 0% 100%;
+    --primary-dark: 222 70% 62%;
+    --primary-light: 222 100% 93%;
+    --secondary: 155 38% 75%;
+    --secondary-foreground: 221 32% 26%;
+    --muted: 226 50% 97%;
+    --muted-foreground: 220 18% 62%;
+    --accent: 340 82% 81%;
+    --accent-foreground: 221 32% 26%;
+    --accent2: 30 100% 83%;
+    --purple: 260 70% 82%;
+    --destructive: 350 90% 81%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 226 50% 93%;
+    --input: 226 50% 93%;
+    --ring: 222 87% 72%;
+    --radius: 0.875rem;
+    --surface2: 226 100% 98%;
+
+    --shadow-soft: 0 4px 20px rgba(124, 158, 245, 0.12);
+    --shadow-lg: 0 8px 32px rgba(124, 158, 245, 0.18);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+    background: radial-gradient(ellipse at top right, hsl(222 100% 93% / 0.6), transparent 60%),
+                hsl(var(--background));
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: 'Nunito', sans-serif;
+  }
+  .font-body {
+    font-family: 'DM Sans', sans-serif;
+  }
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-card {
+    box-shadow: var(--shadow-lg);
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--purple)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-user-bubble {
+    background: linear-gradient(135deg, #7c9ef5, #c4b0f0);
+  }
+  .gradient-header-card {
+    background: linear-gradient(135deg, #dce6ff, #efe9ff);
+  }
+  .gradient-nextsteps {
+    background: linear-gradient(135deg, #fff5f7, #fff9f0);
+  }
+  .gradient-avatar {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--purple)));
+  }
+}
+
+@layer components {
+  .btn-pill {
+    @apply rounded-full transition-all duration-200 ease-in-out font-heading font-semibold;
+  }
+  .btn-pill:active {
+    transform: scale(0.97);
+  }
+  .btn-primary {
+    @apply btn-pill bg-primary text-primary-foreground px-6 py-3 hover:opacity-90;
+  }
+  .btn-ghost {
+    @apply btn-pill bg-transparent border border-border text-foreground px-6 py-3 hover:bg-muted;
+  }
+  .btn-outline-primary {
+    @apply btn-pill bg-transparent border border-primary text-primary px-4 py-2 text-sm hover:bg-primary/10;
+  }
+  .card-medicare {
+    @apply bg-card border border-border rounded-[20px] shadow-soft;
+  }
+  .input-medicare {
+    @apply w-full border border-border rounded-[14px] px-4 py-3 pl-11 text-[15px] font-body
+           bg-background text-foreground placeholder:text-muted-foreground
+           transition-all duration-200 outline-none
+           focus:border-primary focus:ring-[3px] focus:ring-primary-light;
+  }
+  .input-error {
+    @apply border-destructive ring-[3px] ring-destructive/30;
+  }
+
+  /* Chat bubble animations */
+  .chat-bubble-enter {
+    animation: chatSlideUp 0.25s ease forwards;
+  }
+  @keyframes chatSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Typing dots */
+  .typing-dot {
+    @apply inline-block w-2 h-2 rounded-full bg-muted-foreground;
+    animation: typingBounce 0.6s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes typingBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* Skeleton shimmer */
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, hsl(var(--border)), hsl(var(--surface2)), hsl(var(--border)));
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Confidence bar animation */
+  .confidence-bar-fill {
+    transition: width 1.2s ease-out 0.3s;
+  }
+
+  /* Modal entrance */
+  .modal-enter {
+    animation: modalIn 0.2s ease-out;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Screen fade */
+  .screen-fade {
+    animation: screenFade 0.3s ease;
+  }
+  @keyframes screenFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Toast slide */
+  .toast-enter {
+    animation: toastIn 0.2s ease forwards;
+  }
+  .toast-exit {
+    animation: toastOut 0.2s ease forwards;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes toastOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(20px); }
+  }
+}

@@ -1,0 +1,64 @@
+// Medicare AI Backend Prisma Schema (symlink to root)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  chatSessions ChatSession[]
+  reminders    Reminder[]
+}
+
+model ChatSession {
+  id              String      @id @default(cuid())
+  userId          String
+  symptomsFound   String?
+  predictedDisease String
+  confidence      Float
+  explanation     String?
+  allPredictions  String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  followUpQA FollowUpQA[]
+}
+
+model FollowUpQA {
+  id            String     @id @default(cuid())
+  chatId        String
+  question      String
+  answer        String
+  questionIndex Int
+  createdAt     DateTime   @default(now())
+
+  chat ChatSession @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+model Reminder {
+  id             String   @id @default(cuid())
+  userId         String
+  medicineName   String
+  dosage         String
+  frequency      String
+  startDate      DateTime
+  reminderTime   String
+  notes          String?
+  isDone         Boolean  @default(false)
+  lastRemindedAt DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

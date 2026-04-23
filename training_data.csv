@@ -1,0 +1,710 @@
+symptom_text,disease,severity,common_treatments
+"nausea, dizziness, depressive or psychotic symptoms, fainting, seizures, abnormal involuntary movements, sweating, feeling ill",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"itchy scalp, irregular appearing scalp, itching of skin, acne or pimples, skin swelling",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"vaginal discharge, back pain, sharp abdominal pain, nausea, lower abdominal pain, pain during pregnancy",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"joint pain, groin pain, problems with movement, low back pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, suprapubic pain, retention of urine, involuntary urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, heartburn, burning abdominal pain, sharp chest pain, nausea, sharp abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"blurred vision, excessive thirst, fatigue, frequent urination, dry skin",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"back pain, vaginal discharge, pelvic pain, vaginal pain, lower abdominal pain, cramps and spasms, sharp abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, paresthesia, low back pain, back pain, leg pain, neck pain, shoulder pain, ache all over",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, hip pain, arm pain, ache all over, paresthesia",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, decreased appetite, nausea, burning abdominal pain, blood in stool, sharp abdominal pain, chills, fever, diarrhea",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, lower body pain, ache all over, pelvic pain, hip stiffness or tightness, joint pain, problems with movement",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, weakness, dizziness, fainting, diarrhea",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems with movement, ache all over, low back pain, back pain, pelvic pain, hip pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, nausea, cramps and spasms, sharp abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, knee pain, low back pain, joint pain, hip stiffness or tightness, groin pain, hip pain, lower body pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, headache, shoulder pain, wrist pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"fainting, feeling ill, sleepiness, problems with movement, abnormal involuntary movements",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"shoulder stiffness or tightness, hip pain, knee pain, arm stiffness or tightness, elbow pain, leg pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"rectal bleeding, vomiting, changes in stool appearance, diarrhea, nausea",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"depressive or psychotic symptoms, anxiety and nervousness, temper problems, fears and phobias, hostile behavior, abusing alcohol",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"nasal congestion, swollen eye, eye redness, lacrimation",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, involuntary urination, painful urination, frequent urination, side pain",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp chest pain, shortness of breath, nausea, upper abdominal pain, sharp abdominal pain, burning abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, diarrhea, fainting, dizziness, blood in stool, vomiting",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm stiffness or tightness, bones are painful, hand or finger pain, elbow swelling, wrist swelling, arm pain, hand or finger swelling, joint pain, wrist pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"rectal bleeding, fainting, dizziness, changes in stool appearance, sharp abdominal pain",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"feeling ill, abnormal involuntary movements, sleepiness, fainting, problems with movement, sweating",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin swelling, skin dryness, peeling, scaliness, or roughness, skin lesion, skin irritation",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, vaginal pain, problems during pregnancy, intermenstrual bleeding, sharp abdominal pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"eye burns or stings, lacrimation, nasal congestion",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee swelling, elbow swelling, arm swelling, shoulder pain, arm stiffness or tightness, elbow pain, leg swelling, hip pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, problems with movement, hip pain, pelvic pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, arm swelling, elbow pain, bones are painful",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"drug abuse, low self-esteem, hostile behavior, depression, depressive or psychotic symptoms",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe pain, paresthesia, arm pain, problems with movement, dizziness, back pain, loss of sensation",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems with movement, decreased appetite, fainting, nausea",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, sore throat, cough, difficulty in swallowing, sharp chest pain, chest tightness",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"jaundice, peripheral edema, nausea, blood in stool, unusual color or odor to urine, weakness, side pain, upper abdominal pain, heartburn",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"side pain, pelvic pain, pain during pregnancy, burning abdominal pain, back pain, sharp abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin rash, skin dryness, peeling, scaliness, or roughness, skin irritation, itchy scalp, abnormal appearing skin, acne or pimples, skin lesion, skin growth, irregular appearing scalp",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, difficulty breathing, sharp chest pain, sore throat, coughing up sputum, congestion in chest, shortness of breath",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, arm pain, low back pain, abnormal involuntary movements, leg pain, neck pain, hand or finger pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"sinus congestion, nasal congestion, painful sinuses, facial pain",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, knee pain, arm pain, foot or toe pain, ankle pain, back pain, neck pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, lower abdominal pain, pain during pregnancy, side pain, vaginal discharge, pelvic pain, painful urination",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, fluid retention, nausea, blood in stool, sharp abdominal pain, diarrhea, vomiting",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, problems during pregnancy, cramps and spasms, blood clots during menstrual periods, pelvic pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, sweating, high blood pressure, chest pain, high cholesterol",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"nasal congestion, diminished vision, allergic reaction, lacrimation",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"vaginal discharge, lower abdominal pain, problems during pregnancy, pelvic pain, cramps and spasms, intermenstrual bleeding, heavy menstrual flow",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"fears and phobias, abusing alcohol, difficulty speaking, drug abuse, depressive or psychotic symptoms",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"eye burns or stings, pain in eye, nasal congestion, allergic reaction, symptoms of eye, diminished vision",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"weakness, fainting, sleepiness, feeling ill, depressive or psychotic symptoms, abnormal involuntary movements",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"painful urination, involuntary urination, frequent urination, pelvic pain, sharp abdominal pain, blood in urine, lower abdominal pain",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"fainting, rectal bleeding, melena, changes in stool appearance, nausea, blood in stool, sharp abdominal pain, dizziness, diarrhea, weakness",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"slow-healing sores, blurred vision, numbness in hands or feet, frequent infections, extreme hunger",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+stress,No Heart Disease,low,Regular check-ups; healthy diet; exercise; stress management
+"knee pain, lower body pain, back pain, hip pain, problems with movement, low back pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"side pain, fever, chills, lower abdominal pain, burning abdominal pain",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, facial pain, ear pain, sinus congestion, nosebleed, coryza",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, chills, burning abdominal pain, vomiting, headache, nausea",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, decreased appetite, cough, ache all over, skin rash, chills, ear pain, nasal congestion",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist pain, back pain, foot or toe pain, arm pain, hand or finger pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"vaginal pain, spotting or bleeding during pregnancy, problems during pregnancy, heavy menstrual flow, sharp abdominal pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"wheezing, cough, sore throat, nasal congestion",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty speaking, delusions or hallucinations, depression, fears and phobias, temper problems, drug abuse",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"cramps and spasms, pain during pregnancy, pelvic pain, spotting or bleeding during pregnancy, vaginal discharge, lower abdominal pain, intermenstrual bleeding",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, diarrhea, burning abdominal pain, sharp abdominal pain, vomiting, blood in stool",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"chest tightness, nausea, cough, sharp chest pain, burning abdominal pain, upper abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, fever, nasal congestion, cough, sore throat",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, itchiness of eye, eye redness, sneezing, nasal congestion, symptoms of eye, diminished vision, eye burns or stings, lacrimation",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"jaundice, nausea, side pain, weakness, diarrhea, unusual color or odor to urine, heartburn",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"paresthesia, leg pain, loss of sensation, foot or toe pain, hand or finger pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, hip pain, low back pain, back pain, neck pain, knee pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"peripheral edema, side pain, sharp abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"frequent infections, slow-healing sores, frequent urination, numbness in hands or feet, extreme hunger, blurred vision",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"lacrimation, swollen eye, nasal congestion, eye redness",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"acne or pimples, itchy scalp, irregular appearing scalp, itching of skin, skin swelling",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, sore throat, vomiting, sharp chest pain, cough, difficulty in swallowing, upper abdominal pain, burning abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, sore throat, shortness of breath, difficulty breathing, vomiting",pneumonia,high,Consult a physician
+"difficulty breathing, sharp chest pain, sore throat, cough, vomiting, fever",pneumonia,high,Consult a physician
+"sore throat, chills, difficulty in swallowing, ear pain, decreased appetite, ache all over, cough",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, lower body pain, groin pain, leg pain, joint pain, back pain, low back pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, constipation, upper abdominal pain, burning abdominal pain, side pain, fever",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"suprapubic pain, frequent urination, involuntary urination, blood in urine, retention of urine, painful urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, fever, sharp chest pain, coryza, coughing up sputum, wheezing",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, blood in stool, sharp abdominal pain, burning abdominal pain",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm swelling, leg swelling, hip pain, arm stiffness or tightness, elbow pain, knee swelling",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"diarrhea, fever, blood in stool, burning abdominal pain, sharp abdominal pain, decreased appetite",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, sore throat, burning abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg weakness, paresthesia, back pain, leg pain, arm weakness, abnormal involuntary movements, loss of sensation",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, sharp abdominal pain, lower abdominal pain, blood in stool",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin swelling, abnormal appearing skin, skin growth, irregular appearing scalp, itching of skin, acne or pimples, skin dryness, peeling, scaliness, or roughness, pelvic pain, skin irritation, skin lesion",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, sharp abdominal pain, fever, chills, lower abdominal pain, constipation",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"abnormal involuntary movements, nausea, depressive or psychotic symptoms, feeling ill, decreased appetite, fainting",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"sweating, nausea, feeling ill, problems with movement",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"rapid heartbeat, high cholesterol, fatigue, high blood pressure, chest pain, dizziness, sweating",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"knee swelling, arm swelling, leg swelling, shoulder pain, knee pain, arm pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"involuntary urination, suprapubic pain, retention of urine, side pain, frequent urination, blood in urine, painful urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm swelling, bones are painful, wrist swelling, hand or finger pain, arm pain, hand or finger swelling, wrist pain, arm stiffness or tightness",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, diarrhea, unusual color or odor to urine, weakness, peripheral edema, side pain, jaundice",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, shortness of breath, sharp abdominal pain, blood in stool, upper abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe swelling, ankle pain, hand or finger swelling, leg swelling, wrist pain, foot or toe pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"elbow swelling, arm stiffness or tightness, knee pain, elbow pain, leg pain, arm pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"wheezing, congestion in chest, coryza, difficulty breathing, nasal congestion, sharp chest pain",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sleepiness, fainting, decreased appetite, feeling ill, abnormal involuntary movements, nausea, depressive or psychotic symptoms, seizures",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in urine, retention of urine, back pain, symptoms of bladder, painful urination, frequent urination, lower abdominal pain, involuntary urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, vaginal pain, problems during pregnancy, cramps and spasms, sharp abdominal pain, vaginal discharge",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"weakness, blood in stool, sharp abdominal pain, changes in stool appearance, melena, nausea",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"loss of sensation, low back pain, hip pain, leg pain, shoulder pain, knee pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"diarrhea, shortness of breath, jaundice, upper abdominal pain, nausea, peripheral edema, weakness",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"congestion in chest, shortness of breath, sharp chest pain, headache, fever, cough, difficulty breathing",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"painful sinuses, sinus congestion, sore throat, fever, coryza",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"side pain, peripheral edema, sharp abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, back pain, burning abdominal pain, vaginal discharge, painful urination, pelvic pain, vaginal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty speaking, excessive anger, depressive or psychotic symptoms, low self-esteem, abusing alcohol, anxiety and nervousness, drug abuse",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"congestion in chest, sharp chest pain, wheezing, nasal congestion, shortness of breath, coryza",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"loss of sensation, arm pain, neck pain, ache all over, low back pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, nosebleed, fever, ear pain, sore throat, nasal congestion",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"ear pain, skin rash, fever",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, pelvic pain, painful urination, sharp abdominal pain, vaginal discharge, pain during pregnancy, vaginal pain, cramps and spasms, back pain, lower abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, knee pain, arm pain, shoulder pain, hand or finger pain, wrist pain, leg pain, headache",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"delusions or hallucinations, depressive or psychotic symptoms, fears and phobias, excessive anger, anxiety and nervousness, depression, difficulty speaking, drug abuse",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"depressive or psychotic symptoms, fears and phobias, difficulty speaking, abusing alcohol, drug abuse",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, anxiety, dizziness, high blood pressure, sweating, fatigue, jaw pain, high cholesterol",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"delusions or hallucinations, drug abuse, anxiety and nervousness, temper problems, depression, depressive or psychotic symptoms, excessive anger, difficulty speaking",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"nasal congestion, cough, swollen eye, pain in eye, eye burns or stings, diminished vision, sneezing, allergic reaction, lacrimation",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, groin pain, problems with movement, joint pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"hand or finger swelling, elbow pain, arm pain, wrist pain, hand or finger pain, wrist swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe pain, neck pain, problems with movement, arm pain, loss of sensation",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, vomiting, fever, lower abdominal pain, side pain, diarrhea",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe pain, loss of sensation, problems with movement, dizziness, back pain",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"nasal congestion, eye burns or stings, lacrimation",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, burning abdominal pain, chills, lower abdominal pain, diarrhea",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, paresthesia, back pain, neck pain, shoulder pain, lower body pain, leg pain, arm pain, ache all over",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, knee pain, low back pain, leg pain, loss of sensation, neck pain, hip pain, ache all over",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"ache all over, skin rash, headache, vomiting",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, intermenstrual bleeding, sharp abdominal pain, pain during pregnancy, lower abdominal pain, heavy menstrual flow, cramps and spasms",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee swelling, elbow swelling, shoulder pain, shoulder stiffness or tightness",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"delusions or hallucinations, anxiety and nervousness, excessive anger, drug abuse",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"swollen eye, diminished vision, eye burns or stings, lacrimation, pain in eye, symptoms of eye",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"painful urination, pelvic pain, nausea, vaginal pain, cramps and spasms",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, knee pain, wrist pain, foot or toe pain, arm pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"coryza, coughing up sputum, headache, difficulty breathing, congestion in chest",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"vaginal discharge, problems during pregnancy, intermenstrual bleeding, vaginal pain, sharp abdominal pain, pain during pregnancy",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"coryza, ear pain, fever, nasal congestion, nosebleed",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, nausea, fatigue, high blood pressure, jaw pain, irregular heartbeat, sweating, shortness of breath",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"jaundice, upper abdominal pain, unusual color or odor to urine, heartburn",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, arm pain, hand or finger pain, arm stiffness or tightness",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, paresthesia, arm pain, neck pain, lower body pain, hip pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"peripheral edema, heartburn, nausea, jaundice, sharp abdominal pain, diarrhea",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, burning abdominal pain, pelvic pain, sharp abdominal pain, back pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"fainting, vomiting, changes in stool appearance, diarrhea, nausea, sharp abdominal pain",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"sneezing, eye burns or stings, symptoms of eye, swollen eye, pain in eye, lacrimation, diminished vision",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"disturbance of memory, foot or toe pain, back pain, loss of sensation, problems with movement, dizziness",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, nausea, chills, vomiting, sharp abdominal pain, headache, flu-like syndrome",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"ache all over, problems with movement, low back pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, ache all over, sore throat, skin rash, difficulty in swallowing",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"involuntary urination, side pain, symptoms of bladder, pelvic pain, lower abdominal pain, painful urination, back pain, suprapubic pain, blood in urine",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"itching of skin, skin swelling, itchy scalp, abnormal appearing skin, pelvic pain, skin dryness, peeling, scaliness, or roughness",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"frequent urination, involuntary urination, blood in urine, sharp abdominal pain, pelvic pain, symptoms of bladder",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain in eye, symptoms of eye, diminished vision, allergic reaction, nasal congestion, eye burns or stings",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"nasal congestion, sneezing, lacrimation, swollen eye, pain in eye",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, heavy menstrual flow, intermenstrual bleeding, problems during pregnancy, cramps and spasms, blood clots during menstrual periods, spotting or bleeding during pregnancy, pelvic pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"chills, nausea, fever, fluid retention",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, decreased appetite, diarrhea, vomiting, chills, blood in stool, burning abdominal pain",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, lower abdominal pain, sharp abdominal pain, diarrhea, vomiting, nausea",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"acne or pimples, irregular appearing scalp, pelvic pain, skin dryness, peeling, scaliness, or roughness, skin irritation, skin growth",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, vaginal discharge, pelvic pain, back pain, painful urination, vaginal pain, burning abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"upper abdominal pain, burning abdominal pain, sharp abdominal pain, sharp chest pain, vomiting, cough, difficulty in swallowing, sore throat",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"frequent urination, symptoms of bladder, sharp abdominal pain, involuntary urination, blood in urine, pelvic pain",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, pain during pregnancy, sharp abdominal pain, painful urination, side pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, vomiting, ache all over, skin rash",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, vomiting, nasal congestion, difficulty breathing, wheezing, weakness, sore throat",pneumonia,high,Consult a physician
+"blood in stool, vomiting, burning abdominal pain, lower abdominal pain, diarrhea, upper abdominal pain",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower body pain, back pain, hip pain, arm pain, neck pain, paresthesia",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"fainting, weakness, diarrhea, vomiting, dizziness",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"chills, fever, ache all over, ear pain, difficulty in swallowing",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin lesion, skin growth, skin rash, abnormal appearing skin, acne or pimples, irregular appearing scalp",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"allergic reaction, swollen eye, sneezing, nasal congestion, pain in eye",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, ache all over, lower body pain, paresthesia, arm pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, fever, chills, sharp chest pain, sore throat",pneumonia,high,Consult a physician
+"pelvic pain, irregular appearing scalp, skin swelling, skin lesion",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, shortness of breath, difficulty breathing, fever, sharp chest pain, headache, congestion in chest",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, problems during pregnancy, cramps and spasms, sharp abdominal pain, burning abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, cough, difficulty in swallowing, ache all over, decreased appetite, chills, ear pain",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"cramps and spasms, spotting or bleeding during pregnancy, intermenstrual bleeding, pelvic pain, lower abdominal pain, pain during pregnancy, vaginal discharge",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"vaginal discharge, burning abdominal pain, nausea, back pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"weakness, nasal congestion, vomiting, cough",pneumonia,high,Consult a physician
+"back pain, disturbance of memory, arm weakness, abnormal involuntary movements",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, nasal congestion, painful sinuses, facial pain, nosebleed",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty speaking, depression, abusing alcohol, hostile behavior, delusions or hallucinations, excessive anger",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"melena, vomiting blood, sharp abdominal pain",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, burning abdominal pain, uterine contractions, pain during pregnancy, spotting or bleeding during pregnancy, heavy menstrual flow, cramps and spasms, intermenstrual bleeding",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, intermenstrual bleeding, problems during pregnancy, sharp abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"side pain, retention of urine, suprapubic pain, symptoms of bladder, blood in urine, lower abdominal pain, sharp abdominal pain, back pain, pelvic pain, involuntary urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"shoulder pain, hip pain, ache all over, arm pain, lower body pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, difficulty breathing, vomiting, fever, sore throat",pneumonia,high,Consult a physician
+"irregular appearing scalp, abnormal appearing skin, skin rash, pelvic pain, acne or pimples",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, neck pain, ache all over, lower body pain, leg pain, hip pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems with movement, abnormal involuntary movements, weakness, fainting, dizziness, sleepiness, depressive or psychotic symptoms",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, neck pain, problems with movement, leg pain, arm pain, foot or toe pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee swelling, shoulder stiffness or tightness, elbow pain, elbow swelling, leg pain, arm swelling, shoulder pain, arm pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"shoulder pain, shoulder stiffness or tightness, arm swelling, leg pain, elbow pain, elbow swelling, hip pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, abnormal appearing skin, skin rash, irregular appearing scalp, acne or pimples",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"cramps and spasms, problems during pregnancy, blood clots during menstrual periods, pain during pregnancy, pelvic pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, elbow swelling, wrist pain, elbow pain, arm pain, hand or finger pain, hand or finger swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, fluid retention, decreased appetite, blood in stool, flu-like syndrome, sharp abdominal pain",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sinus congestion, coryza, nosebleed, fever, cough",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, flu-like syndrome, nausea, fever",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nasal congestion, sharp chest pain, sore throat, weakness, coryza, vomiting",pneumonia,high,Consult a physician
+"paresthesia, arm pain, back pain, dizziness, abnormal involuntary movements, foot or toe pain, loss of sensation, arm weakness",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"painful urination, cramps and spasms, nausea, vaginal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, vomiting, chest tightness, nausea",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, spotting or bleeding during pregnancy, burning abdominal pain, pelvic pain, intermenstrual bleeding, sharp abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe pain, knee pain, joint pain, wrist pain, knee swelling, leg swelling, foot or toe swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"ear pain, coryza, nasal congestion, nosebleed, fever",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, blood in urine, side pain, back pain",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, headache, nausea, fever, diarrhea, fluid retention",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"coughing up sputum, fever, wheezing, cough, difficulty breathing, sharp chest pain",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, joint pain, hand or finger swelling, foot or toe pain, foot or toe swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"chest tightness, cough, shortness of breath, burning abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"diarrhea, chills, lower abdominal pain, nausea",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"retention of urine, frequent urination, back pain, sharp abdominal pain",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, cramps and spasms, vaginal discharge, problems during pregnancy, pain during pregnancy, intermenstrual bleeding, sharp abdominal pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"ankle pain, wrist swelling, foot or toe pain, joint pain, hand or finger swelling, knee swelling, foot or toe swelling, hand or finger pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, headache, knee pain, wrist pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"neck pain, back pain, loss of sensation, knee pain, arm pain, low back pain, shoulder pain, lower body pain, hip pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, coughing up sputum, headache, wheezing, difficulty breathing",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower body pain, back pain, leg pain, pelvic pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"feeling ill, nausea, sweating, problems with movement",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood clots during menstrual periods, vaginal pain, spotting or bleeding during pregnancy, cramps and spasms, intermenstrual bleeding, problems during pregnancy, pain during pregnancy, sharp abdominal pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, back pain, hand or finger pain, neck pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower body pain, hip pain, ache all over, back pain, leg pain, knee pain, groin pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, back pain, side pain, blood in urine",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"dizziness, weakness, sharp abdominal pain, blood in stool, fainting, melena, vomiting, diarrhea",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"lacrimation, nasal congestion, eye burns or stings, eye redness, diminished vision, cough, sneezing, itchiness of eye, symptoms of eye, allergic reaction",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, suprapubic pain, lower abdominal pain, frequent urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"hip pain, knee pain, arm pain, leg pain, arm stiffness or tightness, arm swelling, shoulder pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems during pregnancy, pain during pregnancy, cramps and spasms, sharp abdominal pain, intermenstrual bleeding, vaginal discharge, vaginal pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"upper abdominal pain, sharp chest pain, shortness of breath, difficulty in swallowing, nausea, cough",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"increased appetite, slow-healing sores, high glucose, fatigue, excessive thirst, dry skin",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+weight gain,No Diabetes,low,Maintain healthy weight; balanced diet; regular exercise; annual glucose screening
+"wrist pain, wrist swelling, knee swelling, foot or toe pain, knee pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"occasional fatigue, mild thirst",No Diabetes,low,Maintain healthy weight; balanced diet; regular exercise; annual glucose screening
+"back pain, loss of sensation, knee pain, lower body pain, neck pain, shoulder pain, arm pain, ache all over, leg pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems with movement, arm pain, paresthesia, back pain, abnormal involuntary movements, ache all over, loss of sensation",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"spotting or bleeding during pregnancy, pelvic pain, sharp abdominal pain, cramps and spasms, lower abdominal pain, pain during pregnancy, vaginal discharge, intermenstrual bleeding, vaginal pain, blood clots during menstrual periods",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, hip pain, low back pain, loss of sensation, leg pain, shoulder pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"drug abuse, depression, temper problems, anxiety and nervousness, difficulty speaking, low self-esteem",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, congestion in chest, difficulty breathing, sore throat, fever",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"fluid retention, chills, fever, nausea",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sleepiness, weakness, seizures, decreased appetite, fainting",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"chills, cough, vomiting, weakness, fever, coryza, wheezing",pneumonia,high,Consult a physician
+"diminished vision, cough, symptoms of eye, itchiness of eye, allergic reaction",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"intermenstrual bleeding, cramps and spasms, heavy menstrual flow, pain during pregnancy, pelvic pain, sharp abdominal pain, lower abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, sore throat, vomiting",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"loss of sensation, hand or finger pain, leg pain, paresthesia, ache all over, foot or toe pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, knee pain, leg pain, lower body pain, ache all over, groin pain, hip pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"numbness in hands or feet, extreme hunger, high glucose, excessive thirst, frequent infections",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"leg swelling, hand or finger pain, knee swelling, knee pain, wrist swelling, foot or toe pain, ankle swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, paresthesia, hip pain, loss of sensation",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, blood in stool, burning abdominal pain, fluid retention, chills, sharp abdominal pain",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, congestion in chest, difficulty breathing, fever, cough",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, pain during pregnancy, vaginal discharge, heavy menstrual flow",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"heavy menstrual flow, cramps and spasms, lower abdominal pain, sharp abdominal pain, problems during pregnancy, burning abdominal pain, spotting or bleeding during pregnancy",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"chest tightness, sharp chest pain, nausea, cough",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"groin pain, knee pain, low back pain, hip stiffness or tightness, pelvic pain, hip pain, leg pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty breathing, headache, coughing up sputum, congestion in chest, coryza",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nosebleed, ear pain, coryza, facial pain, sinus congestion, cough",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"hand or finger pain, arm stiffness or tightness, arm pain, wrist pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg weakness, back pain, dizziness, paresthesia, leg pain, arm pain",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, hand or finger pain, leg pain, wrist pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, arm stiffness or tightness, hand or finger pain, wrist swelling, joint pain, bones are painful, loss of sensation",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, leg pain, low back pain, back pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"feeling ill, nausea, sweating, abnormal involuntary movements, decreased appetite",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"unusual color or odor to urine, side pain, nausea",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"seizures, feeling ill, fainting, problems with movement, nausea, sweating, abnormal involuntary movements",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"cramps and spasms, sharp abdominal pain, problems during pregnancy, lower abdominal pain, burning abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, frequent urination, pelvic pain, symptoms of bladder, side pain, involuntary urination, blood in urine, lower abdominal pain, painful urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, wrist pain, hand or finger swelling, hand or finger pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"disturbance of memory, arm pain, dizziness, problems with movement, leg weakness, loss of sensation, abnormal involuntary movements, arm weakness, paresthesia",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"shoulder pain, knee swelling, shoulder stiffness or tightness, elbow swelling",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"intermenstrual bleeding, blood clots during menstrual periods, lower abdominal pain, pelvic pain, pain during pregnancy, vaginal discharge, heavy menstrual flow",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, skin lesion, skin growth, irregular appearing scalp, acne or pimples, itchy scalp",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp chest pain, chest tightness, vomiting, cough, shortness of breath",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, feeling ill, sleepiness, problems with movement, decreased appetite, sweating, weakness, abnormal involuntary movements",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"spotting or bleeding during pregnancy, cramps and spasms, sharp abdominal pain, intermenstrual bleeding, vaginal pain, pelvic pain, pain during pregnancy, heavy menstrual flow, problems during pregnancy",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, hand or finger swelling, wrist pain, hand or finger pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"excessive anger, delusions or hallucinations, abusing alcohol, hostile behavior, depression, fears and phobias, difficulty speaking",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty speaking, anxiety and nervousness, depression, depressive or psychotic symptoms, drug abuse",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"unusual symptoms, atypical presentation, consult specialist",Other / Rare Disease,unknown,Consult a physician; specialist referral; comprehensive testing; differential diagnosis
+"coryza, difficulty breathing, nasal congestion, congestion in chest, wheezing, sharp chest pain",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems during pregnancy, pelvic pain, spotting or bleeding during pregnancy, sharp abdominal pain, intermenstrual bleeding",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist pain, ankle swelling, wrist swelling, joint pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"acne or pimples, skin growth, irregular appearing scalp, pelvic pain, itchy scalp, skin lesion",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"retention of urine, suprapubic pain, painful urination, lower abdominal pain, back pain, frequent urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood clots during menstrual periods, pelvic pain, problems during pregnancy, burning abdominal pain, cramps and spasms, sharp abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"excessive thirst, increased appetite, unexplained weight loss, high glucose, slow-healing sores, blurred vision, numbness in hands or feet",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"arm pain, sweating, nausea, anxiety, rapid heartbeat, irregular heartbeat",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"nasal congestion, cough, shortness of breath, vomiting, sore throat, weakness, fever, chills",pneumonia,high,Consult a physician
+"back pain, paresthesia, low back pain, neck pain, problems with movement, ache all over, hand or finger pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"involuntary urination, painful urination, frequent urination, retention of urine",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, wrist pain, knee pain, back pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"hand or finger swelling, wrist swelling, knee swelling, leg swelling, joint pain, knee pain, foot or toe pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"depressive or psychotic symptoms, difficulty speaking, abusing alcohol, drug abuse, anxiety and nervousness, low self-esteem, excessive anger",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, weakness, coryza, wheezing, cough",pneumonia,high,Consult a physician
+"heavy menstrual flow, sharp abdominal pain, spotting or bleeding during pregnancy, uterine contractions, pain during pregnancy",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"spotting or bleeding during pregnancy, vaginal pain, lower abdominal pain, cramps and spasms",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"flu-like syndrome, blood in stool, decreased appetite, sharp abdominal pain, diarrhea",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm weakness, disturbance of memory, back pain, abnormal involuntary movements",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"frequent urination, fatigue, excessive thirst, dry skin, increased appetite, unexplained weight loss, high glucose, numbness in hands or feet",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"fainting, dizziness, abnormal involuntary movements, depressive or psychotic symptoms, sleepiness, sweating",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, hip pain, arm stiffness or tightness, leg swelling",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"disturbance of memory, paresthesia, foot or toe pain, loss of sensation, leg weakness, leg pain",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"heartburn, upper abdominal pain, vomiting, chest tightness, sharp chest pain, burning abdominal pain, cough, shortness of breath",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"chest tightness, nausea, cough, difficulty in swallowing, shortness of breath, burning abdominal pain, upper abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"uterine contractions, blood clots during menstrual periods, heavy menstrual flow, problems during pregnancy, pelvic pain, burning abdominal pain, sharp abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, elbow swelling, elbow pain, hip pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"excessive anger, drug abuse, delusions or hallucinations, anxiety and nervousness",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, peripheral edema, jaundice",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, knee pain, hip pain, groin pain, low back pain, leg pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"spotting or bleeding during pregnancy, lower abdominal pain, burning abdominal pain, intermenstrual bleeding, pelvic pain, uterine contractions, heavy menstrual flow, blood clots during menstrual periods, cramps and spasms",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"ache all over, lower body pain, knee pain, paresthesia, arm pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"itching of skin, skin dryness, peeling, scaliness, or roughness, irregular appearing scalp, skin swelling, acne or pimples, skin lesion, skin growth",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, difficulty in swallowing, burning abdominal pain, cough, chest tightness, sore throat, sharp chest pain, vomiting",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"fainting, changes in stool appearance, weakness",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"body aches, chills, sweating, malaise",Other / Rare Disease,unknown,Consult a physician; specialist referral; comprehensive testing; differential diagnosis
+"low back pain, problems with movement, knee pain, hip stiffness or tightness, back pain, hip pain, groin pain, lower body pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"lacrimation, pain in eye, sneezing, nasal congestion, swollen eye",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, ache all over, hand or finger pain, foot or toe pain, abnormal involuntary movements, neck pain, loss of sensation",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, blood in urine, involuntary urination, retention of urine, suprapubic pain, sharp abdominal pain, frequent urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, hip pain, neck pain, low back pain, ache all over",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"hip pain, elbow pain, leg pain, shoulder stiffness or tightness",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, sharp abdominal pain, upper abdominal pain, nausea",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, wrist pain, loss of sensation, hand or finger pain, elbow pain, hand or finger swelling, elbow swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, heavy menstrual flow, spotting or bleeding during pregnancy, lower abdominal pain, pelvic pain, intermenstrual bleeding, problems during pregnancy, uterine contractions, blood clots during menstrual periods, sharp abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, upper abdominal pain, shortness of breath, nausea, blood in stool",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, upper abdominal pain, chills, blood in stool, burning abdominal pain, side pain, lower abdominal pain, constipation",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"abnormal involuntary movements, ache all over, loss of sensation, low back pain, leg pain, hand or finger pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, loss of sensation, back pain, paresthesia, low back pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"peripheral edema, nausea, sharp abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, ankle pain, headache, hand or finger pain, shoulder pain, foot or toe pain, arm pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, hip pain, joint pain, lower body pain, ache all over, groin pain, knee pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"drug abuse, temper problems, abusing alcohol, depressive or psychotic symptoms, excessive anger, fears and phobias, difficulty speaking, delusions or hallucinations",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"depressive or psychotic symptoms, abnormal involuntary movements, fainting, dizziness, weakness",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, diarrhea, dizziness, vomiting",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"hand or finger pain, arm pain, abnormal involuntary movements, loss of sensation, foot or toe pain, ache all over, neck pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, arm stiffness or tightness, hip pain, leg pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"hip pain, loss of sensation, back pain, shoulder pain, lower body pain, paresthesia",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty breathing, cough, fever, wheezing, coughing up sputum, sharp chest pain",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"abnormal involuntary movements, loss of sensation, problems with movement, paresthesia, leg weakness, dizziness, disturbance of memory",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"neck pain, arm pain, lower body pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nasal congestion, sore throat, wheezing, cough",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"elbow pain, joint pain, arm stiffness or tightness, arm swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"dizziness, nausea, rapid heartbeat, arm pain, chest pain, jaw pain",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"difficulty breathing, congestion in chest, wheezing, coughing up sputum",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, cough, sharp chest pain, nasal congestion, chills, difficulty breathing, shortness of breath",pneumonia,high,Consult a physician
+"wrist pain, foot or toe swelling, ankle pain, hand or finger pain, foot or toe pain, knee pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, hand or finger pain, foot or toe pain, headache, arm pain, ankle pain, shoulder pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"neck pain, back pain, arm pain, ankle pain, knee pain, foot or toe pain, low back pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, nasal congestion, cough, fever, headache, ache all over",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe pain, leg pain, disturbance of memory",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist pain, ankle swelling, wrist swelling, foot or toe swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty in swallowing, sore throat, ear pain, vomiting",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"elbow swelling, joint pain, bones are painful, loss of sensation, elbow pain, wrist swelling, arm swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, burning abdominal pain, blood in stool, lower abdominal pain, diarrhea",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, frequent urination, sharp abdominal pain, retention of urine",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, lower body pain, loss of sensation, paresthesia, low back pain, knee pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"anxiety, irregular heartbeat, arm pain, fatigue",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"drug abuse, anxiety and nervousness, difficulty speaking, temper problems, low self-esteem, fears and phobias, delusions or hallucinations",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"blurred vision, dry skin, extreme hunger, unexplained weight loss",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"blood in stool, flu-like syndrome, chills, fluid retention, burning abdominal pain, diarrhea",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"jaundice, peripheral edema, sharp abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, sweating, high cholesterol, nausea, irregular heartbeat, fatigue, arm pain, chest pain",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"nasal congestion, vomiting, sore throat, shortness of breath",pneumonia,high,Consult a physician
+"sharp abdominal pain, back pain, burning abdominal pain, nausea, pain during pregnancy",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"slow-healing sores, unexplained weight loss, fatigue, increased appetite, high glucose, frequent urination, dry skin, numbness in hands or feet",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"hand or finger pain, joint pain, loss of sensation, wrist swelling, hand or finger swelling, elbow swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, ache all over, problems with movement",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"depression, difficulty speaking, temper problems, hostile behavior",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"joint pain, wrist pain, hand or finger swelling, arm pain, elbow swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"decreased appetite, diarrhea, chills, blood in stool, fluid retention, sharp abdominal pain, fever, headache, vomiting, nausea",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, headache, nosebleed, sore throat, facial pain, coryza",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"hand or finger swelling, arm pain, hand or finger pain, elbow swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, knee pain, wrist pain, shoulder pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, lower abdominal pain, fever, sharp abdominal pain, upper abdominal pain, blood in stool",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"ankle pain, shoulder pain, neck pain, arm pain, leg pain, low back pain, back pain, hand or finger pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, fever, ear pain, nasal congestion, nosebleed, headache",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, fever, vomiting, side pain",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee swelling, arm pain, elbow pain, arm swelling, leg pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, fever, diarrhea, sharp abdominal pain",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"changes in stool appearance, sharp abdominal pain, weakness, blood in stool, nausea",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, fever, sore throat, headache, difficulty in swallowing, chills",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, decreased appetite, fever, fluid retention",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"ankle pain, knee pain, ankle swelling, foot or toe pain, wrist pain, hand or finger pain, foot or toe swelling, joint pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"abdominal pain, bloating, constipation, diarrhea",Other / Rare Disease,unknown,Consult a physician; specialist referral; comprehensive testing; differential diagnosis
+"coughing up sputum, nasal congestion, fever, sharp chest pain",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, lower body pain, ache all over, hip pain, joint pain, pelvic pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"allergic reaction, eye redness, diminished vision, pain in eye, itchiness of eye, lacrimation",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"fatigue, weight loss, night sweats, persistent cough",Other / Rare Disease,unknown,Consult a physician; specialist referral; comprehensive testing; differential diagnosis
+"symptoms of eye, diminished vision, cough, allergic reaction, itchiness of eye",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, intermenstrual bleeding, vaginal discharge, problems during pregnancy, sharp abdominal pain, pelvic pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, headache, knee pain, arm pain, foot or toe pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, vaginal pain, sharp abdominal pain, back pain, cramps and spasms, pelvic pain, vaginal discharge",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"chest tightness, difficulty in swallowing, burning abdominal pain, sharp chest pain, sore throat, shortness of breath, heartburn, upper abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"neck pain, ankle pain, wrist pain, arm pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, suprapubic pain, involuntary urination, lower abdominal pain, frequent urination, retention of urine",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, side pain, chills, vomiting, lower abdominal pain, constipation",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, fever, fluid retention, decreased appetite",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe swelling, knee pain, foot or toe pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"suprapubic pain, back pain, blood in urine, involuntary urination, lower abdominal pain, pelvic pain, painful urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"side pain, sharp abdominal pain, heartburn, weakness, jaundice, diarrhea, nausea, upper abdominal pain, peripheral edema, unusual color or odor to urine",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"drug abuse, depression, temper problems, difficulty speaking, low self-esteem, anxiety and nervousness",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, sharp chest pain, sore throat, vomiting",pneumonia,high,Consult a physician
+"elbow swelling, arm stiffness or tightness, arm pain, loss of sensation, arm swelling, wrist pain, hand or finger pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty speaking, anxiety and nervousness, drug abuse, delusions or hallucinations",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"occasional fatigue, mild chest discomfort",No Heart Disease,low,Regular check-ups; healthy diet; exercise; stress management
+"cough, sneezing, lacrimation, eye burns or stings",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, difficulty breathing, sore throat, coryza, congestion in chest, shortness of breath, fever",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, problems with movement, leg pain, paresthesia, neck pain, ache all over, foot or toe pain, arm pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"weakness, vomiting, cough, nasal congestion",pneumonia,high,Consult a physician
+"itchy scalp, skin irritation, skin dryness, peeling, scaliness, or roughness, skin rash, acne or pimples, skin growth, irregular appearing scalp, pelvic pain",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"diarrhea, blood in stool, flu-like syndrome, decreased appetite, sharp abdominal pain",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"loss of sensation, foot or toe pain, back pain, abnormal involuntary movements",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, decreased appetite, vomiting, headache, chills, nasal congestion, ache all over",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, diarrhea, changes in stool appearance, dizziness, weakness, sharp abdominal pain, fainting, melena, vomiting, rectal bleeding, vomiting blood",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems during pregnancy, heavy menstrual flow, vaginal discharge, cramps and spasms, pelvic pain, blood clots during menstrual periods, sharp abdominal pain, vaginal pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, disturbance of memory, arm pain, abnormal involuntary movements, back pain",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe pain, joint pain, hand or finger swelling, foot or toe swelling, wrist swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"hip pain, low back pain, back pain, leg pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm swelling, elbow swelling, shoulder pain, elbow pain, hip pain, leg pain, shoulder stiffness or tightness",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"facial pain, difficulty breathing, headache, fever",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain in eye, swollen eye, nasal congestion, sneezing, allergic reaction",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, vomiting blood, vomiting, dizziness",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, arm stiffness or tightness, elbow swelling, shoulder pain, arm swelling, knee swelling, hip pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin lesion, irregular appearing scalp, abnormal appearing skin, acne or pimples, skin rash, skin growth",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"mild chest discomfort, occasional fatigue",No Heart Disease,low,Regular check-ups; healthy diet; exercise; stress management
+"itchy scalp, skin irritation, skin growth, itching of skin, skin dryness, peeling, scaliness, or roughness, skin swelling, acne or pimples",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"weight gain, occasional fatigue",No Diabetes,low,Maintain healthy weight; balanced diet; regular exercise; annual glucose screening
+"dizziness, back pain, loss of sensation, problems with movement, arm pain, foot or toe pain",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, chills, sharp abdominal pain, side pain, lower abdominal pain, diarrhea, nausea, vomiting, blood in stool",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, nausea, dizziness, weakness",Other / Rare Disease,unknown,Consult a physician; specialist referral; comprehensive testing; differential diagnosis
+"arm pain, leg pain, leg swelling, hip pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, vomiting, decreased appetite, nasal congestion, headache",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty in swallowing, sharp abdominal pain, shortness of breath, burning abdominal pain, vomiting, upper abdominal pain",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"dizziness, arm pain, leg pain, abnormal involuntary movements",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"disturbance of memory, back pain, loss of sensation, abnormal involuntary movements, paresthesia, arm weakness, foot or toe pain, leg weakness",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe pain, headache, wrist pain, neck pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"congestion in chest, sharp chest pain, cough, headache, coughing up sputum, wheezing, sore throat, coryza, fever, shortness of breath",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"suprapubic pain, blood in urine, side pain, lower abdominal pain, involuntary urination, frequent urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, vomiting, sharp abdominal pain, blood in stool",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"ache all over, hip pain, shoulder pain, lower body pain, arm pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin lesion, irregular appearing scalp, skin dryness, peeling, scaliness, or roughness, skin growth",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist pain, hand or finger pain, elbow swelling, elbow pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"hostile behavior, difficulty speaking, temper problems, depression",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"jaundice, heartburn, weakness, nausea, diarrhea",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin swelling, skin dryness, peeling, scaliness, or roughness, skin growth, acne or pimples, itchy scalp, skin irritation, itching of skin",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems during pregnancy, blood clots during menstrual periods, pelvic pain, sharp abdominal pain, burning abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"abnormal involuntary movements, loss of sensation, arm weakness, arm pain, foot or toe pain, back pain, dizziness, paresthesia",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"fainting, weakness, changes in stool appearance",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg swelling, knee pain, joint pain, wrist swelling, foot or toe pain, knee swelling, hand or finger swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"joint pain, elbow pain, arm swelling, elbow swelling, arm stiffness or tightness",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"ankle pain, leg pain, foot or toe pain, hand or finger pain, knee pain, back pain, neck pain, low back pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, fever, vomiting, nasal congestion, cough, weakness, coryza, sore throat, chills",pneumonia,high,Consult a physician
+"fever, sore throat, cough, nasal congestion, headache",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, foot or toe pain, hand or finger pain, wrist pain, arm pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, arm pain, abnormal involuntary movements, loss of sensation, problems with movement",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting blood, weakness, melena",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, leg pain, wrist pain, hand or finger pain, ankle pain, headache, arm pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, cramps and spasms, painful urination, nausea, vaginal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, shortness of breath, coryza, fever, congestion in chest, sore throat, difficulty breathing",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"heavy menstrual flow, cramps and spasms, pain during pregnancy, blood clots during menstrual periods, vaginal pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"itching of skin, irregular appearing scalp, skin irritation, itchy scalp, skin growth, skin swelling, skin dryness, peeling, scaliness, or roughness, skin lesion, acne or pimples",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"dizziness, abnormal involuntary movements, depressive or psychotic symptoms, fainting",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, arm pain, high cholesterol, fatigue, jaw pain, chest pain, irregular heartbeat, sweating",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"sinus congestion, coryza, sore throat, painful sinuses, fever",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"cramps and spasms, uterine contractions, spotting or bleeding during pregnancy, pain during pregnancy, pelvic pain, lower abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"chills, diarrhea, nausea, lower abdominal pain",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"high glucose, increased appetite, fatigue, extreme hunger, unexplained weight loss, numbness in hands or feet, dry skin",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"coryza, sore throat, sharp chest pain, weakness, vomiting, nasal congestion",pneumonia,high,Consult a physician
+"diarrhea, sharp abdominal pain, vomiting, fever",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, nausea, vaginal discharge, burning abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"ache all over, neck pain, arm pain, hip pain, lower body pain, leg pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"coughing up sputum, fever, wheezing, sore throat, sharp chest pain",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"high blood pressure, sweating, high cholesterol, irregular heartbeat, chest pain",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"ache all over, back pain, arm pain, abnormal involuntary movements",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, disturbance of memory, arm pain, back pain, abnormal involuntary movements",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, hand or finger swelling, bones are painful, arm swelling, loss of sensation, elbow swelling, arm stiffness or tightness, joint pain, hand or finger pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"frequent urination, retention of urine, suprapubic pain, lower abdominal pain, blood in urine, sharp abdominal pain, involuntary urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm swelling, arm stiffness or tightness, hip pain, elbow swelling, leg pain, knee swelling, arm pain, shoulder stiffness or tightness",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"peripheral edema, jaundice, side pain, nausea, unusual color or odor to urine, weakness, upper abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty in swallowing, upper abdominal pain, burning abdominal pain, chest tightness, cough, nausea, shortness of breath",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"uterine contractions, pelvic pain, pain during pregnancy, heavy menstrual flow, cramps and spasms, intermenstrual bleeding, burning abdominal pain, spotting or bleeding during pregnancy",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm stiffness or tightness, leg pain, shoulder pain, arm pain, knee pain, hip pain, arm swelling",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nosebleed, sinus congestion, sore throat, painful sinuses",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"dizziness, vomiting blood, vomiting, nausea",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty in swallowing, cough, sore throat, skin rash, chills, ache all over, ear pain, nasal congestion, decreased appetite",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"congestion in chest, wheezing, cough, headache, coughing up sputum, difficulty breathing",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"hand or finger pain, low back pain, neck pain, back pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, ache all over, sore throat, skin rash, decreased appetite, nasal congestion, chills, ear pain",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm swelling, knee pain, arm pain, knee swelling",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"loss of sensation, arm weakness, leg weakness, abnormal involuntary movements, back pain, paresthesia, leg pain",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"paresthesia, loss of sensation, disturbance of memory, leg pain, foot or toe pain, leg weakness",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"rash, joint pain, swollen lymph nodes, sore throat",Other / Rare Disease,unknown,Consult a physician; specialist referral; comprehensive testing; differential diagnosis
+"nausea, depressive or psychotic symptoms, seizures, problems with movement, fainting, feeling ill",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"changes in stool appearance, nausea, diarrhea, vomiting, fainting, sharp abdominal pain",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"coryza, difficulty breathing, cough, chills",pneumonia,high,Consult a physician
+"loss of sensation, joint pain, elbow swelling, hand or finger swelling, hand or finger pain, wrist swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, lower body pain, neck pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"unusual color or odor to urine, heartburn, jaundice, upper abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, sharp abdominal pain, burning abdominal pain, nausea, side pain, lower abdominal pain",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"ear pain, facial pain, sinus congestion, painful sinuses",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"elbow swelling, elbow pain, hand or finger pain, wrist pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"abnormal involuntary movements, low back pain, arm pain, back pain, foot or toe pain, problems with movement",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"diminished vision, itchiness of eye, swollen eye, eye redness, pain in eye, lacrimation, allergic reaction",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"coryza, nasal congestion, wheezing, fever, weakness, vomiting, sore throat, shortness of breath, chills",pneumonia,high,Consult a physician
+"arm pain, wrist swelling, hand or finger swelling, wrist pain, hand or finger pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, painful sinuses, nasal congestion, nosebleed",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"neck pain, headache, wrist pain, foot or toe pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"heavy menstrual flow, problems during pregnancy, cramps and spasms, blood clots during menstrual periods, burning abdominal pain, spotting or bleeding during pregnancy",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, foot or toe pain, arm pain, low back pain, headache",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"uterine contractions, pain during pregnancy, sharp abdominal pain, spotting or bleeding during pregnancy",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+mild chest discomfort,No Heart Disease,low,Regular check-ups; healthy diet; exercise; stress management
+"fever, coryza, shortness of breath, chills, wheezing, weakness, vomiting",pneumonia,high,Consult a physician
+"sharp chest pain, difficulty breathing, cough, shortness of breath, chills",pneumonia,high,Consult a physician
+"skin dryness, peeling, scaliness, or roughness, skin growth, skin lesion, irregular appearing scalp",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, cramps and spasms, sharp abdominal pain, side pain, vaginal discharge, painful urination, burning abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"joint pain, foot or toe pain, hand or finger swelling, hand or finger pain, ankle pain, leg swelling, knee pain, knee swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"neck pain, low back pain, loss of sensation, ache all over, arm pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"fainting, weakness, depressive or psychotic symptoms, feeling ill, abnormal involuntary movements",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm stiffness or tightness, hand or finger pain, wrist pain, hand or finger swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, sharp abdominal pain, lower abdominal pain, burning abdominal pain, intermenstrual bleeding, spotting or bleeding during pregnancy",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, sharp abdominal pain, changes in stool appearance, melena, vomiting blood, nausea, diarrhea, blood in stool",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin lesion, pelvic pain, itching of skin, abnormal appearing skin, skin rash, skin growth",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"lacrimation, allergic reaction, cough, diminished vision, pain in eye, nasal congestion, swollen eye, eye burns or stings",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"jaw pain, shortness of breath, arm pain, nausea, high cholesterol, anxiety",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"spotting or bleeding during pregnancy, problems during pregnancy, sharp abdominal pain, burning abdominal pain, cramps and spasms, heavy menstrual flow, lower abdominal pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, neck pain, ache all over, hip pain, leg pain, paresthesia",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"heavy menstrual flow, pelvic pain, lower abdominal pain, spotting or bleeding during pregnancy, cramps and spasms, problems during pregnancy, intermenstrual bleeding, blood clots during menstrual periods",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"shoulder pain, ankle pain, knee pain, headache",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"abnormal involuntary movements, ache all over, back pain, arm pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"upper abdominal pain, fever, sharp abdominal pain, nausea",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"frequent infections, high glucose, frequent urination, increased appetite, numbness in hands or feet",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"headache, facial pain, fever, sinus congestion, cough, difficulty breathing",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, lower abdominal pain, spotting or bleeding during pregnancy, pelvic pain, cramps and spasms, uterine contractions",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"blurred vision, increased appetite, numbness in hands or feet, unexplained weight loss, frequent urination, slow-healing sores",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"diarrhea, burning abdominal pain, fever, chills, sharp abdominal pain, decreased appetite, blood in stool",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, fatigue, general discomfort, loss of appetite",Other / Rare Disease,unknown,Consult a physician; specialist referral; comprehensive testing; differential diagnosis
+"wrist pain, hand or finger swelling, hand or finger pain, elbow pain, loss of sensation, elbow swelling, wrist swelling",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"groin pain, lower body pain, low back pain, ache all over, knee pain, leg pain, back pain, hip pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"sweating, decreased appetite, feeling ill, abnormal involuntary movements, nausea",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, chills, fever, burning abdominal pain, side pain",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, difficulty breathing, coughing up sputum, congestion in chest, sore throat, sharp chest pain, fever",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, facial pain, fever, difficulty breathing",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, arm pain, loss of sensation, paresthesia, abnormal involuntary movements",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty speaking, abusing alcohol, drug abuse, depressive or psychotic symptoms",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm weakness, loss of sensation, abnormal involuntary movements, leg weakness, paresthesia, dizziness, arm pain, foot or toe pain, leg pain, problems with movement",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"sleepiness, depressive or psychotic symptoms, nausea, dizziness, problems with movement, feeling ill, weakness, abnormal involuntary movements, fainting",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"fears and phobias, hostile behavior, depressive or psychotic symptoms, temper problems, abusing alcohol, anxiety and nervousness",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"nasal congestion, difficulty in swallowing, ear pain, chills, sore throat",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist pain, hand or finger pain, joint pain, wrist swelling, ankle swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"intermenstrual bleeding, vaginal discharge, problems during pregnancy, pelvic pain, lower abdominal pain, cramps and spasms",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"ear pain, difficulty in swallowing, sore throat",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"elbow swelling, elbow pain, arm pain, hip pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"coryza, difficulty breathing, ear pain, cough",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, cough, nasal congestion, vomiting",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"lacrimation, cough, pain in eye, eye redness, itchiness of eye, diminished vision",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, vaginal discharge, lower abdominal pain, intermenstrual bleeding, pain during pregnancy",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"joint pain, hip pain, lower body pain, groin pain, low back pain, pelvic pain, knee pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, sinus congestion, nosebleed, coryza, cough",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"involuntary urination, pelvic pain, frequent urination, lower abdominal pain, painful urination, suprapubic pain",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, anxiety, chest pain, high cholesterol",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"fever, painful sinuses, nasal congestion, nosebleed, facial pain",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"weakness, sharp abdominal pain, heartburn, unusual color or odor to urine, jaundice",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"side pain, weakness, blood in stool, unusual color or odor to urine, upper abdominal pain, jaundice, sharp abdominal pain, diarrhea",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, sharp abdominal pain, nausea, pain during pregnancy",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"hand or finger swelling, foot or toe swelling, ankle swelling, knee pain, knee swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, blood in urine, suprapubic pain, frequent urination, involuntary urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, cramps and spasms, sharp abdominal pain, pelvic pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, lower abdominal pain, upper abdominal pain, burning abdominal pain, sharp abdominal pain, blood in stool",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"weakness, upper abdominal pain, blood in stool, nausea, jaundice, heartburn, side pain, peripheral edema",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, nasal congestion, sharp chest pain, coughing up sputum",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, upper abdominal pain, sharp chest pain, difficulty in swallowing, shortness of breath, cough",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"cramps and spasms, lower abdominal pain, spotting or bleeding during pregnancy, vaginal pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, sore throat, sharp chest pain, cough, heartburn, shortness of breath, difficulty in swallowing",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, side pain, peripheral edema, heartburn, weakness, upper abdominal pain, blood in stool, unusual color or odor to urine, jaundice",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"itching of skin, skin growth, pelvic pain, skin rash, skin lesion, abnormal appearing skin",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, skin rash, ache all over, difficulty in swallowing, vomiting",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"flu-like syndrome, fever, chills, blood in stool, nausea, vomiting",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, wrist swelling, knee swelling, foot or toe swelling, wrist pain, foot or toe pain, leg swelling, joint pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"ankle pain, wrist swelling, foot or toe pain, hand or finger swelling, hand or finger pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"painful urination, suprapubic pain, symptoms of bladder, lower abdominal pain, back pain, frequent urination, retention of urine",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg swelling, foot or toe pain, ankle pain, ankle swelling, joint pain, knee pain, hand or finger swelling, hand or finger pain, knee swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg swelling, hip pain, arm pain, leg pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"fever, nasal congestion, headache, difficulty breathing, sore throat, cough",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"side pain, unusual color or odor to urine, nausea",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"upper abdominal pain, burning abdominal pain, chest tightness",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"wrist swelling, knee swelling, foot or toe pain, knee pain, hand or finger pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"excessive anger, abusing alcohol, anxiety and nervousness, fears and phobias, difficulty speaking, low self-esteem",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, back pain, painful urination, vaginal discharge, pelvic pain, cramps and spasms, burning abdominal pain, nausea",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"hand or finger pain, wrist swelling, wrist pain, joint pain, ankle swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, headache, nausea, vomiting, decreased appetite, diarrhea, sharp abdominal pain",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"high glucose, unexplained weight loss, increased appetite, frequent infections, dry skin",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"itching of skin, skin growth, irregular appearing scalp, skin swelling, pelvic pain, skin dryness, peeling, scaliness, or roughness",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"spotting or bleeding during pregnancy, sharp abdominal pain, problems during pregnancy, heavy menstrual flow, pain during pregnancy, pelvic pain",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems with movement, feeling ill, abnormal involuntary movements, nausea",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, fever, vomiting, cough, chills, nasal congestion",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"coryza, cough, ear pain, difficulty breathing",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"suprapubic pain, pelvic pain, lower abdominal pain, painful urination, frequent urination, involuntary urination",cystitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower body pain, ache all over, hip pain, knee pain, leg pain, groin pain, hip stiffness or tightness, back pain, low back pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"headache, knee pain, ankle pain, shoulder pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"mild thirst, weight gain",No Diabetes,low,Maintain healthy weight; balanced diet; regular exercise; annual glucose screening
+"depressive or psychotic symptoms, feeling ill, fainting, nausea",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, sharp chest pain, shortness of breath, sore throat",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"irregular heartbeat, fatigue, nausea, shortness of breath, high cholesterol, arm pain, high blood pressure",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"unusual color or odor to urine, nausea, jaundice, weakness, upper abdominal pain, side pain, peripheral edema",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, sharp chest pain, nasal congestion, sore throat, difficulty breathing",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"abnormal involuntary movements, problems with movement, fainting, seizures, feeling ill, sweating, nausea",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, foot or toe pain, wrist pain, knee pain, arm pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, diarrhea, rectal bleeding, vomiting, changes in stool appearance",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, irregular heartbeat, chest pain, fatigue, jaw pain, high cholesterol, dizziness, anxiety",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"vomiting, cough, wheezing, weakness",pneumonia,high,Consult a physician
+"eye burns or stings, pain in eye, lacrimation, allergic reaction, diminished vision, eye redness, sneezing, cough, itchiness of eye",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"joint pain, wrist pain, ankle swelling, wrist swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, ankle swelling, hand or finger swelling, knee swelling, foot or toe swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, abnormal involuntary movements, arm pain, paresthesia, loss of sensation",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"side pain, nausea, vomiting, lower abdominal pain, chills",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"pain during pregnancy, spotting or bleeding during pregnancy, pelvic pain, sharp abdominal pain, problems during pregnancy",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, blood clots during menstrual periods, heavy menstrual flow, vaginal pain, pain during pregnancy, pelvic pain",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"dizziness, loss of sensation, abnormal involuntary movements, leg weakness, paresthesia, disturbance of memory, problems with movement",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"seizures, decreased appetite, problems with movement, fainting, sleepiness, nausea",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"chills, difficulty in swallowing, fever, headache, sore throat, vomiting",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"shortness of breath, fever, sore throat, sharp chest pain",pneumonia,high,Consult a physician
+"sore throat, ear pain, ache all over, chills",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin swelling, skin rash, skin irritation, pelvic pain, skin lesion, irregular appearing scalp",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"lower abdominal pain, burning abdominal pain, diarrhea, blood in stool",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"hip stiffness or tightness, knee pain, joint pain, lower body pain, leg pain, pelvic pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"knee pain, hand or finger swelling, leg swelling, hand or finger pain",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, vaginal discharge, pain during pregnancy, burning abdominal pain, lower abdominal pain, side pain, painful urination",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"heartburn, jaundice, unusual color or odor to urine, weakness, sharp abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"skin swelling, skin lesion, skin irritation, skin dryness, peeling, scaliness, or roughness",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, weakness, shortness of breath, wheezing, coryza",pneumonia,high,Consult a physician
+"foot or toe pain, paresthesia, back pain, abnormal involuntary movements",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"high blood pressure, jaw pain, shortness of breath, high cholesterol, arm pain, fatigue",Heart Disease,high,Immediate medical attention; aspirin; nitroglycerin; lifestyle changes; cardiac rehabilitation
+"decreased appetite, flu-like syndrome, burning abdominal pain, sharp abdominal pain, fluid retention, blood in stool",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"constipation, vomiting, side pain, upper abdominal pain, chills, fever, nausea, lower abdominal pain, diarrhea",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"heavy menstrual flow, problems during pregnancy, cramps and spasms, burning abdominal pain, spotting or bleeding during pregnancy, blood clots during menstrual periods",spontaneous abortion,medium,Consult a physician; rest and hydration; monitor symptoms
+"neck pain, wrist pain, arm pain, ankle pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"nosebleed, sore throat, painful sinuses, sinus congestion",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, constipation, lower abdominal pain, fever, blood in stool, upper abdominal pain",diverticulitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, cramps and spasms, back pain, pain during pregnancy",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"excessive thirst, numbness in hands or feet, extreme hunger, unexplained weight loss, high glucose, slow-healing sores, dry skin, blurred vision",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"increased appetite, fatigue, frequent urination, extreme hunger, unexplained weight loss, blurred vision, dry skin",Diabetes,medium,Blood sugar monitoring; insulin therapy; metformin; dietary changes; regular exercise
+"sharp chest pain, shortness of breath, chills, difficulty breathing, cough",pneumonia,high,Consult a physician
+"arm pain, elbow swelling, hand or finger swelling, hand or finger pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"difficulty breathing, cough, sharp chest pain, fever, vomiting, coryza, weakness, chills, shortness of breath",pneumonia,high,Consult a physician
+"vomiting, chest tightness, nausea, cough",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"cramps and spasms, vaginal discharge, sharp abdominal pain, back pain, nausea, lower abdominal pain, side pain, pain during pregnancy, vaginal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, back pain, hip pain, neck pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, diarrhea, headache, nausea, fever",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"itchiness of eye, swollen eye, allergic reaction, diminished vision, eye redness, lacrimation",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"nasal congestion, shortness of breath, cough, vomiting, sharp chest pain, difficulty breathing",pneumonia,high,Consult a physician
+"diarrhea, jaundice, blood in stool, peripheral edema",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm weakness, dizziness, disturbance of memory, back pain, loss of sensation, arm pain, leg pain",peripheral nerve disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm swelling, shoulder stiffness or tightness, elbow pain, arm stiffness or tightness, leg pain, leg swelling",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"heartburn, burning abdominal pain, sharp chest pain, sharp abdominal pain, nausea, sore throat",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, upper abdominal pain, chest tightness",esophagitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"heavy menstrual flow, cramps and spasms, vaginal pain, blood clots during menstrual periods, pain during pregnancy",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting blood, blood in stool, nausea, fainting, sharp abdominal pain, diarrhea, dizziness, melena",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, leg pain, elbow swelling, arm stiffness or tightness, elbow pain, knee pain",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, difficulty breathing, cough, sharp chest pain, nasal congestion",acute bronchitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"neck pain, arm pain, low back pain, hand or finger pain, back pain, ache all over, leg pain, abnormal involuntary movements",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, hand or finger pain, loss of sensation, low back pain, ache all over, abnormal involuntary movements",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"melena, weakness, vomiting blood",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"sore throat, ear pain, chills, ache all over",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"depressive or psychotic symptoms, abnormal involuntary movements, dizziness, weakness, fainting",hypoglycemia,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, lower body pain, groin pain, hip pain, pelvic pain, problems with movement",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"hip pain, leg pain, elbow pain, shoulder stiffness or tightness",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, neck pain, hand or finger pain, foot or toe pain, ankle pain, leg pain",sprain or strain,medium,Consult a physician; rest and hydration; monitor symptoms
+"irregular appearing scalp, pelvic pain, skin growth, skin swelling, itching of skin",fungal infection of the hair,medium,Consult a physician; rest and hydration; monitor symptoms
+"drug abuse, difficulty speaking, delusions or hallucinations, depression",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"sinus congestion, fever, cough, headache, difficulty breathing, facial pain",nose disorder,medium,Consult a physician; rest and hydration; monitor symptoms
+"sharp abdominal pain, heavy menstrual flow, vaginal pain, pain during pregnancy, pelvic pain, blood clots during menstrual periods",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"vomiting, weakness, shortness of breath, wheezing",pneumonia,high,Consult a physician
+"side pain, burning abdominal pain, painful urination, cramps and spasms, vaginal discharge, sharp abdominal pain, lower abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"foot or toe pain, knee pain, knee swelling, wrist pain, leg swelling",gout,medium,Consult a physician; rest and hydration; monitor symptoms
+"elbow swelling, joint pain, arm pain, hand or finger swelling, wrist pain",injury to the arm,medium,Consult a physician; rest and hydration; monitor symptoms
+"lacrimation, eye burns or stings, sneezing, cough",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"pelvic pain, low back pain, back pain, hip pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"shoulder pain, knee swelling, hip pain, arm pain, elbow swelling, arm stiffness or tightness, arm swelling",bursitis,medium,Consult a physician; rest and hydration; monitor symptoms
+"back pain, problems with movement, ache all over, pelvic pain",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, neck pain, hip pain, low back pain",spondylosis,medium,Consult a physician; rest and hydration; monitor symptoms
+"arm pain, problems with movement, loss of sensation, foot or toe pain, neck pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms
+"mild fever, occasional pain, unclear diagnosis, further testing needed",Other / Rare Disease,unknown,Consult a physician; specialist referral; comprehensive testing; differential diagnosis
+"painful urination, sharp abdominal pain, side pain, cramps and spasms, pain during pregnancy, burning abdominal pain",vulvodynia,medium,Consult a physician; rest and hydration; monitor symptoms
+"low back pain, problems with movement, leg pain, ache all over, lower body pain, back pain, hip pain, pelvic pain, hip stiffness or tightness",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"dizziness, blood in stool, fainting, sharp abdominal pain, nausea, vomiting blood, melena, diarrhea",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"burning abdominal pain, diarrhea, vomiting, blood in stool, headache",infectious gastroenteritis,medium,Consult a physician; rest and hydration; monitor symptoms
+"hostile behavior, low self-esteem, depressive or psychotic symptoms, drug abuse, depression",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"nausea, peripheral edema, sharp abdominal pain",liver disease,medium,Consult a physician; rest and hydration; monitor symptoms
+"blood in stool, dizziness, diarrhea, vomiting",gastrointestinal hemorrhage,medium,Consult a physician; rest and hydration; monitor symptoms
+"abusing alcohol, excessive anger, anxiety and nervousness, depressive or psychotic symptoms, delusions or hallucinations, difficulty speaking, depression",marijuana abuse,medium,Consult a physician; rest and hydration; monitor symptoms
+"cough, nasal congestion, symptoms of eye, eye redness, diminished vision",conjunctivitis due to allergy,medium,Consult a physician; rest and hydration; monitor symptoms
+"leg pain, ache all over, groin pain, joint pain, back pain, low back pain, hip pain, lower body pain, knee pain, hip stiffness or tightness",arthritis of the hip,medium,Consult a physician; rest and hydration; monitor symptoms
+"heavy menstrual flow, vaginal pain, spotting or bleeding during pregnancy, sharp abdominal pain, problems during pregnancy",vaginal cyst,medium,Consult a physician; rest and hydration; monitor symptoms
+"chills, difficulty in swallowing, sore throat, nasal congestion, ear pain",strep throat,medium,Consult a physician; rest and hydration; monitor symptoms
+"problems with movement, arm pain, paresthesia, foot or toe pain, loss of sensation, hand or finger pain",complex regional pain syndrome,medium,Consult a physician; rest and hydration; monitor symptoms

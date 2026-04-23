@@ -1,0 +1,136 @@
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Activity, Sparkles, AlertTriangle, CheckCircle, Save, RotateCcw, BarChart3 } from 'lucide-react';
+import { saveToHistory } from '@/api/config';
+
+interface Props {
+  result: any;
+  user: any;
+  onBack: () => void;
+  onNewCheck: () => void;
+  onDashboard: () => void;
+  onToast: (msg: string, type: 'success' | 'error' | 'info') => void;
+}
+
+export default function ResultsScreen({ result, user, onBack, onNewCheck, onDashboard, onToast }: Props) {
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [barWidth, setBarWidth] = useState(0);
+
+  useEffect(() => { setTimeout(() => setBarWidth(result.confidence), 100); }, [result.confidence]);
+
+  if (!result) return null;
+
+  const handleSave = async () => {
+    if (!user) { onToast('Please sign in to save', 'info'); return; }
+    setSaving(true);
+    const res = await saveToHistory(result);
+    setSaving(false);
+    if (res.error) { onToast(res.error, 'error'); return; }
+    setSaved(true);
+    onToast('Saved to your history!', 'success');
+  };
+
+  const otherPredictions = (result.all_predictions || []).slice(1);
+
+  return (
+    <div className="screen-fade max-w-[720px] mx-auto px-5 py-10">
+      <button onClick={onBack} className="flex items-center gap-1 text-muted-foreground text-sm mb-6 hover:text-foreground transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back to Chat
+      </button>
+
+      {/* Header */}
+      <div className="gradient-header-card rounded-3xl p-8 mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-10 h-10 rounded-full bg-card flex items-center justify-center"><Activity className="w-5 h-5 text-primary" /></div>
+          <span className="text-primary font-heading font-semibold text-sm">Analysis Complete</span>
+        </div>
+        <h1 className="font-heading font-extrabold text-2xl mb-3">Your Symptom Report</h1>
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {result.symptoms_found?.map((s: string) => (
+            <span key={s} className="bg-primary-light text-primary text-xs px-2.5 py-1 rounded-full font-semibold">{s}</span>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">{new Date().toLocaleString()}</p>
+      </div>
+
+      {/* Main prediction */}
+      <div className="card-medicare border-2 border-primary-light p-7 mb-4">
+        <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
+          <h2 className="font-heading font-extrabold text-2xl">{result.disease}</h2>
+          <span className="bg-primary-light text-primary font-heading font-bold text-sm px-3 py-1 rounded-full">{result.confidence}% match</span>
+        </div>
+        <span className="bg-secondary/30 text-secondary-foreground text-xs px-3 py-1 rounded-full font-semibold">Most Likely Condition</span>
+        <div className="mt-5">
+          <div className="flex justify-between text-sm mb-1.5">
+            <span className="text-muted-foreground">Confidence Level</span>
+            <span className="font-heading font-bold">{result.confidence}%</span>
+          </div>
+          <div className="h-2.5 bg-border rounded-full overflow-hidden">
+            <div className="h-full rounded-full bg-gradient-to-r from-primary to-purple confidence-bar-fill" style={{ width: `${barWidth}%` }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Other predictions */}
+      {otherPredictions.length > 0 && (
+        <div className="mb-4">
+          <h3 className="font-heading font-bold text-base mb-3">Other Possibilities</h3>
+          <div className="space-y-2">
+            {otherPredictions.map((p: any, i: number) => (
+              <div key={i} className="card-medicare bg-surface2 p-4 flex items-center justify-between">
+                <span className="font-heading font-semibold text-sm">{p.disease}</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-24 h-2 bg-border rounded-full overflow-hidden">
+                    <div className="h-full rounded-full confidence-bar-fill" style={{ width: `${p.confidence}%`, background: i === 0 ? 'hsl(var(--accent))' : 'hsl(var(--accent2))' }} />
+                  </div>
+                  <span className="text-sm font-semibold text-muted-foreground w-12 text-right">{p.confidence}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Explanation */}
+      {result.explanation && (
+        <div className="card-medicare p-7 mb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <h3 className="font-heading font-bold text-base">AI Explanation</h3>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">Generated by GPT — informational purposes only</p>
+          <p className="text-[15px] leading-[1.8] text-muted-foreground">{result.explanation}</p>
+        </div>
+      )}
+
+      {/* Next steps */}
+      <div className="gradient-nextsteps border border-accent rounded-2xl p-7 mb-4">
+        <h3 className="font-heading font-bold text-base mb-3">💡 Recommended Next Steps</h3>
+        <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
+          <li>Consult a qualified doctor for proper diagnosis</li>
+          <li>Avoid self-medicating based on AI predictions</li>
+          <li>If symptoms worsen, go to emergency care immediately</li>
+          <li>Track when symptoms started and any changes</li>
+        </ol>
+      </div>
+
+      {/* Disclaimer */}
+      <div className="bg-[#fff3cd] border border-[#ffc107] rounded-xl p-4 mb-6 flex items-start gap-2">
+        <AlertTriangle className="w-5 h-5 text-[#856404] shrink-0 mt-0.5" />
+        <div>
+          <p className="font-heading font-bold text-sm text-[#856404] mb-1">Important Medical Disclaimer</p>
+          <p className="text-xs text-[#856404] leading-relaxed">This AI prediction is for informational purposes only and should not be considered medical advice. Always consult a qualified healthcare provider for diagnosis and treatment.</p>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-wrap gap-3">
+        <button onClick={handleSave} disabled={saved || saving} className={`btn-pill px-5 py-2.5 text-sm flex items-center gap-2 ${saved ? 'bg-secondary/30 text-secondary-foreground' : 'btn-primary'}`}>
+          {saved ? <><CheckCircle className="w-4 h-4" /> Saved</> : saving ? 'Saving...' : <><Save className="w-4 h-4" /> Save to History</>}
+        </button>
+        <button onClick={onNewCheck} className="btn-ghost px-5 py-2.5 text-sm flex items-center gap-2"><RotateCcw className="w-4 h-4" /> New Check</button>
+        <button onClick={onDashboard} className="btn-ghost px-5 py-2.5 text-sm flex items-center gap-2"><BarChart3 className="w-4 h-4" /> View Dashboard</button>
+      </div>
+    </div>
+  );
+}
