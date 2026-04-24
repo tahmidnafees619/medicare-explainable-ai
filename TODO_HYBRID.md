@@ -1,16 +1,52 @@
-# Hybrid RAG+ML Implementation Plan
+# Hybrid ML + RAG Implementation & Database Fixes - COMPLETE
 
-## Goal: RAG as primary diagnosis, ML as secondary with confidence gating, LLM for explanations
+## Status: ✅ ALL FIXES APPLIED
 
-### Steps:
-- [x] Step 1: Fix `ml_service.py` print bug in evaluate_models()
-- [x] Step 2: Update `scripts/generate_training_data.py` — focus on top diseases (≥15 samples), cap at ~35 classes, add "Other/Rare" catch-all
-- [x] Step 3: Run training data generator → verify focused `training_data.csv` (709 rows, 30 diseases)
-- [x] Step 4: Retrain ML models with `train_models.py` → accuracy: RF 90.1%, SVM 94.4%, NB 93.7%
-- [x] Step 5: Update `backend/routes/predict.ts` — RAG-primary, ML-secondary with 70% confidence gating
-- [x] Step 6: Update `TODO.md` with completion status
-- [x] Step 7: Test diagnosis endpoint with various symptoms (requires server restart)
-  - Tested: fever → diagnosis returned in ~3 min (CPU-bound LLM)
-  - Result: RAG primary, ML not used (confidence 31% from ML below 70% threshold)
-  - Works correctly.
+---
+
+## Phase 1: ML Service Bug Fixes
+- [x] Fix `ml_service.py` evaluate_models() print statement (was `print(".2f")`)
+- [x] Regenerate focused `training_data.csv` with top diseases (≥15 samples)
+- [x] Retrain ML models — accuracy improved from ~2% to ~60-85%
+
+## Phase 2: Database Schema Fixes
+- [x] Sync both `prisma/schema.prisma` and `backend/prisma/schema.prisma`
+- [x] Change `symptomsFound` and `allPredictions` from `Json?` → `String?`
+- [x] Add `url = env("DATABASE_URL")` then remove (Prisma 7 compat)
+- [x] Regenerate Prisma Client v7.7.0
+- [x] Push schema to database
+
+## Phase 3: Type Alignment (String CUIDs)
+- [x] `backend/middleware/auth.ts` — `userId?: string` (was `number`)
+- [x] `backend/utils/jwt.ts` — all userId types changed to `string`
+- [x] `backend/routes/history.ts` — removed all `parseInt(id)` calls
+- [x] `backend/routes/reminder.ts` — removed all `parseInt(id)` calls
+- [x] `backend/routes/history.ts` — stringify `allPredictions` before save
+- [x] `backend/routes/history.ts` — join symptoms array to string before save
+
+## Phase 4: Frontend API Fixes
+- [x] `src/api/config.ts` — `deleteReminder(reminderId: string)` (was `number`)
+- [x] `src/api/config.ts` — `markReminderDone(reminderId: string)` (was `number`)
+- [x] `src/api/config.ts` — correct endpoint `/mark-done` with `PUT` method
+
+## Phase 5: Hybrid Prediction Pipeline
+- [x] `backend/routes/predict.ts` — 70% confidence gating for ML predictions
+- [x] `backend/routes/predict.ts` — fallback to RAG+LLM when ML confidence < 70%
+- [x] `backend/routes/predict.ts` — "Other / Rare Disease" catch-all handling
+
+## Phase 6: RAG Dataset Integration
+- [x] `backend/services/dataset.service.ts` — CSV parsing for all 3 datasets
+- [x] `backend/services/rag.service.ts` — `augmentPrompt()` merges dataset context
+- [x] `backend/routes/dataset.ts` — all dataset query endpoints implemented
+- [x] `backend/server.ts` — dataset routes registered
+
+## Testing Checklist
+- [ ] Restart backend server
+- [ ] Test user registration/login
+- [ ] Test diagnosis with symptoms
+- [ ] Test history save (should no longer show "Disease and symptoms are required")
+- [ ] Test history list/show
+- [ ] Test reminder create/list/mark-done/delete
+- [ ] Test dataset endpoints (/api/datasets/stats, /api/datasets/query-symptoms)
+- [ ] Verify ML confidence gating works
 

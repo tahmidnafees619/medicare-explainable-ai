@@ -8,9 +8,9 @@ interface Props {
 
 const steps = [
   { num: '01', icon: MessageCircle, title: 'Describe Your Symptoms', desc: 'Type how you feel in plain language. No medical knowledge needed.' },
-  { num: '02', icon: HelpCircle, title: 'AI Follow-Up Questions', desc: 'Our NLP engine extracts your symptoms and asks smart follow-up questions to gather more detail.' },
-  { num: '03', icon: Activity, title: 'ML Disease Prediction', desc: 'A trained Random Forest model analyzes your symptoms and predicts possible conditions with confidence scores.' },
-  { num: '04', icon: Sparkles, title: 'GPT Explanation', desc: 'GPT-3.5 generates a plain-English explanation of your results and recommends next steps.' },
+  { num: '02', icon: HelpCircle, title: 'AI Symptom Analysis', desc: 'Our AI uses medical knowledge (RAG) and a local language model to extract symptoms and ask targeted follow-up questions.' },
+  { num: '03', icon: Activity, title: 'ML Disease Prediction', desc: 'Combines RAG (medical knowledge), local LLM reasoning, and optional ML models (Random Forest, SVM, Naive Bayes) for accurate predictions.' },
+  { num: '04', icon: Sparkles, title: 'AI Explanation', desc: 'A local AI assistant (llama3.2) generates a plain-English explanation of your results.' },
 ];
 
 export default function LandingScreen({ onGetStarted, onSignIn, onDemo }: Props) {
@@ -38,7 +38,7 @@ export default function LandingScreen({ onGetStarted, onSignIn, onDemo }: Props)
           <span className="gradient-text">Symptom Analysis</span> 🩺
         </h1>
         <p className="text-muted-foreground text-[17px] max-w-[500px] mx-auto mb-8 leading-relaxed">
-          Describe your symptoms in plain language. MediCare AI uses advanced NLP and machine learning to extract your symptoms, ask targeted follow-up questions, predict conditions, and explain results in simple terms.
+          Describe your symptoms in plain language. MediCare AI uses RAG (medical knowledge retrieval), a local LLM (llama3.2 via Ollama), and optional machine learning models to understand your symptoms, ask follow-up questions, predict conditions, and explain results in simple terms.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
           <button onClick={onGetStarted} className="btn-primary text-base py-3.5 px-8">Start Health Check →</button>
@@ -54,7 +54,7 @@ export default function LandingScreen({ onGetStarted, onSignIn, onDemo }: Props)
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-muted-foreground text-sm">
           <span className="flex items-center gap-1.5"><Lock className="w-4 h-4" /> Your data is private and encrypted</span>
           <span className="flex items-center gap-1.5"><Zap className="w-4 h-4" /> ML-powered predictions</span>
-          <span className="flex items-center gap-1.5"><Stethoscope className="w-4 h-4" /> NLP symptom extraction</span>
+          <span className="flex items-center gap-1.5"><Stethoscope className="w-4 h-4" /> AI-powered analysis</span>
           <span className="flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> Always consult a real doctor</span>
         </div>
       </section>

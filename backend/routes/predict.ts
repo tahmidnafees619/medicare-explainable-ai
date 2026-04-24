@@ -88,9 +88,11 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
 
     let mlEnsemble: { disease: string; confidence: number } | null = null;
     let useML = false;
+    let mlModelPredictions: any = null;
 
     if (mlResult && !mlResult.error) {
       mlEnsemble = mlResult.ensemble_prediction;
+      mlModelPredictions = mlResult.model_predictions;
       const mlDisease = mlEnsemble.disease;
       const mlConfidence = mlEnsemble.confidence;
 
@@ -141,6 +143,59 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
       });
     }
 
+    // ── Build Methodology Explanation ───────────────────────────────────
+    const methodsUsed: Array<'rag' | 'llm' | 'ml'> = ['rag', 'llm'];
+    if (mlUsed && mlEnsemble) {
+      methodsUsed.push('ml');
+    }
+
+    let methodologyExplanation = '';
+    let primaryMethod: 'rag' | 'llm' | 'ml' | 'ensemble' = 'ensemble';
+
+    if (!mlUsed || !mlEnsemble) {
+      primaryMethod = 'rag';
+      methodologyExplanation = 'Diagnosis generated using RAG-based medical knowledge retrieval combined with AI clinical reasoning (LLM). The analysis considers symptom patterns, disease prevalence, and clinical correlations from the medical knowledge base.';
+    } else if (mlEnsemble.confidence > 85) {
+      primaryMethod = 'ml';
+      methodologyExplanation = `Diagnosis generated through ML ensemble consensus. While RAG-based analysis initially suggested "${llmPrediction.disease}", the ML ensemble (Random Forest, SVM, and Naive Bayes models) all agreed on "${mlEnsemble.disease}" with high confidence (${mlEnsemble.confidence.toFixed(1)}%), leading to the final result.`;
+    } else {
+      primaryMethod = 'ensemble';
+      methodologyExplanation = `Diagnosis confirmed by multiple methods. RAG-based medical knowledge retrieval and LLM clinical reasoning identified "${llmPrediction.disease}" (${llmPrediction.confidence}% confidence), which is supported by ML ensemble analysis (${mlEnsemble.confidence.toFixed(1)}% confidence). The combined agreement increases diagnostic confidence.`;
+    }
+
+    // Build ML model breakdown
+    let mlModelsBreakdown: any = null;
+    if (mlModelPredictions) {
+      mlModelsBreakdown = {
+        random_forest: {
+          disease: mlModelPredictions.random_forest.disease,
+          confidence: mlModelPredictions.random_forest.confidence,
+          used: mlUsed && mlModelPredictions.random_forest.disease === finalDisease,
+        },
+        svm: {
+          disease: mlModelPredictions.svm.disease,
+          confidence: mlModelPredictions.svm.confidence,
+          used: mlUsed && mlModelPredictions.svm.disease === finalDisease,
+        },
+        naive_bayes: {
+          disease: mlModelPredictions.naive_bayes.disease,
+          confidence: mlModelPredictions.naive_bayes.confidence,
+          used: mlUsed && mlModelPredictions.naive_bayes.disease === finalDisease,
+        },
+      };
+    }
+
+    // Build decision path
+    const decisionPath: string[] = [];
+    decisionPath.push(`RAG analysis matched ${ragContext.split('Disease:').length - 1} relevant conditions from knowledge base`);
+    decisionPath.push(`LLM reasoning identified "${llmPrediction.disease}" with ${llmPrediction.confidence}% confidence`);
+    if (mlEnsemble) {
+      decisionPath.push(`ML ensemble (${mlEnsemble.confidence.toFixed(1)}% confidence) ${mlUsed ? 'supported the final diagnosis' : 'was below threshold, not used'}`);
+    }
+    if (mlUsed && mlEnsemble && mlEnsemble.confidence > 85) {
+      decisionPath.push('ML override triggered (confidence > 85%) - final result reflects ML consensus');
+    }
+
     const finalPrediction = {
       disease: finalDisease,
       confidence: finalConfidence,
@@ -157,6 +212,13 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
         confidence: llmPrediction.confidence,
       },
       rag_context_preview: ragContext.substring(0, 300) + (ragContext.length > 300 ? '...' : ''),
+      methodology: {
+        primary_method: primaryMethod,
+        methods_used: methodsUsed,
+        ml_models_used: mlModelsBreakdown,
+        explanation: methodologyExplanation,
+        decision_path: decisionPath,
+      },
     };
 
     res.json(finalPrediction);

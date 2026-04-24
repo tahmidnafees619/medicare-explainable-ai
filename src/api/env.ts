@@ -8,9 +8,8 @@ export const env = {
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL || '/api',
   backendUrl: import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:5000',
 
-  // ML/NLP Services
+  // External services
   mlServiceUrl: import.meta.env.VITE_ML_SERVICE_URL || 'http://localhost:8000',
-  nlpServiceUrl: import.meta.env.VITE_NLP_SERVICE_URL || 'http://localhost:8001',
 
   // Database (informational only on frontend)
   dbHost: import.meta.env.VITE_DB_HOST || 'localhost',
