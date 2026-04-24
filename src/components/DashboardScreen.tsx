@@ -23,8 +23,8 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
   const loadData = async () => {
     setLoading(true);
     const [hRes, rRes] = await Promise.all([getUserHistory(), getReminders()]);
-    setHistory(hRes.history || []);
-    setReminders(rRes.reminders || []);
+    setHistory(Array.isArray(hRes) ? hRes : []);
+    setReminders(Array.isArray(rRes) ? rRes : []);
     setLoading(false);
   };
 
@@ -63,7 +63,7 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
     loadData();
   };
 
-  const mostCommon = history.length ? Object.entries(history.reduce((acc: any, h: any) => { acc[h.disease] = (acc[h.disease] || 0) + 1; return acc; }, {})).sort((a: any, b: any) => b[1] - a[1])[0]?.[0] || '—' : '—';
+  const mostCommon = history.length ? Object.entries(history.reduce((acc: any, h: any) => { acc[h.predictedDisease] = (acc[h.predictedDisease] || 0) + 1; return acc; }, {})).sort((a: any, b: any) => b[1] - a[1])[0]?.[0] || '—' : '—';
 
   const relativeTime = (dateStr: string) => {
     const d = new Date(dateStr);
@@ -117,13 +117,13 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
                     <div className="flex items-center gap-3">
                       <div className={`w-3 h-3 rounded-full ${h.confidence >= 80 ? 'bg-secondary' : h.confidence >= 60 ? 'bg-accent2' : 'bg-destructive'}`} />
                       <div>
-                        <p className="font-heading font-bold text-[15px]">{h.disease}</p>
-                        <p className="text-muted-foreground text-xs">{(h.symptoms || []).join(', ')}</p>
+                        <p className="font-heading font-bold text-[15px]">{h.predictedDisease}</p>
+                        <p className="text-muted-foreground text-xs">{(h.symptomsFound ? h.symptomsFound.split(", ") : []).join(', ')}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="bg-primary-light text-primary text-xs px-2.5 py-1 rounded-full font-semibold">{h.confidence}%</span>
-                      <span className="text-muted-foreground text-xs">{new Date(h.created_at).toLocaleDateString()}</span>
+                      <span className="text-muted-foreground text-xs">{new Date(h.createdAt).toLocaleDateString()}</span>
                       {expandedId === h.id ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                     </div>
                   </div>
@@ -158,9 +158,9 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full bg-accent2/30 flex items-center justify-center"><Pill className="w-4 h-4 text-accent-foreground" /></div>
                     <div>
-                      <p className="font-heading font-bold text-sm">{r.medicine_name}</p>
+                      <p className="font-heading font-bold text-sm">{r.medicineName}</p>
                       <p className="text-muted-foreground text-xs">{r.dosage} — {r.frequency}</p>
-                      {r.next_reminder && <p className="text-xs mt-0.5">Next: {new Date(r.next_reminder).toLocaleString()}</p>}
+                      {r.startDate && <p className="text-xs mt-0.5">Next: {new Date(r.startDate).toLocaleString()}</p>}
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
