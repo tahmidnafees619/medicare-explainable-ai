@@ -74,6 +74,42 @@ router.get('/active', authMiddleware, async (req: AuthRequest, res: Response) =>
 });
 
 // PUT /api/reminders/:id/mark-done
+// PUT /api/reminders/:id
+router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const idParam = req.params.id;
+    const id = parseInt(idParam as string, 10);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid reminder id' });
+
+    const { medicineName, dosage, frequency, startDate, reminderTime, notes } = req.body;
+
+    const reminder = await prisma.reminder.findUnique({
+      where: { id },
+    });
+
+    if (!reminder) return res.status(404).json({ error: 'Reminder not found' });
+    if (reminder.userId !== userId) return res.status(403).json({ error: 'Unauthorized' });
+
+    const dataToUpdate: any = {};
+    if (medicineName !== undefined) dataToUpdate.medicineName = medicineName;
+    if (dosage !== undefined) dataToUpdate.dosage = dosage;
+    if (frequency !== undefined) dataToUpdate.frequency = frequency;
+    if (reminderTime !== undefined) dataToUpdate.reminderTime = reminderTime;
+    if (notes !== undefined) dataToUpdate.notes = notes;
+    if (startDate !== undefined) dataToUpdate.startDate = startDate ? new Date(startDate) : null;
+
+    const updated = await prisma.reminder.update({
+      where: { id },
+      data: dataToUpdate,
+    });
+
+    res.json(updated);
+  } catch (error) {
+    console.error('Update reminder error:', error);
+    res.status(500).json({ error: 'Failed to update reminder' });
+  }
+});
 router.put('/:id/mark-done', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;

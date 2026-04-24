@@ -83,7 +83,7 @@ export async function saveToHistory(predictionData: any) {
   return safeFetch(`${BASE_URL}/history`, {
     method: 'POST',
     headers: authHeaders(),
-body: JSON.stringify({
+    body: JSON.stringify({
       disease: predictionData.disease,
       confidence: predictionData.confidence,
       symptoms: predictionData.symptoms_found || predictionData.symptoms,
@@ -102,7 +102,7 @@ export async function getReminders() {
 }
 
 export async function addReminder(reminderData: any) {
-return safeFetch(`${BASE_URL}/reminders/create`, {
+  return safeFetch(`${BASE_URL}/reminders/create`, {
     method: 'POST',
     headers: authHeaders(),
     body: JSON.stringify({
@@ -112,6 +112,21 @@ return safeFetch(`${BASE_URL}/reminders/create`, {
       startDate: reminderData.startDate,
       reminderTime: reminderData.reminderTime,
       notes: reminderData.notes,
+    }),
+  });
+}
+
+export async function updateReminder(reminderId: string | number, data: any) {
+  return safeFetch(`${BASE_URL}/reminders/${reminderId}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({
+      medicineName: data.medicineName,
+      dosage: data.dosage,
+      frequency: data.frequency,
+      startDate: data.startDate,
+      reminderTime: data.reminderTime,
+      notes: data.notes,
     }),
   });
 }

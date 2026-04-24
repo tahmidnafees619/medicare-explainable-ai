@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Activity, Clock, Bell, TrendingUp, ChevronDown, ChevronUp, Trash2, Check, Pencil, Plus, X, Pill, Calendar as CalIcon, AlertCircle } from 'lucide-react';
-import { getUserHistory, getReminders, deleteReminder, markReminderDone, addReminder } from '@/api/config';
+import { getUserHistory, getReminders, deleteReminder, markReminderDone, addReminder, updateReminder } from '@/api/config';
 
 interface Props {
   user: any;
@@ -19,6 +19,7 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
   const [form, setForm] = useState({ medicineName: '', dosage: '', frequency: 'Once daily', startDate: '', reminderTime: '', notes: '' });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [formLoading, setFormLoading] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -45,7 +46,7 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
     loadData();
   };
 
-  const handleAddReminder = async () => {
+  const handleSaveReminder = async () => {
     const e: Record<string, string> = {};
     if (!form.medicineName) e.medicineName = 'Required';
     if (!form.dosage) e.dosage = 'Required';
@@ -54,24 +55,44 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
     setFormErrors(e);
     if (Object.keys(e).length) return;
     setFormLoading(true);
-    const res = await addReminder(form);
+    const isEdit = Boolean(editingId);
+    const payload = {
+      medicineName: form.medicineName,
+      dosage: form.dosage,
+      frequency: form.frequency,
+      startDate: form.startDate,
+      reminderTime: form.reminderTime,
+      notes: form.notes,
+    };
+    const res = isEdit ? await updateReminder(editingId!, payload) : await addReminder(payload);
     setFormLoading(false);
     if (res.error) { onToast(res.error, 'error'); return; }
     setShowModal(false);
+    setEditingId(null);
     setForm({ medicineName: '', dosage: '', frequency: 'Once daily', startDate: '', reminderTime: '', notes: '' });
-    onToast('Reminder added!', 'success');
+    onToast(isEdit ? 'Reminder updated!' : 'Reminder added!', 'success');
     loadData();
   };
 
   const mostCommon = history.length ? Object.entries(history.reduce((acc: any, h: any) => { acc[h.predictedDisease] = (acc[h.predictedDisease] || 0) + 1; return acc; }, {})).sort((a: any, b: any) => b[1] - a[1])[0]?.[0] || '—' : '—';
 
   const relativeTime = (dateStr: string) => {
+    if (!dateStr) return '—';
     const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '—';
     const diff = Date.now() - d.getTime();
     const days = Math.floor(diff / 86400000);
     if (days === 0) return 'Today';
     if (days === 1) return 'Yesterday';
     return `${days} days ago`;
+  };
+
+  const formatTime = (hhmm: string) => {
+    if (!hhmm) return '';
+    const [hh, mm] = hhmm.split(':');
+    const d = new Date();
+    d.setHours(Number(hh || '0'), Number(mm || '0'), 0, 0);
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   };
 
   const Skeleton = () => <div className="skeleton-shimmer rounded-2xl h-20" />;
@@ -91,7 +112,7 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
         {loading ? Array(4).fill(0).map((_, i) => <Skeleton key={i} />) : (
           <>
             <StatCard icon={Activity} bg="bg-primary-light" color="text-primary" value={history.length} label="Total Symptom Checks" />
-            <StatCard icon={Clock} bg="bg-secondary/30" color="text-secondary-foreground" value={history[0] ? relativeTime(history[0].created_at) : 'No checks'} label="Last Check" />
+            <StatCard icon={Clock} bg="bg-secondary/30" color="text-secondary-foreground" value={history[0] ? relativeTime(history[0].createdAt) : 'No checks'} label="Last Check" />
             <StatCard icon={Bell} bg="bg-accent/30" color="text-accent-foreground" value={reminders.length} label="Active Reminders" />
             <StatCard icon={TrendingUp} bg="bg-purple/30" color="text-foreground" value={mostCommon} label="Most Common" />
           </>
@@ -142,14 +163,14 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading font-bold text-lg">💊 Medication Reminders</h2>
-          <button onClick={() => setShowModal(true)} className="btn-outline-primary flex items-center gap-1"><Plus className="w-4 h-4" /> Add Reminder</button>
+          <button onClick={() => { setEditingId(null); setForm({ medicineName: '', dosage: '', frequency: 'Once daily', startDate: '', reminderTime: '', notes: '' }); setShowModal(true); }} className="btn-outline-primary flex items-center gap-1"><Plus className="w-4 h-4" /> Add Reminder</button>
         </div>
         {loading ? <div className="space-y-3">{[1, 2].map(i => <Skeleton key={i} />)}</div> :
           reminders.length === 0 ? (
             <div className="card-medicare p-8 text-center">
               <Bell className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
               <p className="font-heading font-bold text-sm mb-1">No reminders set</p>
-              <button onClick={() => setShowModal(true)} className="text-primary text-sm hover:underline mt-1">+ Add your first reminder</button>
+              <button onClick={() => { setEditingId(null); setForm({ medicineName: '', dosage: '', frequency: 'Once daily', startDate: '', reminderTime: '', notes: '' }); setShowModal(true); }} className="text-primary text-sm hover:underline mt-1">+ Add your first reminder</button>
             </div>
           ) : (
             <div className="space-y-3">
@@ -160,11 +181,22 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
                     <div>
                       <p className="font-heading font-bold text-sm">{r.medicineName}</p>
                       <p className="text-muted-foreground text-xs">{r.dosage} — {r.frequency}</p>
-                      {r.startDate && <p className="text-xs mt-0.5">Next: {new Date(r.startDate).toLocaleString()}</p>}
+                      {r.startDate && <p className="text-xs mt-0.5">Next: {new Date(r.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} {formatTime(r.reminderTime)}</p>}
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => onToast('Edit coming soon', 'info')} className="p-2 rounded-full hover:bg-muted transition-colors"><Pencil className="w-4 h-4 text-muted-foreground" /></button>
+                    <button onClick={() => {
+                      setEditingId(r.id);
+                      setForm({
+                        medicineName: r.medicineName || '',
+                        dosage: r.dosage || '',
+                        frequency: r.frequency || 'Once daily',
+                        startDate: r.startDate ? new Date(r.startDate).toISOString().slice(0, 10) : '',
+                        reminderTime: r.reminderTime || '',
+                        notes: r.notes || '',
+                      });
+                      setShowModal(true);
+                    }} className="p-2 rounded-full hover:bg-muted transition-colors"><Pencil className="w-4 h-4 text-muted-foreground" /></button>
                     <button onClick={() => handleMarkDone(r.id)} className="p-2 rounded-full hover:bg-muted transition-colors"><Check className="w-4 h-4 text-secondary" /></button>
                     <button onClick={() => handleDeleteReminder(r.id)} className="p-2 rounded-full hover:bg-muted transition-colors"><Trash2 className="w-4 h-4 text-destructive" /></button>
                   </div>
@@ -174,13 +206,13 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
           )}
       </div>
 
-      {/* Add Reminder Modal */}
+      {/* Add/Edit Reminder Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-5" onClick={() => setShowModal(false)}>
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" />
           <div className="card-medicare modal-enter relative z-10 w-full max-w-[420px] rounded-3xl p-8" onClick={e => e.stopPropagation()}>
-            <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
-            <h3 className="font-heading font-bold text-xl mb-5">Add Medication Reminder 💊</h3>
+            <button onClick={() => { setShowModal(false); setEditingId(null); }} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
+            <h3 className="font-heading font-bold text-xl mb-5">{editingId ? 'Edit Medication Reminder 💊' : 'Add Medication Reminder 💊'}</h3>
             <div className="space-y-3">
               <div className="relative">
                 <Pill className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
@@ -199,10 +231,10 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
                 <input type="time" value={form.reminderTime} onChange={e => setForm({ ...form, reminderTime: e.target.value })} className={`input-medicare ${formErrors.reminderTime ? 'input-error' : ''}`} />
               </div>
               <textarea rows={2} placeholder="Any additional notes..." value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="input-medicare pl-4 resize-none" />
-              <button onClick={handleAddReminder} disabled={formLoading} className="btn-primary w-full py-3 text-[15px]">
+              <button onClick={handleSaveReminder} disabled={formLoading} className="btn-primary w-full py-3 text-[15px]">
                 {formLoading ? 'Saving...' : 'Save Reminder'}
               </button>
-              <button onClick={() => setShowModal(false)} className="btn-ghost w-full py-2.5 text-sm">Cancel</button>
+              <button onClick={() => { setShowModal(false); setEditingId(null); }} className="btn-ghost w-full py-2.5 text-sm">Cancel</button>
             </div>
           </div>
         </div>
