@@ -41,3 +41,7 @@ testResults_*.json
 *.njsproj
 *.sln
 *.sw?
+
+# Backend logs
+backend/*.log
+backend/*.txt
