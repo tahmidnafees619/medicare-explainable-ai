@@ -3,6 +3,7 @@ import { Stethoscope, MessageCircle, HelpCircle, Activity, Sparkles, Lock, Zap, 
 interface Props {
   onGetStarted: () => void;
   onSignIn: () => void;
+  onAbout: () => void;
   onDemo?: () => void;
 }
 
@@ -13,7 +14,7 @@ const steps = [
   { num: '04', icon: Sparkles, title: 'AI Explanation', desc: 'A local AI assistant (llama3.2) generates a plain-English explanation of your results.' },
 ];
 
-export default function LandingScreen({ onGetStarted, onSignIn, onDemo }: Props) {
+export default function LandingScreen({ onGetStarted, onSignIn, onAbout, onDemo }: Props) {
   return (
     <div className="screen-fade min-h-screen">
       {/* Navbar */}
@@ -23,6 +24,7 @@ export default function LandingScreen({ onGetStarted, onSignIn, onDemo }: Props)
           <span className="font-heading font-bold text-lg text-primary">MediCare AI</span>
         </div>
         <div className="flex items-center gap-3">
+          <button onClick={onAbout} className="btn-ghost text-sm py-2 px-4">About</button>
           <button onClick={onSignIn} className="btn-ghost text-sm py-2 px-4">Sign In</button>
           <button onClick={onGetStarted} className="btn-primary text-sm py-2 px-4">Get Started</button>
         </div>

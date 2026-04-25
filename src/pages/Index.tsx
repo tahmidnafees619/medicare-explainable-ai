@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Stethoscope, Bell, MessageCircle, ClipboardList, User, LogOut, MessageSquarePlus, AlertCircle } from 'lucide-react';
 import LandingScreen from '@/components/LandingScreen';
+import AboutScreen from '@/components/AboutScreen';
 import AuthScreen from '@/components/AuthScreen';
 import ChatScreen from '@/components/ChatScreen';
 import ResultsScreen from '@/components/ResultsScreen';
@@ -8,7 +9,7 @@ import DashboardScreen from '@/components/DashboardScreen';
 import ToastContainer, { ToastItem } from '@/components/ToastContainer';
 import { logoutUser } from '@/api/config';
 
-type Screen = 'landing' | 'auth' | 'chat' | 'results' | 'dashboard';
+type Screen = 'landing' | 'about' | 'auth' | 'chat' | 'results' | 'dashboard';
 
 export default function Index() {
   const [screen, setScreen] = useState<Screen>('landing');
@@ -132,7 +133,14 @@ export default function Index() {
         <LandingScreen
           onGetStarted={() => { setAuthTab('register'); setScreen('auth'); }}
           onSignIn={() => { setAuthTab('login'); setScreen('auth'); }}
+          onAbout={() => setScreen('about')}
           onDemo={handleDemoMode}
+        />
+      )}
+      {screen === 'about' && (
+        <AboutScreen
+          onBack={() => setScreen('landing')}
+          onGetStarted={() => { setAuthTab('register'); setScreen('auth'); }}
         />
       )}
       {screen === 'auth' && (
