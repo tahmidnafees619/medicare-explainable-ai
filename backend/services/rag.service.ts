@@ -24,6 +24,71 @@ function normalizeText(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9\s]/g, '');
 }
 
+/**
+ * Maps ML model disease names to medical knowledge base disease names.
+ * This bridges the gap between the ML training data and the KB.
+ */
+const DISEASE_ALIASES: Record<string, string[]> = {
+  'acute bronchitis': ['Bronchitis'],
+  'cystitis': ['Urinary Tract Infection'],
+  'conjunctivitis due to allergy': ['Allergic Rhinitis'],
+  'esophagitis': ['GERD (Acid Reflux)'],
+  'gastrointestinal hemorrhage': ['Gastroenteritis (Stomach Flu)'],
+  'infectious gastroenteritis': ['Gastroenteritis (Stomach Flu)'],
+  'pneumonia': ['Pneumonia'],
+  'hypoglycemia': ['Diabetes Type 1', 'Diabetes Type 2'],
+  'gout': ['Arthritis'],
+  'arthritis of the hip': ['Arthritis'],
+  'bursitis': ['Arthritis'],
+  'spondylosis': ['Arthritis'],
+  'diverticulitis': ['Appendicitis'],
+  'liver disease': ['Heart Disease'],
+  'nose disorder': ['Common Cold', 'Allergic Rhinitis'],
+  'fungal infection of the hair': ['Abnormal appearing skin'],
+  'marijuana abuse': ['Anxiety Disorder', 'Depression'],
+  'peripheral nerve disorder': ['Anxiety Disorder'],
+  'complex regional pain syndrome': ['Anxiety Disorder', 'Depression'],
+  'spontaneous abortion': ['Pain during pregnancy'],
+  'vaginal cyst': ['Urinary Tract Infection'],
+  'vulvodynia': ['Urinary Tract Infection'],
+  'sprain or strain': ['Injury to the arm'],
+  'injury to the arm': ['Injury to the arm'],
+  'strep throat': ['Common Cold', 'Influenza (Flu)'],
+};
+
+/**
+ * Look up a disease in the knowledge base, trying exact match first,
+ * then aliases if no exact match is found.
+ */
+function findDiseaseInKB(diseaseName: string): Disease | undefined {
+  const diseases = medicalKnowledge as Disease[];
+  const normalizedTarget = normalizeText(diseaseName);
+
+  // Try exact or substring match first
+  const exactMatch = diseases.find(
+    d => normalizeText(d.disease) === normalizedTarget ||
+         normalizeText(d.disease).includes(normalizedTarget) ||
+         normalizedTarget.includes(normalizeText(d.disease))
+  );
+  if (exactMatch) return exactMatch;
+
+  // Try aliases
+  const aliases = DISEASE_ALIASES[diseaseName];
+  if (aliases) {
+    for (const alias of aliases) {
+      const normalizedAlias = normalizeText(alias);
+      const aliasMatch = diseases.find(
+        d => normalizeText(d.disease) === normalizedAlias ||
+             normalizeText(d.disease).includes(normalizedAlias) ||
+             normalizedAlias.includes(normalizeText(d.disease))
+      );
+      if (aliasMatch) return aliasMatch;
+    }
+  }
+
+  return undefined;
+}
+
 function calculateSimilarity(symptoms: string[], diseaseSymptoms: string[]): number {
   const normalizedInput = symptoms.map(normalizeText);
   const normalizedDb = diseaseSymptoms.map(normalizeText);
@@ -98,6 +163,26 @@ export function getAllDiseases(): string[] {
   return diseases.map(d => d.disease);
 }
 
+export function validateSymptomMatches(symptoms: string[], diseaseName: string): number {
+  const disease = findDiseaseInKB(diseaseName);
+  if (!disease) return 0;
+
+  const normalizedInput = symptoms.map(normalizeText);
+  const normalizedDb = disease.symptoms.map(normalizeText);
+
+  let matchCount = 0;
+  for (const inputSymptom of normalizedInput) {
+    for (const dbSymptom of normalizedDb) {
+      if (dbSymptom.includes(inputSymptom) || inputSymptom.includes(dbSymptom)) {
+        matchCount++;
+        break;
+      }
+    }
+  }
+
+  return matchCount;
+}
+
 export function augmentPrompt(symptoms: string[], userQuery?: string): string {
   const topResults = searchDiseases(symptoms);
   
@@ -129,4 +214,3 @@ export function augmentPrompt(symptoms: string[], userQuery?: string): string {
   
   return context;
 }
-

@@ -76,91 +76,121 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
 
     const followUpAnswers = answers || [];
 
-    // ── PRIMARY: RAG + LLM Prediction ─────────────────────────────
-    const ragContext = ragService.augmentPrompt(symptoms);
-    console.log('RAG Context loaded:', ragContext.substring(0, 200) + '...');
-
-    const llmPrediction = await llmService.generatePrediction(symptoms, followUpAnswers);
-    const explanation = await llmService.generateExplanation(llmPrediction.disease, symptoms);
-
-    // ── SECONDARY: ML Prediction (with confidence gating) ─────────
+    // ── STEP 1: ML Prediction (fast, deterministic) ──────────────
     const mlResult = await callMLService(symptoms);
 
     let mlEnsemble: { disease: string; confidence: number } | null = null;
-    let useML = false;
     let mlModelPredictions: any = null;
 
     if (mlResult && !mlResult.error) {
       mlEnsemble = mlResult.ensemble_prediction;
       mlModelPredictions = mlResult.model_predictions;
+    }
+
+    // ── STEP 2: RAG Symptom Validation ────────────────────────────
+    const ragResults = ragService.searchDiseases(symptoms);
+    const ragSymptomMatches = mlEnsemble
+      ? ragService.validateSymptomMatches(symptoms, mlEnsemble.disease)
+      : 0;
+
+    // ── STEP 3: Decision Gate ─────────────────────────────────────
+    // Use ML if: confidence >= 70%, not "Other / Rare Disease", and RAG validates symptom matches
+    let useML = false;
+    if (mlEnsemble) {
       const mlDisease = mlEnsemble.disease;
       const mlConfidence = mlEnsemble.confidence;
 
-      // Gate: only use ML if confidence >= 70% AND not "Other / Rare Disease"
-      if (mlConfidence >= 70 && mlDisease !== 'Other / Rare Disease') {
+      if (mlConfidence >= 70 && mlDisease !== 'Other / Rare Disease' && ragSymptomMatches > 0) {
         useML = true;
-        console.log(`ML secondary check: ${mlDisease} @ ${mlConfidence.toFixed(1)}% confidence — ACCEPTED`);
+        console.log(`ML primary check: ${mlDisease} @ ${mlConfidence.toFixed(1)}% confidence, ${ragSymptomMatches} symptom matches — ACCEPTED`);
       } else {
-        console.log(`ML secondary check: ${mlDisease} @ ${mlConfidence.toFixed(1)}% confidence — REJECTED (gated)`);
+        console.log(`ML primary check: ${mlDisease} @ ${mlConfidence.toFixed(1)}% confidence, ${ragSymptomMatches} symptom matches — REJECTED (fallback to LLM)`);
       }
     }
 
-    // ── Build Final Prediction ────────────────────────────────────
-    // RAG is always primary. ML only overrides when high-confidence and relevant.
-    let finalDisease = llmPrediction.disease;
-    let finalConfidence = llmPrediction.confidence;
+    // ── STEP 4: Get Prediction & Explanation ──────────────────────
+    let finalDisease: string;
+    let finalConfidence: number;
     let predictionSource: string;
-    let mlUsed = false;
+    let llmPrediction: { disease: string; confidence: number; allPredictions: any[]; explanation: string } | null = null;
+    let explanation: string;
 
     if (useML && mlEnsemble) {
-      // If ML is confident AND agrees with RAG on broad category, boost confidence
-      // If ML disagrees but is very confident (>85%), let ML override for common diseases
+      // FAST PATH: ML primary, LLM explanation only
+      finalDisease = mlEnsemble.disease;
+      finalConfidence = mlEnsemble.confidence;
+      predictionSource = 'ml_primary';
+
+      // Boost confidence if ML is very confident
       if (mlEnsemble.confidence > 85) {
-        finalDisease = mlEnsemble.disease;
-        finalConfidence = Math.max(llmPrediction.confidence, mlEnsemble.confidence);
-        predictionSource = 'rag_primary_ml_override';
-        mlUsed = true;
-      } else {
-        // ML supports RAG — boost confidence slightly
-        finalConfidence = Math.min(95, llmPrediction.confidence + 5);
-        predictionSource = 'rag_primary_ml_boost';
-        mlUsed = true;
+        finalConfidence = Math.min(95, mlEnsemble.confidence + 5);
+        predictionSource = 'ml_primary_high_confidence';
       }
+
+      // Always generate explanation via LLM
+      explanation = await llmService.generateExplanation(finalDisease, symptoms);
     } else {
-      predictionSource = 'rag_primary_only';
+      // FALLBACK PATH: LLM prediction + explanation (for unseen patterns / edge cases)
+      const llmResult = await llmService.generatePrediction(symptoms, followUpAnswers);
+      llmPrediction = {
+        disease: llmResult.disease,
+        confidence: llmResult.confidence,
+        allPredictions: llmResult.allPredictions,
+        explanation: llmResult.explanation,
+      };
+
+      finalDisease = llmResult.disease;
+      finalConfidence = llmResult.confidence;
+      predictionSource = 'llm_fallback_unseen_pattern';
+
+      explanation = await llmService.generateExplanation(finalDisease, symptoms);
     }
 
-    const allPredictions: any[] = [
-      ...llmPrediction.allPredictions,
-    ];
+    // ── STEP 5: Build All Predictions List ────────────────────────
+    const allPredictions: any[] = [];
 
-    if (mlEnsemble) {
+    if (useML && mlEnsemble) {
       allPredictions.push({
         disease: mlEnsemble.disease,
         confidence: mlEnsemble.confidence,
         source: 'ml_ensemble',
-        used_in_final: mlUsed,
+        used_in_final: true,
       });
     }
 
-    // ── Build Methodology Explanation ───────────────────────────────────
-    const methodsUsed: Array<'rag' | 'llm' | 'ml'> = ['rag', 'llm'];
-    if (mlUsed && mlEnsemble) {
-      methodsUsed.push('ml');
+    if (llmPrediction) {
+      allPredictions.push(...llmPrediction.allPredictions.map((p: any) => ({
+        ...p,
+        source: 'llm_fallback',
+        used_in_final: true,
+      })));
     }
 
-    let methodologyExplanation = '';
-    let primaryMethod: 'rag' | 'llm' | 'ml' | 'ensemble' = 'ensemble';
+    if (mlEnsemble && !useML) {
+      allPredictions.push({
+        disease: mlEnsemble.disease,
+        confidence: mlEnsemble.confidence,
+        source: 'ml_ensemble',
+        used_in_final: false,
+      });
+    }
 
-    if (!mlUsed || !mlEnsemble) {
-      primaryMethod = 'rag';
-      methodologyExplanation = 'Diagnosis generated using RAG-based medical knowledge retrieval combined with AI clinical reasoning (LLM). The analysis considers symptom patterns, disease prevalence, and clinical correlations from the medical knowledge base.';
-    } else if (mlEnsemble.confidence > 85) {
-      primaryMethod = 'ml';
-      methodologyExplanation = `Diagnosis generated through ML ensemble consensus. While RAG-based analysis initially suggested "${llmPrediction.disease}", the ML ensemble (Random Forest, SVM, and Naive Bayes models) all agreed on "${mlEnsemble.disease}" with high confidence (${mlEnsemble.confidence.toFixed(1)}%), leading to the final result.`;
+    // ── STEP 6: Build Methodology Explanation ─────────────────────
+    const methodsUsed: Array<'rag' | 'llm' | 'ml'> = [];
+    let primaryMethod: 'rag' | 'llm' | 'ml' | 'ensemble';
+    let methodologyExplanation = '';
+
+    if (useML && mlEnsemble) {
+      methodsUsed.push('ml', 'rag', 'llm');
+      primaryMethod = mlEnsemble.confidence > 85 ? 'ml' : 'ensemble';
+      methodologyExplanation = `Diagnosis generated primarily through ML ensemble analysis (${mlEnsemble.confidence.toFixed(1)}% confidence). The ML prediction was validated against the medical knowledge base, which confirmed ${ragSymptomMatches} matching symptom(s) for ${mlEnsemble.disease}. A patient-friendly explanation was generated by the LLM.`;
     } else {
-      primaryMethod = 'ensemble';
-      methodologyExplanation = `Diagnosis confirmed by multiple methods. RAG-based medical knowledge retrieval and LLM clinical reasoning identified "${llmPrediction.disease}" (${llmPrediction.confidence}% confidence), which is supported by ML ensemble analysis (${mlEnsemble.confidence.toFixed(1)}% confidence). The combined agreement increases diagnostic confidence.`;
+      methodsUsed.push('llm', 'rag');
+      if (mlEnsemble) methodsUsed.push('ml');
+      primaryMethod = 'llm';
+      methodologyExplanation = mlEnsemble
+        ? `The ML ensemble predicted "${mlEnsemble.disease}" with ${mlEnsemble.confidence.toFixed(1)}% confidence, but this was rejected due to insufficient symptom validation (${ragSymptomMatches} match(es)) or low confidence. The diagnosis was instead generated by LLM clinical reasoning for this less common or unseen symptom pattern.`
+        : `Diagnosis generated by LLM clinical reasoning. The ML service was unavailable, so the system relied on AI analysis of the symptom pattern.`;
     }
 
     // Build ML model breakdown
@@ -170,48 +200,59 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
         random_forest: {
           disease: mlModelPredictions.random_forest.disease,
           confidence: mlModelPredictions.random_forest.confidence,
-          used: mlUsed && mlModelPredictions.random_forest.disease === finalDisease,
+          used: useML && mlModelPredictions.random_forest.disease === finalDisease,
         },
         svm: {
           disease: mlModelPredictions.svm.disease,
           confidence: mlModelPredictions.svm.confidence,
-          used: mlUsed && mlModelPredictions.svm.disease === finalDisease,
+          used: useML && mlModelPredictions.svm.disease === finalDisease,
         },
         naive_bayes: {
           disease: mlModelPredictions.naive_bayes.disease,
           confidence: mlModelPredictions.naive_bayes.confidence,
-          used: mlUsed && mlModelPredictions.naive_bayes.disease === finalDisease,
+          used: useML && mlModelPredictions.naive_bayes.disease === finalDisease,
         },
       };
     }
 
     // Build decision path
     const decisionPath: string[] = [];
-    decisionPath.push(`RAG analysis matched ${ragContext.split('Disease:').length - 1} relevant conditions from knowledge base`);
-    decisionPath.push(`LLM reasoning identified "${llmPrediction.disease}" with ${llmPrediction.confidence}% confidence`);
     if (mlEnsemble) {
-      decisionPath.push(`ML ensemble (${mlEnsemble.confidence.toFixed(1)}% confidence) ${mlUsed ? 'supported the final diagnosis' : 'was below threshold, not used'}`);
+      decisionPath.push(`ML ensemble predicted "${mlEnsemble.disease}" with ${mlEnsemble.confidence.toFixed(1)}% confidence`);
+      decisionPath.push(`RAG validation found ${ragSymptomMatches} symptom match(es) for "${mlEnsemble.disease}" in medical knowledge base`);
+    } else {
+      decisionPath.push('ML service unavailable');
     }
-    if (mlUsed && mlEnsemble && mlEnsemble.confidence > 85) {
-      decisionPath.push('ML override triggered (confidence > 85%) - final result reflects ML consensus');
+
+    if (useML && mlEnsemble) {
+      decisionPath.push(`ML prediction ACCEPTED — fast path used (1 LLM call for explanation only)`);
+      if (mlEnsemble.confidence > 85) {
+        decisionPath.push('High-confidence ML result — confidence boosted');
+      }
+    } else {
+      decisionPath.push(`ML prediction REJECTED — falling back to LLM prediction + explanation (2 LLM calls)`);
+      if (llmPrediction) {
+        decisionPath.push(`LLM reasoning identified "${llmPrediction.disease}" with ${llmPrediction.confidence}% confidence`);
+      }
     }
 
     const finalPrediction = {
       disease: finalDisease,
       confidence: finalConfidence,
       all_predictions: allPredictions,
-      explanation: explanation || llmPrediction.explanation,
+      explanation: explanation || (llmPrediction?.explanation ?? 'No explanation available.'),
       symptoms_found: symptoms,
       prediction_source: predictionSource,
       ml_available: !!mlEnsemble,
       ml_confidence: mlEnsemble?.confidence ?? null,
       ml_disease: mlEnsemble?.disease ?? null,
-      ml_used: mlUsed,
-      llm_prediction: {
-        disease: llmPrediction.disease,
-        confidence: llmPrediction.confidence,
-      },
-      rag_context_preview: ragContext.substring(0, 300) + (ragContext.length > 300 ? '...' : ''),
+      ml_used: useML,
+      llm_prediction: llmPrediction
+        ? { disease: llmPrediction.disease, confidence: llmPrediction.confidence }
+        : null,
+      rag_context_preview: ragResults.length > 0
+        ? `Matched ${ragResults.length} diseases. Top: ${ragResults.slice(0, 3).map(r => r.disease).join(', ')}`
+        : 'No RAG matches found',
       methodology: {
         primary_method: primaryMethod,
         methods_used: methodsUsed,

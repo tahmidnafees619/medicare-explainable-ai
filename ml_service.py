@@ -186,12 +186,32 @@ class MediCareMLService:
                     'confidence': 0.0  # SVM doesn't provide probabilities easily
                 }
 
-        # Ensemble prediction (average of all models)
+        # Ensemble prediction (weighted average)
+        # Weights based on model reliability:
+        #   SVM = 0.5  (consistently highest individual confidence)
+        #   Naive Bayes = 0.3
+        #   Random Forest = 0.2 (often disagrees, lower individual confidence)
+        MODEL_WEIGHTS = {
+            'svm': 0.5,
+            'naive_bayes': 0.3,
+            'random_forest': 0.2,
+        }
+
         if len(probabilities) > 0:
-            avg_probabilities = np.mean(list(probabilities.values()), axis=0)
-            ensemble_idx = np.argmax(avg_probabilities)
+            weighted_probabilities = np.zeros(len(self.label_encoder.classes_))
+            total_weight = 0.0
+
+            for name, proba in probabilities.items():
+                weight = MODEL_WEIGHTS.get(name, 0.33)
+                weighted_probabilities += np.array(proba) * weight
+                total_weight += weight
+
+            if total_weight > 0:
+                weighted_probabilities /= total_weight
+
+            ensemble_idx = int(np.argmax(weighted_probabilities))
             ensemble_disease = self.label_encoder.inverse_transform([ensemble_idx])[0]
-            ensemble_confidence = float(avg_probabilities[ensemble_idx] * 100)
+            ensemble_confidence = float(weighted_probabilities[ensemble_idx] * 100)
         else:
             ensemble_disease = predictions['random_forest']['disease']
             ensemble_confidence = predictions['random_forest']['confidence']
