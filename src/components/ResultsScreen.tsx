@@ -11,6 +11,13 @@ interface Props {
   onToast: (msg: string, type: 'success' | 'error' | 'info') => void;
 }
 
+function getConfidenceLabel(score: number) {
+  if (score >= 75) return { label: 'Likely match', colorClass: 'bg-green-100 text-green-700' };
+  if (score >= 50) return { label: 'Possible match', colorClass: 'bg-amber-100 text-amber-700' };
+  if (score >= 30) return { label: 'Low confidence match', colorClass: 'bg-orange-100 text-orange-700' };
+  return { label: 'Weak signal only', colorClass: 'bg-red-100 text-red-700' };
+}
+
 export default function ResultsScreen({ result, user, onBack, onNewCheck, onDashboard, onToast }: Props) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -19,6 +26,9 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
   useEffect(() => { setTimeout(() => setBarWidth(result.confidence), 100); }, [result.confidence]);
 
   if (!result) return null;
+
+  const confidenceLabel = getConfidenceLabel(result.confidence);
+  const isWeakSignal = result.confidence < 22;
 
   const handleSave = async () => {
     if (!user) { onToast('Please sign in to save', 'info'); return; }
@@ -54,29 +64,36 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
       </div>
 
       {/* Main prediction */}
-      <div className="card-medicare border-2 border-primary-light p-7 mb-4">
-        <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
-          <h2 className="font-heading font-extrabold text-2xl">{result.disease}</h2>
-          <span className="bg-primary-light text-primary font-heading font-bold text-sm px-3 py-1 rounded-full">{result.confidence}% match</span>
-        </div>
-        <span className="bg-secondary/30 text-secondary-foreground text-xs px-3 py-1 rounded-full font-semibold">Most Likely Condition</span>
-        <div className="mt-5">
-          <div className="flex justify-between text-sm mb-1.5">
-            <span className="text-muted-foreground">Confidence Level</span>
-            <span className="font-heading font-bold">{result.confidence}%</span>
+      {!isWeakSignal ? (
+        <div className="card-medicare border-2 border-primary-light p-7 mb-4">
+          <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
+            <h2 className="font-heading font-extrabold text-2xl">{result.disease}</h2>
+            <span className="bg-primary-light text-primary font-heading font-bold text-sm px-3 py-1 rounded-full">{result.confidence}% match</span>
           </div>
-          <div className="h-2.5 bg-border rounded-full overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-primary to-purple confidence-bar-fill" style={{ width: `${barWidth}%` }} />
+          <span className={`${confidenceLabel.colorClass} text-xs px-3 py-1 rounded-full font-semibold`}>{confidenceLabel.label}</span>
+          <div className="mt-5">
+            <div className="flex justify-between text-sm mb-1.5">
+              <span className="text-muted-foreground">Confidence Level</span>
+              <span className="font-heading font-bold">{result.confidence}%</span>
+            </div>
+            <div className="h-2.5 bg-border rounded-full overflow-hidden">
+              <div className="h-full rounded-full bg-gradient-to-r from-primary to-purple confidence-bar-fill" style={{ width: `${barWidth}%` }} />
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="card-medicare border-2 border-red-200 bg-red-50/30 p-7 mb-4">
+          <h2 className="font-heading font-extrabold text-xl text-red-700 mb-2">No strong match found. Results below are weak signals only.</h2>
+          <span className={`${confidenceLabel.colorClass} text-xs px-3 py-1 rounded-full font-semibold`}>{confidenceLabel.label}</span>
+        </div>
+      )}
 
-      {/* Other predictions */}
-      {otherPredictions.length > 0 && (
+      {/* All predictions (muted when weak signal) */}
+      {(otherPredictions.length > 0 || isWeakSignal) && (
         <div className="mb-4">
-          <h3 className="font-heading font-bold text-base mb-3">Other Possibilities</h3>
-          <div className="space-y-2">
-            {otherPredictions.map((p: any, i: number) => (
+          <h3 className="font-heading font-bold text-base mb-3">{isWeakSignal ? 'Weak Signals' : 'Other Possibilities'}</h3>
+          <div className={`space-y-2 ${isWeakSignal ? 'opacity-70' : ''}`}>
+            {(isWeakSignal ? result.all_predictions || [] : otherPredictions).map((p: any, i: number) => (
               <div key={i} className="card-medicare bg-surface2 p-4 flex items-center justify-between">
                 <span className="font-heading font-semibold text-sm">{p.disease}</span>
                 <div className="flex items-center gap-3">
@@ -151,18 +168,54 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
               </div>
             </>
           )}
+
+          {result.rag_validation && (
+            <div className="border-t border-border pt-3 mt-3">
+              <p className="text-xs font-semibold text-muted-foreground mb-2">RAG Symptom Validation:</p>
+              <p className="text-sm mb-3">Match score: <span className="font-semibold">{result.rag_validation.score.toFixed(1)}%</span></p>
+              <div className="grid gap-3 md:grid-cols-2 text-sm">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Matching symptoms</p>
+                  {result.rag_validation.matchedSymptoms?.length > 0 ? (
+                    <ul className="list-disc list-inside text-muted-foreground">
+                      {result.rag_validation.matchedSymptoms.map((symptom: string) => (
+                        <li key={symptom}>{symptom}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted-foreground">No matching symptoms found.</p>
+                  )}
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Missing symptoms</p>
+                  {result.rag_validation.missingSymptoms?.length > 0 ? (
+                    <ul className="list-disc list-inside text-muted-foreground">
+                      {result.rag_validation.missingSymptoms.map((symptom: string) => (
+                        <li key={symptom}>{symptom}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted-foreground">No missing disease symptoms detected.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {/* Explanation */}
-      {result.explanation && (
+      {result.disease && (
         <div className="card-medicare p-7 mb-4">
           <div className="flex items-center gap-2 mb-1">
             <Sparkles className="w-5 h-5 text-primary" />
             <h3 className="font-heading font-bold text-base">AI Explanation</h3>
+            {result.explanation_pending && <span className="text-xs text-muted-foreground animate-pulse">Generating...</span>}
           </div>
-           <p className="text-xs text-muted-foreground mb-3">Generated by AI (llama3.2) — informational purposes only</p>
-          <p className="text-[15px] leading-[1.8] text-muted-foreground">{result.explanation}</p>
+          <p className="text-xs text-muted-foreground mb-3">{result.explanation_source === 'ollama' ? 'Generated by AI (llama3.2)' : 'Generated by AI analysis'} — informational purposes only</p>
+          <div className="text-[15px] leading-[1.8] text-muted-foreground" style={{ whiteSpace: 'pre-line' }}>
+            {result.explanation || <span className="italic text-muted-foreground">Detailed explanation is being generated...</span>}
+          </div>
         </div>
       )}
 

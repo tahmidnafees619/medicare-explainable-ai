@@ -102,7 +102,7 @@ function generateFallbackFollowUpQuestions(symptoms: string[]): string[] {
   return Array.from(new Set(questions)).slice(0, 5);
 }
 
-async function callOllama(prompt: string, systemPrompt?: string): Promise<string> {
+async function callOllama(prompt: string, systemPrompt?: string, timeoutMs = 30000): Promise<string> {
   try {
     const body: Record<string, string | boolean> = {
       model: OLLAMA_MODEL,
@@ -113,11 +113,17 @@ async function callOllama(prompt: string, systemPrompt?: string): Promise<string
       body.system = systemPrompt;
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     const response = await fetch(`${OLLAMA_HOST}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`Ollama error: ${response.status}`);
@@ -248,6 +254,18 @@ Return ONLY valid JSON, no other text.`;
   }
 }
 
+function generateFallbackExplanation(disease: string, symptoms: string[]): string {
+  return `Based on the symptoms you reported (${symptoms.join(', ')}), "${disease}" has been identified as a possible condition.\n\n` +
+    `What this means:\n` +
+    `"${disease}" is a medical condition that can present with the symptoms you described. ` +
+    `The analysis matched your symptom pattern against known disease profiles.\n\n` +
+    `Important next steps:\n` +
+    `• Consult a qualified healthcare provider for a proper diagnosis and treatment plan.\n` +
+    `• Monitor your symptoms and seek emergency care if they worsen.\n` +
+    `• Do not self-medicate based on this AI prediction alone.\n\n` +
+    `Disclaimer: This information is generated for educational purposes only and does not replace professional medical advice.`;
+}
+
 export async function generateExplanation(
   disease: string,
   symptoms: string[]
@@ -263,12 +281,20 @@ Rules:
 
 Do not use technical jargon without explanation.`;
 
-  const result = await callOllama(
-    `Explain what "${disease}" means for a patient with symptoms: ${symptoms.join(', ')}`,
-    systemPrompt
-  );
-
-  return result;
+  try {
+    const result = await callOllama(
+      `Explain what "${disease}" means for a patient with symptoms: ${symptoms.join(', ')}`,
+      systemPrompt
+    );
+    if (result && result.trim().length > 0) {
+      return result.trim();
+    }
+    console.warn('Ollama returned empty explanation, using fallback');
+    return generateFallbackExplanation(disease, symptoms);
+  } catch (error) {
+    console.error('Ollama explanation failed, using fallback:', error);
+    return generateFallbackExplanation(disease, symptoms);
+  }
 }
 
 export async function healthCheck(): Promise<boolean> {

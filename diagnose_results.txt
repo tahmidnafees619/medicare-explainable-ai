@@ -1,0 +1,32 @@
+=== ML SERVICE DIRECT TESTS ===
+Bronchitis          : Bronchitis                @  19.7% -> LLM | RF= 10.4% SVM= 21.5% NB= 22.9%
+UTI                 : Urinary Tract Infection   @  34.1% -> LLM | RF= 20.1% SVM= 30.7% NB= 49.2%
+Common Cold         : Common Cold               @  82.9% -> ML | RF= 49.9% SVM= 95.6% NB= 83.9%
+Diabetes Type 2     : Diabetes Type 2           @  65.2% -> LLM | RF= 30.7% SVM= 81.5% NB= 64.4%
+Anxiety Disorder    : Anxiety Disorder          @  71.7% -> ML | RF= 42.8% SVM= 82.8% NB= 72.5%
+Appendicitis        : Appendicitis              @  72.6% -> ML | RF= 21.9% SVM= 94.0% NB= 70.7%
+Heart Disease       : Heart Disease             @  55.7% -> LLM | RF= 20.7% SVM= 73.6% NB= 49.0%
+Meningitis          : Migraine                  @  15.8% -> LLM | RF= 10.1% SVM= 20.5% NB= 13.4%
+
+=== BACKEND FULL PIPELINE TESTS ===
+Bronchitis          : final=Bronchitis                source=ml_primary                     ml_used=True ml=Bronchitis@19.741450058297527
+UTI                 : final=Urinary Tract Infection   source=ml_primary                     ml_used=True ml=Urinary Tract Infection@34.11168507818006
+Common Cold         : final=Common Cold               source=ml_primary                     ml_used=True ml=Common Cold@82.92918456119914
+Diabetes Type 2     : final=Diabetes Type 2           source=ml_primary                     ml_used=True ml=Diabetes Type 2@65.22638513244725
+Anxiety Disorder    : final=Anxiety Disorder          source=ml_primary                     ml_used=True ml=Anxiety Disorder@71.7281846824201
+Appendicitis        : final=Appendicitis              source=ml_primary                     ml_used=True ml=Appendicitis@72.58039717133296
+Heart Disease       : final=Heart Disease             source=ml_primary                     ml_used=True ml=Heart Disease@55.657001942779786
+Meningitis          : final=Meningitis                source=llm_fallback_unseen_pattern    ml_used=False ml=Migraine@15.809766885108642
+
+=== ML KNOWN DISEASES ===
+{
+  "available_models": [
+    "random_forest",
+    "svm",
+    "naive_bayes"
+  ],
+  "models_trained": true,
+  "status": "healthy"
+}
+
+DONE  

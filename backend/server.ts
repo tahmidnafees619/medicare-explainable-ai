@@ -97,7 +97,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 MediCare AI Backend running on http://localhost:${PORT}`);
   console.log(`📚 Health check: http://localhost:${PORT}/health`);
   console.log(`🔐 Auth endpoint: http://localhost:${PORT}/api/auth`);
@@ -106,6 +106,24 @@ app.listen(PORT, () => {
   console.log(`🧠 Predict endpoint: http://localhost:${PORT}/api/predict`);
   console.log(`📋 History endpoint: http://localhost:${PORT}/api/history`);
   console.log(`📊 Dataset endpoint: http://localhost:${PORT}/api/datasets`);
+  
+  // Check ML service availability
+  console.log('\n⏳ Checking ML service status...');
+  try {
+    const mlHealth = await fetch(`${process.env.ML_SERVICE_URL || 'http://localhost:8000'}/health`);
+    if (mlHealth.ok) {
+      const status = await mlHealth.json();
+      if (status.models_trained) {
+        console.log('✅ ML service ready with pre-trained models');
+      } else {
+        console.log('⚠️  ML service connected but models not loaded. Run: python train_models.py');
+      }
+    } else {
+      console.log('⚠️  ML service unavailable (will use LLM fallback for predictions)');
+    }
+  } catch {
+    console.log('⚠️  Could not reach ML service at startup (will use LLM fallback)');
+  }
 });
 
 export default app;

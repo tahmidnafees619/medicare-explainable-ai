@@ -39,104 +39,32 @@ class MediCareMLService:
         self.models = {}
         self.is_trained = False
 
-    def load_training_data(self, csv_path: str) -> pd.DataFrame:
-        """Load and preprocess training data from CSV"""
-        try:
-            df = pd.read_csv(csv_path)
-            print(f"Loaded {len(df)} training samples")
-            return df
-        except Exception as e:
-            print(f"Error loading training data: {e}")
-            return None
-
-    def preprocess_data(self, df: pd.DataFrame):
-        """Preprocess the training data"""
-        # Extract features and labels
-        X_text = df['symptom_text'].fillna('')
-        y = df['disease']
-
-        # Encode labels
-        self.label_encoder = LabelEncoder()
-        y_encoded = self.label_encoder.fit_transform(y)
-
-        # Create TF-IDF vectorizer
-        self.vectorizer = TfidfVectorizer(
-            max_features=1000,
-            stop_words='english',
-            ngram_range=(1, 2)
-        )
-
-        X = self.vectorizer.fit_transform(X_text)
-
-        return X, y_encoded
-
-    def train_models(self, X, y):
-        """Train the three ML models"""
-        print("Training ML models...")
-
-        # Split data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
-
-        # Train Random Forest
-        print("Training Random Forest...")
-        rf = RandomForestClassifier(
-            n_estimators=100,
-            max_depth=10,
-            random_state=42
-        )
-        rf.fit(X_train, y_train)
-        self.models['random_forest'] = rf
-
-        # Train SVM
-        print("Training SVM...")
-        svm = SVC(
-            kernel='linear',
-            probability=True,
-            random_state=42
-        )
-        svm.fit(X_train, y_train)
-        self.models['svm'] = svm
-
-        # Train Naive Bayes
-        print("Training Naive Bayes...")
-        nb = MultinomialNB()
-        nb.fit(X_train, y_train)
-        self.models['naive_bayes'] = nb
-
-        # Evaluate models
-        self.evaluate_models(X_test, y_test)
-
-        # Save models
-        self.save_models()
-
-        self.is_trained = True
-        print("All models trained and saved!")
-
-    def evaluate_models(self, X_test, y_test):
-        """Evaluate model performance"""
-        print("\nModel Evaluation Results:")
-        print("-" * 50)
-
-        for name, model in self.models.items():
-            y_pred = model.predict(X_test)
-            accuracy = accuracy_score(y_test, y_pred)
-            print(f"  {name}: {accuracy:.2%} accuracy")
-
-    def save_models(self):
-        """Save trained models to disk"""
-        joblib.dump(self.vectorizer, f'{MODEL_DIR}/tfidf_vectorizer.pkl')
-        joblib.dump(self.label_encoder, f'{MODEL_DIR}/label_encoder.pkl')
-
-        for name, model in self.models.items():
-            joblib.dump(model, f'{MODEL_DIR}/{name}.pkl')
-
-        print(f"Models saved to {MODEL_DIR}/")
+    def check_models_exist(self) -> bool:
+        """Check if all required model files exist"""
+        required_files = [
+            f'{MODEL_DIR}/tfidf_vectorizer.pkl',
+            f'{MODEL_DIR}/label_encoder.pkl',
+            f'{MODEL_DIR}/random_forest.pkl',
+            f'{MODEL_DIR}/svm.pkl',
+            f'{MODEL_DIR}/naive_bayes.pkl',
+        ]
+        
+        for file_path in required_files:
+            if not os.path.exists(file_path):
+                print(f"Missing: {file_path}")
+                return False
+        
+        return True
 
     def load_models(self):
-        """Load trained models from disk"""
+        """Load pre-trained models from disk"""
+        if not self.check_models_exist():
+            print("✗ Pre-trained models not found!")
+            print("  Run 'python train_models.py' to train models offline first.")
+            return False
+        
         try:
+            print("📂 Loading pre-trained models...")
             self.vectorizer = joblib.load(f'{MODEL_DIR}/tfidf_vectorizer.pkl')
             self.label_encoder = joblib.load(f'{MODEL_DIR}/label_encoder.pkl')
 
@@ -145,85 +73,106 @@ class MediCareMLService:
                 self.models[name] = joblib.load(f'{MODEL_DIR}/{name}.pkl')
 
             self.is_trained = True
-            print("Models loaded successfully!")
+            print("✓ Models loaded successfully!")
+            print(f"✓ Diseases: {len(self.label_encoder.classes_)}")
             return True
         except Exception as e:
-            print(f"Error loading models: {e}")
+            print(f"✗ Error loading models: {e}")
             return False
 
-    def predict(self, symptoms: List[str]) -> Dict[str, Any]:
-        """Make predictions using ensemble of all 3 models"""
-        if not self.is_trained:
-            return {"error": "Models not trained or loaded"}
+     def predict(self, symptoms: List[str]) -> Dict[str, Any]:
+         """Make predictions using ensemble of all 3 models.
 
-        # Convert symptoms list to text
-        symptoms_text = ', '.join(symptoms)
+         Uses dynamic ensemble weighting via softmax on model confidence scores,
+         disagreement penalty for low model agreement, and returns detailed
+         breakdown for transparency.
+         """
+         if not self.is_trained:
+             return {"error": "Models not trained or loaded"}
 
-        # Vectorize input
-        X = self.vectorizer.transform([symptoms_text])
+         # Convert symptoms list to text
+         symptoms_text = ', '.join(symptoms)
 
-        # Get predictions from all models
-        predictions = {}
-        probabilities = {}
+         # Vectorize input
+         X = self.vectorizer.transform([symptoms_text])
 
-        for name, model in self.models.items():
-            if hasattr(model, 'predict_proba'):
-                proba = model.predict_proba(X)[0]
-                pred_idx = np.argmax(proba)
-                pred_disease = self.label_encoder.inverse_transform([pred_idx])[0]
-                confidence = float(proba[pred_idx] * 100)
+         predictions: Dict[str, Any] = {}
+         model_scores: List[float] = []
 
-                predictions[name] = {
-                    'disease': pred_disease,
-                    'confidence': confidence
-                }
-                probabilities[name] = proba.tolist()
-            else:
-                pred_idx = model.predict(X)[0]
-                pred_disease = self.label_encoder.inverse_transform([pred_idx])[0]
-                predictions[name] = {
-                    'disease': pred_disease,
-                    'confidence': 0.0  # SVM doesn't provide probabilities easily
-                }
+         for name, model in self.models.items():
+             if hasattr(model, 'predict_proba'):
+                 proba = model.predict_proba(X)[0]
+                 best_idx = np.argmax(proba)
+                 pred_disease = self.label_encoder.inverse_transform([best_idx])[0]
+                 confidence = float(proba[best_idx] * 100)
 
-        # Ensemble prediction (weighted average)
-        # Weights based on model reliability:
-        #   SVM = 0.5  (consistently highest individual confidence)
-        #   Naive Bayes = 0.3
-        #   Random Forest = 0.2 (often disagrees, lower individual confidence)
-        MODEL_WEIGHTS = {
-            'svm': 0.5,
-            'naive_bayes': 0.3,
-            'random_forest': 0.2,
-        }
+                 predictions[name] = {
+                     'disease': pred_disease,
+                     'confidence': confidence,
+                 }
+                 model_scores.append(confidence)
+             else:
+                 pred_idx = model.predict(X)[0]
+                 pred_disease = self.label_encoder.inverse_transform([pred_idx])[0]
+                 predictions[name] = {
+                     'disease': pred_disease,
+                     'confidence': 0.0,
+                 }
+                 model_scores.append(0.0)
 
-        if len(probabilities) > 0:
-            weighted_probabilities = np.zeros(len(self.label_encoder.classes_))
-            total_weight = 0.0
+         if not model_scores:
+             return {
+                 'ensemble_prediction': {
+                     'disease': 'Unknown',
+                     'confidence': 0.0,
+                 },
+                 'model_predictions': predictions,
+                 'all_diseases': self.label_encoder.classes_.tolist(),
+             }
 
-            for name, proba in probabilities.items():
-                weight = MODEL_WEIGHTS.get(name, 0.33)
-                weighted_probabilities += np.array(proba) * weight
-                total_weight += weight
+         # ── Stage 2A: Softmax weighting ────────────────────────────────────
+         def softmax(scores: List[float]) -> List[float]:
+             scores_arr = np.array(scores)
+             e = np.exp(scores_arr / 25)  # temperature=25 controls spread
+             return (e / e.sum()).tolist()
 
-            if total_weight > 0:
-                weighted_probabilities /= total_weight
+         dynamic_weights = softmax(model_scores)
+         weighted_ml_raw = sum(s * w for s, w in zip(model_scores, dynamic_weights))
 
-            ensemble_idx = int(np.argmax(weighted_probabilities))
-            ensemble_disease = self.label_encoder.inverse_transform([ensemble_idx])[0]
-            ensemble_confidence = float(weighted_probabilities[ensemble_idx] * 100)
-        else:
-            ensemble_disease = predictions['random_forest']['disease']
-            ensemble_confidence = predictions['random_forest']['confidence']
+         # ── Stage 2B: Disagreement penalty ─────────────────────────────────
+         std_dev = np.std(model_scores)
+         disagreement_penalty = float(std_dev * 0.25)
 
-        return {
-            'ensemble_prediction': {
-                'disease': ensemble_disease,
-                'confidence': ensemble_confidence
-            },
-            'model_predictions': predictions,
-            'all_diseases': self.label_encoder.classes_.tolist()
-        }
+         # ── Stage 2C: Adjusted ML confidence ───────────────────────────────
+         adjusted_ml = max(0.0, weighted_ml_raw - disagreement_penalty)
+
+         # Model agreement level
+         if std_dev < 10:
+             agreement_level = 'high'
+         elif std_dev < 25:
+             agreement_level = 'medium'
+         else:
+             agreement_level = 'low'
+
+         # Top model (highest confidence this run)
+         model_names = list(self.models.keys())
+         top_model_idx = int(np.argmax(model_scores))
+         top_model = model_names[top_model_idx]
+
+         return {
+             'ensemble_prediction': {
+                 'disease': predictions[top_model]['disease'],
+                 'confidence': round(adjusted_ml, 1),
+             },
+             'model_predictions': predictions,
+             'all_diseases': self.label_encoder.classes_.tolist(),
+             'dynamic_weights': dynamic_weights,
+             'weighted_ml_raw': round(weighted_ml_raw, 1),
+             'disagreement_penalty': round(disagreement_penalty, 1),
+             'adjusted_ml': round(adjusted_ml, 1),
+             'model_agreement_level': agreement_level,
+             'top_model': top_model,
+         }
 
 # Global ML service instance
 ml_service = MediCareMLService()

@@ -7,6 +7,8 @@ interface Disease {
   description: string;
   treatments: string[];
   severity: string;
+  core_symptoms?: string[];
+  red_flag_symptoms?: string[];
 }
 
 interface SearchResult {
@@ -163,24 +165,133 @@ export function getAllDiseases(): string[] {
   return diseases.map(d => d.disease);
 }
 
-export function validateSymptomMatches(symptoms: string[], diseaseName: string): number {
+
+
+export interface SymptomValidationResult {
+  disease: string;
+  matchedSymptoms: string[];
+  missingSymptoms: string[];
+  rag_score: number;
+  red_flags_present: string[];
+  red_flags_missing: string[];
+}
+
+/**
+ * Stage 3: RAG Symptom Validation with weighted symptom matching
+ * Core symptoms (must-have) weight = 1.5, Supporting symptoms weight = 1.0
+ * Red flag penalties/rewards applied
+ */
+export function validateSymptomMatches(
+  symptoms: string[],
+  diseaseName: string
+): SymptomValidationResult {
   const disease = findDiseaseInKB(diseaseName);
-  if (!disease) return 0;
+  if (!disease) {
+    return {
+      disease: diseaseName,
+      matchedSymptoms: [],
+      missingSymptoms: [],
+      rag_score: 0,
+      red_flags_present: [],
+      red_flags_missing: [],
+    };
+  }
 
   const normalizedInput = symptoms.map(normalizeText);
-  const normalizedDb = disease.symptoms.map(normalizeText);
+  const normalizedDiseaseSymptoms = disease.symptoms.map(normalizeText);
 
-  let matchCount = 0;
-  for (const inputSymptom of normalizedInput) {
-    for (const dbSymptom of normalizedDb) {
-      if (dbSymptom.includes(inputSymptom) || inputSymptom.includes(dbSymptom)) {
-        matchCount++;
-        break;
-      }
+  const coreSymptoms = (disease.core_symptoms || []).map(normalizeText);
+  const redFlagSymptoms = (disease.red_flag_symptoms || []).map(normalizeText);
+
+  const matchedSymptoms: string[] = [];
+  const missingSymptoms: string[] = [];
+  let weightedMatch = 0;
+  let weightedTotal = 0;
+
+  for (let i = 0; i < disease.symptoms.length; i += 1) {
+    const dbSymptom = disease.symptoms[i];
+    const normalizedDbSymptom = normalizedDiseaseSymptoms[i];
+
+    // Determine weight: core = 1.5, supporting = 1.0
+    const isCore = coreSymptoms.some(cs => cs === normalizedDbSymptom);
+    const weight = isCore ? 1.5 : 1.0;
+    weightedTotal += weight;
+
+    const matched = normalizedInput.some(inputSymptom =>
+      normalizedDbSymptom.includes(inputSymptom) || inputSymptom.includes(normalizedDbSymptom)
+    );
+
+    if (matched) {
+      matchedSymptoms.push(dbSymptom);
+      weightedMatch += weight;
+    } else {
+      missingSymptoms.push(dbSymptom);
     }
   }
 
-  return matchCount;
+  let ragScore = weightedTotal === 0 ? 0 : (weightedMatch / weightedTotal) * 100;
+
+  // Red flag checks
+  const redFlagsPresent: string[] = [];
+  const redFlagsMissing: string[] = [];
+
+  for (const redFlag of redFlagSymptoms) {
+    const isPresent = normalizedInput.some(is => is.includes(redFlag) || redFlag.includes(is));
+    if (isPresent) {
+      redFlagsPresent.push(redFlag);
+    } else {
+      redFlagsMissing.push(redFlag);
+    }
+  }
+
+  // Apply penalty: if any red flag symptom is missing, reduce score
+  if (redFlagsMissing.length > 0) {
+    ragScore *= 0.85;
+  }
+
+  // Apply reward: if all red flags are present, boost score (capped at 100)
+  if (redFlagsPresent.length > 0 && redFlagsMissing.length === 0) {
+    ragScore = Math.min(100, ragScore * 1.15);
+  }
+
+  return {
+    disease: disease.disease,
+    matchedSymptoms,
+    missingSymptoms,
+    rag_score: Math.round(ragScore * 10) / 10,
+    red_flags_present: redFlagsPresent,
+    red_flags_missing: redFlagsMissing,
+  };
+}
+
+/**
+ * Get RAG validation scores for top 3 predicted diseases
+ */
+export function validateTopDiseases(
+  symptoms: string[],
+  topDiseases: string[]
+): Array<{
+  disease: string;
+  rag_score: number;
+  matched: string[];
+  missing: string[];
+  red_flags_present: string[];
+  red_flags_missing: string[];
+}> {
+  return topDiseases
+    .slice(0, 3)
+    .map(diseaseName => {
+      const validation = validateSymptomMatches(symptoms, diseaseName);
+      return {
+        disease: validation.disease,
+        rag_score: validation.rag_score,
+        matched: validation.matchedSymptoms,
+        missing: validation.missingSymptoms,
+        red_flags_present: validation.red_flags_present,
+        red_flags_missing: validation.red_flags_missing,
+      };
+    })
+    .sort((a, b) => b.rag_score - a.rag_score);
 }
 
 export function augmentPrompt(symptoms: string[], userQuery?: string): string {

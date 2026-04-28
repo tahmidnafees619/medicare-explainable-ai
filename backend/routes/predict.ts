@@ -8,6 +8,83 @@ const router = Router();
 // ML Service configuration
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
 
+// ── Stage 1: Symptom Preprocessing ────────────────────────────────────────
+
+/**
+ * Normalize symptom text: lowercase, strip punctuation/non-alphanumeric
+ */
+function normalizeSymptom(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+}
+
+/**
+ * Synonym expansion map – maps common user terms to standardized KB forms
+ */
+const SYMPTOM_SYNONYMS: Record<string, string[]> = {
+  headache: ['cephalgia', 'head pain', 'head hurts', 'migraine'],
+  rash: ['skin rash', 'eruption', 'itchy rash', 'blisters'],
+  fever: ['temperature', 'hot body', 'high temperature'],
+  'runny nose': ['stuffy nose', 'blocked nose', 'nasal congestion'],
+  'sore throat': ['throat pain'],
+  cough: ['coughing'],
+  nausea: ['nauseous'],
+  vomiting: ['vomit', 'throwing up'],
+  diarrhea: ['loose stool'],
+  'abdominal pain': ['stomach pain', 'stomach ache', 'abdomen pain'],
+  'shortness of breath': ['breathing trouble', 'difficulty breathing', 'breathless'],
+  'chest pain': ['chest tightness'],
+  'body aches': ['body pain', 'muscle pain', 'muscle ache'],
+  fatigue: ['tired', 'weakness', 'weak', 'extreme fatigue'],
+};
+
+/**
+ * Expand synonyms – maps any synonym to its canonical form
+ */
+function expandSynonyms(symptom: string): string {
+  const normalized = normalizeSymptom(symptom);
+  for (const [canonical, synonyms] of Object.entries(SYMPTOM_SYNONYMS)) {
+    if (normalized === canonical || synonyms.some(s => normalizeSymptom(s) === normalized)) {
+      return canonical;
+    }
+  }
+  return normalized;
+}
+
+/**
+ * Gate: minimum 3 symptoms required for reliable prediction
+ */
+function symptomGate(symptoms: string[]): { passed: boolean; error?: string } {
+  if (symptoms.length < 3) {
+    return {
+      passed: false,
+      error: 'MIN_SYMPTOMS',
+    };
+  }
+  return { passed: true };
+}
+
+/**
+ * Full preprocessing pipeline – returns normalized + expanded symptoms
+ */
+function preprocessSymptoms(rawSymptoms: string[]): { symptoms: string[]; gate: { passed: boolean; error?: string } } {
+  const normalized = rawSymptoms.map(normalizeSymptom);
+  const expanded = normalized.map(expandSynonyms);
+  const unique = Array.from(new Set(expanded)).filter(s => s.length > 0);
+  const gate = symptomGate(unique);
+  return { symptoms: unique, gate };
+}
+
+// ── Stage 4: Confidence Label Mapping ─────────────────────────────────────
+
+function getConfidenceLabel(score: number): { label: string; color: string } {
+  if (score >= 75) return { label: 'Likely match', color: 'green' };
+  if (score >= 50) return { label: 'Possible match', color: 'amber' };
+  if (score >= 30) return { label: 'Low confidence match', color: 'orange' };
+  return { label: 'Weak signal only', color: 'red' };
+}
+
+// ── Helper: Call ML Service ───────────────────────────────────────────────
+
 async function callMLService(symptoms: string[]): Promise<any> {
   try {
     const response = await fetch(`${ML_SERVICE_URL}/predict`, {
@@ -76,10 +153,22 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
 
     const followUpAnswers = answers || [];
 
-    // ── STEP 1: ML Prediction (fast, deterministic) ──────────────
-    const mlResult = await callMLService(symptoms);
+    // ── Stage 1: Symptom Preprocessing & Gate ─────────────────────────────
+    const { symptoms: processedSymptoms, gate } = preprocessSymptoms(symptoms);
 
-    let mlEnsemble: { disease: string; confidence: number } | null = null;
+    if (!gate.passed) {
+      return res.status(400).json({
+        error: gate.error,
+        message: 'Please add at least 3 symptoms for a reliable result.',
+        symptom_count: processedSymptoms.length,
+        gate_passed: false,
+      });
+    }
+
+    // ── Stage 2: ML Prediction ─────────────────────────────────────────────
+    const mlResult = await callMLService(processedSymptoms);
+
+    let mlEnsemble: any = null;
     let mlModelPredictions: any = null;
 
     if (mlResult && !mlResult.error) {
@@ -87,178 +176,248 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
       mlModelPredictions = mlResult.model_predictions;
     }
 
-    // ── STEP 2: RAG Symptom Validation ────────────────────────────
-    const ragResults = ragService.searchDiseases(symptoms);
-    const ragSymptomMatches = mlEnsemble
-      ? ragService.validateSymptomMatches(symptoms, mlEnsemble.disease)
-      : 0;
+    // Get top 3 diseases from ML for RAG validation
+    const top3Diseases: string[] = mlEnsemble
+      ? [mlEnsemble.disease]
+      : [];
 
-    // ── STEP 3: Decision Gate ─────────────────────────────────────
-    // Use ML if: confidence >= 70%, not "Other / Rare Disease", and RAG validates symptom matches
-    let useML = false;
-    if (mlEnsemble) {
-      const mlDisease = mlEnsemble.disease;
-      const mlConfidence = mlEnsemble.confidence;
-
-      if (mlConfidence >= 70 && mlDisease !== 'Other / Rare Disease' && ragSymptomMatches > 0) {
-        useML = true;
-        console.log(`ML primary check: ${mlDisease} @ ${mlConfidence.toFixed(1)}% confidence, ${ragSymptomMatches} symptom matches — ACCEPTED`);
-      } else {
-        console.log(`ML primary check: ${mlDisease} @ ${mlConfidence.toFixed(1)}% confidence, ${ragSymptomMatches} symptom matches — REJECTED (fallback to LLM)`);
-      }
+    // Also include other model predictions if they differ
+    if (mlModelPredictions) {
+      const otherDiseases = Object.values(mlModelPredictions)
+        .map((m: any) => m.disease)
+        .filter((d: string) => d !== top3Diseases[0] && !top3Diseases.includes(d));
+      top3Diseases.push(...otherDiseases.slice(0, 2));
     }
 
-    // ── STEP 4: Get Prediction & Explanation ──────────────────────
-    let finalDisease: string;
-    let finalConfidence: number;
-    let predictionSource: string;
-    let llmPrediction: { disease: string; confidence: number; allPredictions: any[]; explanation: string } | null = null;
-    let explanation: string;
+    // ── Stage 3: RAG Symptom Validation (top 3) ────────────────────────────
+    const ragCandidates = ragService.validateTopDiseases(processedSymptoms, top3Diseases);
+    const ragValidation = ragCandidates.length > 0 ? ragCandidates[0] : null;
 
-    if (useML && mlEnsemble) {
-      // FAST PATH: ML primary, LLM explanation only
+    const ragScore = ragValidation?.rag_score ?? 0;
+
+    // ── Stage 2C & 4: Build ML breakdown with dynamic ensemble ──────────────
+    let ml_breakdown: any = null;
+    let adjusted_ml = 0;
+    let model_agreement_level = 'unknown';
+    let top_model = 'none';
+    let disagreement_penalty_val = 0;
+    let dynamic_weights: number[] = [];
+    let weighted_ml_raw = 0;
+
+    if (mlEnsemble && mlResult) {
+      // Use new ML service response structure
+      adjusted_ml = mlResult.adjusted_ml ?? mlResult.weighted_ml_raw ?? mlEnsemble.confidence;
+      weighted_ml_raw = mlResult.weighted_ml_raw ?? mlEnsemble.confidence;
+      dynamic_weights = mlResult.dynamic_weights ?? [];
+      disagreement_penalty_val = mlResult.disagreement_penalty ?? 0;
+      model_agreement_level = mlResult.model_agreement_level ?? 'unknown';
+      top_model = mlResult.top_model ?? 'unknown';
+
+      ml_breakdown = {
+        rf_prob: mlModelPredictions?.random_forest?.confidence ?? 0,
+        svm_prob: mlModelPredictions?.svm?.confidence ?? 0,
+        nb_prob: mlModelPredictions?.naive_bayes?.confidence ?? 0,
+        dynamic_weights: dynamic_weights,
+        weighted_ml_raw: Math.round(weighted_ml_raw * 10) / 10,
+        disagreement_penalty: Math.round(disagreement_penalty_val * 10) / 10,
+        adjusted_ml: Math.round(adjusted_ml * 10) / 10,
+        model_agreement_level,
+        top_model,
+      };
+    }
+
+    // ── Stage 4: Adaptive Hybrid Score ─────────────────────────────────────
+    let ml_weight = 0.5;
+    let rag_weight = 0.5;
+
+    if (adjusted_ml >= 65) {
+      ml_weight = 0.75;
+      rag_weight = 0.25;
+    } else if (adjusted_ml >= 45) {
+      ml_weight = 0.65;
+      rag_weight = 0.35;
+    } else {
+      ml_weight = 0.50;
+      rag_weight = 0.50;
+    }
+
+    let final_confidence = (ml_weight * adjusted_ml) + (rag_weight * ragScore);
+    final_confidence = Math.max(0, Math.min(85, final_confidence)); // cap at 85
+    final_confidence = Math.round(final_confidence * 10) / 10;
+
+    const { label: confidence_label, color: confidence_color } = getConfidenceLabel(final_confidence);
+
+    // ── Determine final disease & prediction source ─────────────────────────
+    let finalDisease: string;
+    let predictionSource: 'ml_primary' | 'llm_fallback' | 'rag_primary';
+    let llmPrediction: any = null;
+    let explanation: string = '';
+
+    if (mlEnsemble && adjusted_ml >= 30) {
+      // ML primary path
       finalDisease = mlEnsemble.disease;
-      finalConfidence = mlEnsemble.confidence;
       predictionSource = 'ml_primary';
 
-      // Boost confidence if ML is very confident
-      if (mlEnsemble.confidence > 85) {
-        finalConfidence = Math.min(95, mlEnsemble.confidence + 5);
-        predictionSource = 'ml_primary_high_confidence';
+      try {
+        explanation = await llmService.generateExplanation(finalDisease, processedSymptoms);
+      } catch (err) {
+        console.error('Error generating explanation:', err);
+        explanation = `${finalDisease} is a possible diagnosis based on your symptoms.`;
       }
+     } else if (ragValidation && ragScore >= 40) {
+       // RAG primary path (ML uncertain but RAG has strong match)
+       finalDisease = ragValidation.disease;
+       predictionSource = 'rag_primary';
+       final_confidence = Math.min(final_confidence, ragScore);
 
-      // Always generate explanation via LLM
-      explanation = await llmService.generateExplanation(finalDisease, symptoms);
+      try {
+        explanation = await llmService.generateExplanation(finalDisease, processedSymptoms);
+      } catch (err) {
+        console.error('Error generating explanation:', err);
+        explanation = `${finalDisease} is a possible diagnosis based on your symptoms.`;
+      }
     } else {
-      // FALLBACK PATH: LLM prediction + explanation (for unseen patterns / edge cases)
-      const llmResult = await llmService.generatePrediction(symptoms, followUpAnswers);
+      // LLM fallback
+      const llmResult = await llmService.generatePrediction(processedSymptoms, followUpAnswers);
       llmPrediction = {
         disease: llmResult.disease,
         confidence: llmResult.confidence,
         allPredictions: llmResult.allPredictions,
         explanation: llmResult.explanation,
       };
-
       finalDisease = llmResult.disease;
-      finalConfidence = llmResult.confidence;
-      predictionSource = 'llm_fallback_unseen_pattern';
-
-      explanation = await llmService.generateExplanation(finalDisease, symptoms);
+      final_confidence = Math.min(final_confidence, llmResult.confidence);
+      predictionSource = 'llm_fallback';
+      explanation = llmResult.explanation;
     }
 
-    // ── STEP 5: Build All Predictions List ────────────────────────
+    // ── Build all predictions list ──────────────────────────────────────────
     const allPredictions: any[] = [];
 
-    if (useML && mlEnsemble) {
+    if (mlEnsemble && adjusted_ml >= 30) {
       allPredictions.push({
         disease: mlEnsemble.disease,
-        confidence: mlEnsemble.confidence,
+        confidence: Math.round(adjusted_ml * 10) / 10,
         source: 'ml_ensemble',
-        used_in_final: true,
+        used_in_final: mlEnsemble.disease === finalDisease,
       });
     }
 
     if (llmPrediction) {
       allPredictions.push(...llmPrediction.allPredictions.map((p: any) => ({
-        ...p,
+        disease: p.disease,
+        confidence: p.confidence,
         source: 'llm_fallback',
-        used_in_final: true,
+        used_in_final: p.disease === finalDisease,
       })));
     }
 
-    if (mlEnsemble && !useML) {
-      allPredictions.push({
-        disease: mlEnsemble.disease,
-        confidence: mlEnsemble.confidence,
-        source: 'ml_ensemble',
-        used_in_final: false,
-      });
+    // Add RAG candidates as predictions
+    for (const cand of ragCandidates) {
+      if (!allPredictions.some(p => p.disease === cand.disease)) {
+        allPredictions.push({
+          disease: cand.disease,
+          confidence: Math.round(cand.rag_score * 10) / 10,
+          source: 'rag_validation',
+          used_in_final: cand.disease === finalDisease,
+        });
+      }
     }
 
-    // ── STEP 6: Build Methodology Explanation ─────────────────────
-    const methodsUsed: Array<'rag' | 'llm' | 'ml'> = [];
-    let primaryMethod: 'rag' | 'llm' | 'ml' | 'ensemble';
-    let methodologyExplanation = '';
+    // ── Build RAG breakdown ─────────────────────────────────────────────────
+    const rag_breakdown = ragValidation
+      ? {
+          rag_score: ragScore,
+          matched_symptoms: ragValidation.matched,
+          missing_symptoms: ragValidation.missing,
+          red_flags_present: ragValidation.red_flags_present,
+          red_flags_missing: ragValidation.red_flags_missing,
+        }
+      : null;
 
-    if (useML && mlEnsemble) {
-      methodsUsed.push('ml', 'rag', 'llm');
-      primaryMethod = mlEnsemble.confidence > 85 ? 'ml' : 'ensemble';
-      methodologyExplanation = `Diagnosis generated primarily through ML ensemble analysis (${mlEnsemble.confidence.toFixed(1)}% confidence). The ML prediction was validated against the medical knowledge base, which confirmed ${ragSymptomMatches} matching symptom(s) for ${mlEnsemble.disease}. A patient-friendly explanation was generated by the LLM.`;
-    } else {
-      methodsUsed.push('llm', 'rag');
-      if (mlEnsemble) methodsUsed.push('ml');
-      primaryMethod = 'llm';
-      methodologyExplanation = mlEnsemble
-        ? `The ML ensemble predicted "${mlEnsemble.disease}" with ${mlEnsemble.confidence.toFixed(1)}% confidence, but this was rejected due to insufficient symptom validation (${ragSymptomMatches} match(es)) or low confidence. The diagnosis was instead generated by LLM clinical reasoning for this less common or unseen symptom pattern.`
-        : `Diagnosis generated by LLM clinical reasoning. The ML service was unavailable, so the system relied on AI analysis of the symptom pattern.`;
-    }
-
-    // Build ML model breakdown
-    let mlModelsBreakdown: any = null;
-    if (mlModelPredictions) {
-      mlModelsBreakdown = {
-        random_forest: {
-          disease: mlModelPredictions.random_forest.disease,
-          confidence: mlModelPredictions.random_forest.confidence,
-          used: useML && mlModelPredictions.random_forest.disease === finalDisease,
-        },
-        svm: {
-          disease: mlModelPredictions.svm.disease,
-          confidence: mlModelPredictions.svm.confidence,
-          used: useML && mlModelPredictions.svm.disease === finalDisease,
-        },
-        naive_bayes: {
-          disease: mlModelPredictions.naive_bayes.disease,
-          confidence: mlModelPredictions.naive_bayes.confidence,
-          used: useML && mlModelPredictions.naive_bayes.disease === finalDisease,
-        },
+    // ── Build ML breakdown additions ───────────────────────────────────────
+    if (!ml_breakdown) {
+      ml_breakdown = {
+        rf_prob: 0, svm_prob: 0, nb_prob: 0,
+        dynamic_weights: [],
+        weighted_ml_raw: 0,
+        disagreement_penalty: 0,
+        adjusted_ml: 0,
+        model_agreement_level: 'unavailable',
+        top_model: 'none',
       };
     }
 
-    // Build decision path
-    const decisionPath: string[] = [];
-    if (mlEnsemble) {
-      decisionPath.push(`ML ensemble predicted "${mlEnsemble.disease}" with ${mlEnsemble.confidence.toFixed(1)}% confidence`);
-      decisionPath.push(`RAG validation found ${ragSymptomMatches} symptom match(es) for "${mlEnsemble.disease}" in medical knowledge base`);
+    // ── Build Methodology Explanation ───────────────────────────────────────
+    const methodsUsed: string[] = ['llm'];
+    let primaryMethod = 'llm';
+    let methodologyExplanation = '';
+
+    if (predictionSource === 'ml_primary') {
+      methodsUsed.push('ml', 'rag');
+      primaryMethod = 'ml';
+      methodologyExplanation = `Diagnosis generated primarily through ML ensemble analysis (${adjusted_ml.toFixed(1)}% confidence) and validated by symptom matching (${ragScore.toFixed(1)}%). Final hybrid confidence: ${final_confidence.toFixed(1)}%.`;
+    } else if (predictionSource === 'rag_primary') {
+      methodsUsed.push('rag');
+      primaryMethod = 'rag';
+      methodologyExplanation = `Diagnosis based on strong symptom-to-disease matching (${ragScore.toFixed(1)}%) when ML confidence was low. Final hybrid confidence: ${final_confidence.toFixed(1)}%.`;
     } else {
-      decisionPath.push('ML service unavailable');
+      methodologiesUsed = ['llm', 'rag'];
+      primaryMethod = 'llm';
+      methodologyExplanation = mlEnsemble
+        ? `ML predicted "${mlEnsemble.disease}" with ${adjusted_ml.toFixed(1)}% confidence but was deprioritized. Diagnosis from LLM clinical reasoning.`
+        : `ML service unavailable. Diagnosis from LLM clinical reasoning.`;
     }
 
-    if (useML && mlEnsemble) {
-      decisionPath.push(`ML prediction ACCEPTED — fast path used (1 LLM call for explanation only)`);
-      if (mlEnsemble.confidence > 85) {
-        decisionPath.push('High-confidence ML result — confidence boosted');
-      }
-    } else {
-      decisionPath.push(`ML prediction REJECTED — falling back to LLM prediction + explanation (2 LLM calls)`);
-      if (llmPrediction) {
-        decisionPath.push(`LLM reasoning identified "${llmPrediction.disease}" with ${llmPrediction.confidence}% confidence`);
-      }
-    }
+    // ── Safety ───────────────────────────────────────────────────────────────
+    const safety = {
+      disclaimer: 'This is not a medical diagnosis. Consult a doctor.',
+      recommend_doctor: final_confidence < 70,
+      symptom_count: processedSymptoms.length,
+      gate_passed: true,
+    };
 
+    // ── Final Response ───────────────────────────────────────────────────────
     const finalPrediction = {
+      top_result: {
+        disease: finalDisease,
+        final_confidence,
+        confidence_label,
+        confidence_color,
+      },
+      ml_breakdown,
+      rag_breakdown,
+      hybrid_weights_used: { ml_weight, rag_weight },
+      safety,
+      candidates: ragCandidates.map(c => ({
+        disease: c.disease,
+        rag_score: c.rag_score,
+        matched: c.matched,
+        missing: c.missing,
+      })),
+      // Backwards-compatible legacy fields
       disease: finalDisease,
-      confidence: finalConfidence,
+      confidence: final_confidence,
       all_predictions: allPredictions,
-      explanation: explanation || (llmPrediction?.explanation ?? 'No explanation available.'),
-      symptoms_found: symptoms,
+      explanation,
+      explanation_pending: false,
+      symptoms_found: processedSymptoms,
       prediction_source: predictionSource,
       ml_available: !!mlEnsemble,
-      ml_confidence: mlEnsemble?.confidence ?? null,
+      ml_confidence: Math.round(adjusted_ml * 10) / 10,
       ml_disease: mlEnsemble?.disease ?? null,
-      ml_used: useML,
-      llm_prediction: llmPrediction
-        ? { disease: llmPrediction.disease, confidence: llmPrediction.confidence }
-        : null,
-      rag_context_preview: ragResults.length > 0
-        ? `Matched ${ragResults.length} diseases. Top: ${ragResults.slice(0, 3).map(r => r.disease).join(', ')}`
+      ml_used: predictionSource === 'ml_primary',
+      symptom_match_score: ragScore,
+      rag_validation: ragValidation,
+      rag_context_preview: ragCandidates.length > 0
+        ? `Matched ${ragCandidates.length} diseases.`
         : 'No RAG matches found',
       methodology: {
         primary_method: primaryMethod,
         methods_used: methodsUsed,
-        ml_models_used: mlModelsBreakdown,
+        ml_models_used: ml_breakdown,
         explanation: methodologyExplanation,
-        decision_path: decisionPath,
+        decision_path: [],
       },
     };
 

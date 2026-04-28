@@ -1,177 +1,674 @@
 [
   {
     "disease": "Common Cold",
-    "symptoms": ["runny nose", "sore throat", "cough", "sneezing", "congestion", "headache", "fatigue", "mild fever"],
+    "symptoms": [
+      "runny nose",
+      "sore throat",
+      "cough",
+      "sneezing",
+      "congestion",
+      "headache",
+      "fatigue",
+      "mild fever"
+    ],
     "description": "A viral infection of the upper respiratory tract",
-    "treatments": ["rest", "hydration", "over-the-counter cold medication", "vitamin C"],
-    "severity": "low"
+    "treatments": [
+      "rest",
+      "hydration",
+      "over-the-counter cold medication",
+      "vitamin C"
+    ],
+    "severity": "low",
+    "red_flag_symptoms": [],
+    "core_symptoms": [
+      "runny nose",
+      "sore throat",
+      "cough"
+    ]
   },
   {
     "disease": "Influenza (Flu)",
-    "symptoms": ["high fever", "body aches", "fatigue", "dry cough", "headache", "chills", "sore throat", "loss of appetite"],
+    "symptoms": [
+      "high fever",
+      "body aches",
+      "fatigue",
+      "dry cough",
+      "headache",
+      "chills",
+      "sore throat",
+      "loss of appetite"
+    ],
     "description": "A viral respiratory illness caused by influenza viruses",
-    "treatments": ["rest", "hydration", "antiviral medications", "fever reducers"],
-    "severity": "medium"
+    "treatments": [
+      "rest",
+      "hydration",
+      "antiviral medications",
+      "fever reducers"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [
+      "high fever",
+      "body aches"
+    ],
+    "core_symptoms": [
+      "high fever",
+      "body aches"
+    ]
   },
   {
     "disease": "Gastroenteritis (Stomach Flu)",
-    "symptoms": ["nausea", "vomiting", "diarrhea", "stomach pain", "fever", "headache", "fatigue", "dehydration"],
+    "symptoms": [
+      "nausea",
+      "vomiting",
+      "diarrhea",
+      "stomach pain",
+      "fever",
+      "headache",
+      "fatigue",
+      "dehydration"
+    ],
     "description": "Inflammation of the stomach and intestines",
-    "treatments": ["hydration", "electrolyte replacement", "rest", "bland diet"],
-    "severity": "low"
+    "treatments": [
+      "hydration",
+      "electrolyte replacement",
+      "rest",
+      "bland diet"
+    ],
+    "severity": "low",
+    "red_flag_symptoms": [
+      "vomiting",
+      "dehydration"
+    ],
+    "core_symptoms": [
+      "nausea",
+      "vomiting",
+      "diarrhea"
+    ]
   },
   {
     "disease": "Migraine",
-    "symptoms": ["severe headache", "nausea", "sensitivity to light", "sensitivity to sound", "visual disturbances", "dizziness"],
+    "symptoms": [
+      "severe headache",
+      "nausea",
+      "sensitivity to light",
+      "sensitivity to sound",
+      "visual disturbances",
+      "dizziness"
+    ],
     "description": "A neurological condition causing intense headaches",
-    "treatments": ["pain relievers", "rest in dark room", "avoid triggers", "prescription medications"],
-    "severity": "medium"
+    "treatments": [
+      "pain relievers",
+      "rest in dark room",
+      "avoid triggers",
+      "prescription medications"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [
+      "severe headache",
+      "visual disturbances"
+    ],
+    "core_symptoms": [
+      "severe headache",
+      "nausea",
+      "sensitivity to light"
+    ]
   },
   {
     "disease": "Tension Headache",
-    "symptoms": ["headache", "pressure in head", "neck pain", "shoulder tension", "fatigue", "difficulty concentrating"],
+    "symptoms": [
+      "headache",
+      "pressure in head",
+      "neck pain",
+      "shoulder tension",
+      "fatigue",
+      "difficulty concentrating"
+    ],
     "description": "Headache caused by muscle tension and stress",
-    "treatments": ["over-the-counter pain relievers", "stress management", "relaxation techniques", "physical therapy"],
-    "severity": "low"
+    "treatments": [
+      "over-the-counter pain relievers",
+      "stress management",
+      "relaxation techniques",
+      "physical therapy"
+    ],
+    "severity": "low",
+    "red_flag_symptoms": [],
+    "core_symptoms": [
+      "headache"
+    ]
   },
   {
     "disease": "Hypertension (High Blood Pressure)",
-    "symptoms": ["headache", "shortness of breath", "nosebleeds", "dizziness", "chest pain", "vision changes"],
+    "symptoms": [
+      "headache",
+      "shortness of breath",
+      "nosebleeds",
+      "dizziness",
+      "chest pain",
+      "vision changes"
+    ],
     "description": "A condition where blood pressure in arteries is consistently elevated",
-    "treatments": ["lifestyle changes", "medication", "low-sodium diet", "regular exercise"],
-    "severity": "high"
+    "treatments": [
+      "lifestyle changes",
+      "medication",
+      "low-sodium diet",
+      "regular exercise"
+    ],
+    "severity": "high",
+    "red_flag_symptoms": [
+      "shortness of breath",
+      "chest pain",
+      "vision changes"
+    ],
+    "core_symptoms": [
+      "headache"
+    ]
   },
   {
     "disease": "Pneumonia",
-    "symptoms": ["cough", "fever", "chills", "shortness of breath", "chest pain", "fatigue", "confusion", "sputum production"],
+    "symptoms": [
+      "cough",
+      "fever",
+      "chills",
+      "shortness of breath",
+      "chest pain",
+      "fatigue",
+      "confusion",
+      "sputum production"
+    ],
     "description": "Infection that inflames the air sacs in one or both lungs",
-    "treatments": ["antibiotics", "rest", "hydration", "oxygen therapy"],
-    "severity": "high"
+    "treatments": [
+      "antibiotics",
+      "rest",
+      "hydration",
+      "oxygen therapy"
+    ],
+    "severity": "high",
+    "red_flag_symptoms": [
+      "fever",
+      "shortness of breath",
+      "chest pain",
+      "confusion"
+    ],
+    "core_symptoms": [
+      "cough",
+      "fever",
+      "shortness of breath"
+    ]
   },
   {
     "disease": "Bronchitis",
-    "symptoms": ["cough", "mucus production", "shortness of breath", "fatigue", "fever", "chest discomfort"],
+    "symptoms": [
+      "cough",
+      "mucus production",
+      "shortness of breath",
+      "fatigue",
+      "fever",
+      "chest discomfort"
+    ],
     "description": "Inflammation of the lining of the bronchial tubes",
-    "treatments": ["rest", "hydration", "bronchodilators", "cough suppressants"],
-    "severity": "medium"
+    "treatments": [
+      "rest",
+      "hydration",
+      "bronchodilators",
+      "cough suppressants"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [
+      "shortness of breath",
+      "fever"
+    ],
+    "core_symptoms": [
+      "cough"
+    ]
   },
   {
     "disease": "Asthma",
-    "symptoms": ["shortness of breath", "wheezing", "coughing", "chest tightness", "difficulty breathing"],
+    "symptoms": [
+      "shortness of breath",
+      "wheezing",
+      "coughing",
+      "chest tightness",
+      "difficulty breathing"
+    ],
     "description": "A condition in which airways narrow and swell",
-    "treatments": ["inhalers", "medications", "avoid triggers", "action plan"],
-    "severity": "medium"
+    "treatments": [
+      "inhalers",
+      "medications",
+      "avoid triggers",
+      "action plan"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [
+      "shortness of breath",
+      "wheezing",
+      "difficulty breathing"
+    ],
+    "core_symptoms": [
+      "wheezing",
+      "shortness of breath"
+    ]
   },
   {
     "disease": "Diabetes Type 2",
-    "symptoms": ["increased thirst", "frequent urination", "fatigue", "blurred vision", "slow healing", "hunger", "weight loss"],
+    "symptoms": [
+      "increased thirst",
+      "frequent urination",
+      "fatigue",
+      "blurred vision",
+      "slow healing",
+      "hunger",
+      "weight loss"
+    ],
     "description": "A chronic condition affecting blood sugar regulation",
-    "treatments": ["diet changes", "exercise", "medication", "blood sugar monitoring"],
-    "severity": "high"
+    "treatments": [
+      "diet changes",
+      "exercise",
+      "medication",
+      "blood sugar monitoring"
+    ],
+    "severity": "high",
+    "red_flag_symptoms": [
+      "increased thirst",
+      "frequent urination",
+      "weight loss"
+    ],
+    "core_symptoms": [
+      "increased thirst",
+      "frequent urination"
+    ]
   },
   {
     "disease": "Diabetes Type 1",
-    "symptoms": ["increased thirst", "frequent urination", "extreme hunger", "unintended weight loss", "fatigue", "blurred vision"],
+    "symptoms": [
+      "increased thirst",
+      "frequent urination",
+      "extreme hunger",
+      "unintended weight loss",
+      "fatigue",
+      "blurred vision"
+    ],
     "description": "Autoimmune condition where pancreas produces little insulin",
-    "treatments": ["insulin therapy", "blood sugar monitoring", "diet management", "exercise"],
-    "severity": "high"
+    "treatments": [
+      "insulin therapy",
+      "blood sugar monitoring",
+      "diet management",
+      "exercise"
+    ],
+    "severity": "high",
+    "red_flag_symptoms": [
+      "increased thirst",
+      "frequent urination",
+      "extreme hunger",
+      "unintended weight loss"
+    ],
+    "core_symptoms": [
+      "increased thirst",
+      "frequent urination",
+      "unintended weight loss"
+    ]
   },
   {
     "disease": "Heart Disease",
-    "symptoms": ["chest pain", "shortness of breath", "fatigue", "heart palpitations", "dizziness", "nausea"],
+    "symptoms": [
+      "chest pain",
+      "shortness of breath",
+      "fatigue",
+      "heart palpitations",
+      "dizziness",
+      "nausea"
+    ],
     "description": "Various conditions affecting the heart",
-    "treatments": ["lifestyle changes", "medication", "surgery", "cardiac rehabilitation"],
-    "severity": "high"
+    "treatments": [
+      "lifestyle changes",
+      "medication",
+      "surgery",
+      "cardiac rehabilitation"
+    ],
+    "severity": "high",
+    "red_flag_symptoms": [
+      "chest pain",
+      "shortness of breath",
+      "heart palpitations",
+      "dizziness",
+      "nausea"
+    ],
+    "core_symptoms": [
+      "chest pain",
+      "shortness of breath"
+    ]
   },
   {
     "disease": "Coronary Artery Disease",
-    "symptoms": ["chest pain", "shortness of breath", "fatigue", "pain in neck/jaw", "pain in arm", "nausea"],
+    "symptoms": [
+      "chest pain",
+      "shortness of breath",
+      "fatigue",
+      "pain in neck/jaw",
+      "pain in arm",
+      "nausea"
+    ],
     "description": "Narrowing of the arteries supplying blood to the heart",
-    "treatments": ["medication", "lifestyle changes", "angioplasty", "bypass surgery"],
-    "severity": "high"
+    "treatments": [
+      "medication",
+      "lifestyle changes",
+      "angioplasty",
+      "bypass surgery"
+    ],
+    "severity": "high",
+    "red_flag_symptoms": [
+      "chest pain",
+      "shortness of breath",
+      "pain in neck/jaw",
+      "pain in arm",
+      "nausea"
+    ],
+    "core_symptoms": [
+      "chest pain"
+    ]
   },
   {
     "disease": "GERD (Acid Reflux)",
-    "symptoms": ["heartburn", "regurgitation", "chest pain", "difficulty swallowing", "chronic cough", "sore throat"],
+    "symptoms": [
+      "heartburn",
+      "regurgitation",
+      "chest pain",
+      "difficulty swallowing",
+      "chronic cough",
+      "sore throat"
+    ],
     "description": "Chronic digestive disease where stomach acid flows back into esophagus",
-    "treatments": ["diet changes", "medications", "weight management", "avoid lying down after meals"],
-    "severity": "low"
+    "treatments": [
+      "diet changes",
+      "medications",
+      "weight management",
+      "avoid lying down after meals"
+    ],
+    "severity": "low",
+    "red_flag_symptoms": [],
+    "core_symptoms": [
+      "heartburn",
+      "regurgitation"
+    ]
   },
   {
     "disease": "Anxiety Disorder",
-    "symptoms": ["excessive worry", "restlessness", "fatigue", "difficulty concentrating", "irritability", "sleep problems"],
+    "symptoms": [
+      "excessive worry",
+      "restlessness",
+      "fatigue",
+      "difficulty concentrating",
+      "irritability",
+      "sleep problems"
+    ],
     "description": "Mental health condition characterized by persistent worry",
-    "treatments": ["therapy", "medication", "stress management", "lifestyle changes"],
-    "severity": "medium"
+    "treatments": [
+      "therapy",
+      "medication",
+      "stress management",
+      "lifestyle changes"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [],
+    "core_symptoms": [
+      "excessive worry"
+    ]
   },
   {
     "disease": "Depression",
-    "symptoms": ["persistent sadness", "loss of interest", "fatigue", "sleep changes", "appetite changes", "difficulty concentrating"],
+    "symptoms": [
+      "persistent sadness",
+      "loss of interest",
+      "fatigue",
+      "sleep changes",
+      "appetite changes",
+      "difficulty concentrating"
+    ],
     "description": "Mood disorder causing persistent feelings of sadness",
-    "treatments": ["therapy", "medication", "exercise", "support groups"],
-    "severity": "medium"
+    "treatments": [
+      "therapy",
+      "medication",
+      "exercise",
+      "support groups"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [],
+    "core_symptoms": [
+      "persistent sadness",
+      "loss of interest"
+    ]
   },
   {
     "disease": "Allergic Rhinitis",
-    "symptoms": ["sneezing", "runny nose", "itchy eyes", "congestion", "headache", "fatigue"],
+    "symptoms": [
+      "sneezing",
+      "runny nose",
+      "itchy eyes",
+      "congestion",
+      "headache",
+      "fatigue"
+    ],
     "description": "Inflammation of nasal passages caused by allergens",
-    "treatments": ["antihistamines", "nasal sprays", "avoid allergens", "immunotherapy"],
-    "severity": "low"
+    "treatments": [
+      "antihistamines",
+      "nasal sprays",
+      "avoid allergens",
+      "immunotherapy"
+    ],
+    "severity": "low",
+    "red_flag_symptoms": [],
+    "core_symptoms": [
+      "sneezing",
+      "runny nose"
+    ]
   },
   {
     "disease": "Arthritis",
-    "symptoms": ["joint pain", "stiffness", "swelling", "decreased range of motion", "fatigue"],
+    "symptoms": [
+      "joint pain",
+      "stiffness",
+      "swelling",
+      "decreased range of motion",
+      "fatigue"
+    ],
     "description": "Inflammation of one or more joints",
-    "treatments": ["medication", "physical therapy", "exercise", "joint replacement"],
-    "severity": "medium"
+    "treatments": [
+      "medication",
+      "physical therapy",
+      "exercise",
+      "joint replacement"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [],
+    "core_symptoms": [
+      "joint pain",
+      "stiffness"
+    ]
   },
   {
     "disease": "Urinary Tract Infection",
-    "symptoms": ["frequent urination", "burning urination", "cloudy urine", "pelvic pain", "fever", "nausea"],
+    "symptoms": [
+      "frequent urination",
+      "burning urination",
+      "cloudy urine",
+      "pelvic pain",
+      "fever",
+      "nausea"
+    ],
     "description": "Infection in any part of the urinary system",
-    "treatments": ["antibiotics", "hydration", "urinary pain relievers"],
-    "severity": "medium"
+    "treatments": [
+      "antibiotics",
+      "hydration",
+      "urinary pain relievers"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [
+      "fever",
+      "nausea"
+    ],
+    "core_symptoms": [
+      "frequent urination",
+      "burning urination"
+    ]
   },
   {
     "disease": "Thyroid Disorder (Hypothyroidism)",
-    "symptoms": ["fatigue", "weight gain", "cold intolerance", "dry skin", "hair loss", "depression", "constipation"],
+    "symptoms": [
+      "fatigue",
+      "weight gain",
+      "cold intolerance",
+      "dry skin",
+      "hair loss",
+      "depression",
+      "constipation"
+    ],
     "description": "Underactive thyroid gland not producing enough hormones",
-    "treatments": ["thyroid hormone replacement", "regular monitoring", "diet adjustments"],
-    "severity": "medium"
+    "treatments": [
+      "thyroid hormone replacement",
+      "regular monitoring",
+      "diet adjustments"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [],
+    "core_symptoms": [
+      "fatigue",
+      "weight gain"
+    ]
   },
   {
     "disease": "Thyroid Disorder (Hyperthyroidism)",
-    "symptoms": ["weight loss", "rapid heartbeat", "nervousness", "heat intolerance", "tremors", "sleep problems"],
+    "symptoms": [
+      "weight loss",
+      "rapid heartbeat",
+      "nervousness",
+      "heat intolerance",
+      "tremors",
+      "sleep problems"
+    ],
     "description": "Overactive thyroid gland producing too much hormone",
-    "treatments": ["medication", "radioactive iodine", "surgery", "beta blockers"],
-    "severity": "medium"
+    "treatments": [
+      "medication",
+      "radioactive iodine",
+      "surgery",
+      "beta blockers"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [
+      "rapid heartbeat"
+    ],
+    "core_symptoms": [
+      "weight loss",
+      "rapid heartbeat"
+    ]
   },
   {
     "disease": "Anemia",
-    "symptoms": ["fatigue", "weakness", "pale skin", "shortness of breath", "dizziness", "cold hands/feet"],
+    "symptoms": [
+      "fatigue",
+      "weakness",
+      "pale skin",
+      "shortness of breath",
+      "dizziness",
+      "cold hands/feet"
+    ],
     "description": "Condition with insufficient healthy red blood cells",
-    "treatments": ["iron supplements", "diet changes", "treatment of underlying cause", "blood transfusions"],
-    "severity": "medium"
+    "treatments": [
+      "iron supplements",
+      "diet changes",
+      "treatment of underlying cause",
+      "blood transfusions"
+    ],
+    "severity": "medium",
+    "red_flag_symptoms": [
+      "shortness of breath",
+      "dizziness"
+    ],
+    "core_symptoms": [
+      "fatigue",
+      "weakness"
+    ]
   },
   {
     "disease": "Appendicitis",
-    "symptoms": ["abdominal pain", "nausea", "vomiting", "fever", "loss of appetite", "constipation"],
+    "symptoms": [
+      "abdominal pain",
+      "nausea",
+      "vomiting",
+      "fever",
+      "loss of appetite",
+      "constipation"
+    ],
     "description": "Inflammation of the appendix requiring medical attention",
-    "treatments": ["surgery (appendectomy)", "antibiotics"],
-    "severity": "high"
+    "treatments": [
+      "surgery (appendectomy)",
+      "antibiotics"
+    ],
+    "severity": "high",
+    "red_flag_symptoms": [
+      "abdominal pain",
+      "vomiting",
+      "fever",
+      "loss of appetite"
+    ],
+    "core_symptoms": [
+      "abdominal pain",
+      "vomiting",
+      "fever"
+    ]
   },
   {
     "disease": "Chickenpox",
-    "symptoms": ["itchy rash", "blisters", "fever", "fatigue", "loss of appetite", "headache"],
+    "symptoms": [
+      "itchy rash",
+      "blisters",
+      "fever",
+      "fatigue",
+      "loss of appetite",
+      "headache"
+    ],
     "description": "Viral infection causing itchy blisters",
-    "treatments": ["rest", "calamine lotion", "antihistamines", "avoid scratching"],
-    "severity": "low"
+    "treatments": [
+      "rest",
+      "calamine lotion",
+      "antihistamines",
+      "avoid scratching"
+    ],
+    "severity": "low",
+    "red_flag_symptoms": [
+      "blisters",
+      "fever"
+    ],
+    "core_symptoms": [
+      "blisters",
+      "itchy rash"
+    ]
   },
   {
     "disease": "Mononucleosis",
-    "symptoms": ["extreme fatigue", "fever", "sore throat", "swollen lymph nodes", "body aches", "rash"],
+    "symptoms": [
+      "extreme fatigue",
+      "fever",
+      "sore throat",
+      "swollen lymph nodes",
+      "body aches",
+      "rash"
+    ],
     "description": "Viral infection also known as mono or kissing disease",
-    "treatments": ["rest", "hydration", "pain relievers", "avoid strenuous activity"],
-    "severity": "low"
+    "treatments": [
+      "rest",
+      "hydration",
+      "pain relievers",
+      "avoid strenuous activity"
+    ],
+    "severity": "low",
+    "red_flag_symptoms": [
+      "extreme fatigue",
+      "fever",
+      "sore throat"
+    ],
+    "core_symptoms": [
+      "extreme fatigue",
+      "fever",
+      "sore throat"
+    ]
   }
 ]

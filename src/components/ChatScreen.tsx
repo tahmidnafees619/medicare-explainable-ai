@@ -58,6 +58,10 @@ export default function ChatScreen({ onViewResults, predictionResult, setPredict
       addMsg({ role: 'ai', type: 'text', content: "I couldn't identify specific symptoms from your description. Try being more specific, for example: 'I have had a fever of 38°C, headache, and body aches for 2 days.'" });
       return;
     }
+    if (res.symptoms_found.length < 3) {
+      addMsg({ role: 'ai', type: 'text', content: `I found these symptoms: ${res.symptoms_found.join(', ')}. Please add at least 3 symptoms for a more reliable result.`, symptoms: res.symptoms_found });
+      return;
+    }
 
     setCurrentSymptoms(res.symptoms_found);
     addMsg({ role: 'ai', type: 'text', content: `Thanks for sharing. I found these symptoms: ${res.symptoms_found.join(', ')}. Let me ask a few follow-up questions to better understand.`, symptoms: res.symptoms_found });
