@@ -328,8 +328,11 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
     const rag_breakdown = ragValidation
       ? {
           rag_score: ragScore,
-          matched_symptoms: ragValidation.matched,
-          missing_symptoms: ragValidation.missing,
+          score: ragScore,
+          matched: ragValidation.matched,
+          missing: ragValidation.missing,
+          matchedSymptoms: ragValidation.matched,
+          missingSymptoms: ragValidation.missing,
           red_flags_present: ragValidation.red_flags_present,
           red_flags_missing: ragValidation.red_flags_missing,
         }
@@ -349,7 +352,7 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
     }
 
     // ── Build Methodology Explanation ───────────────────────────────────────
-    const methodsUsed: string[] = ['llm'];
+    let methodsUsed: string[] = ['llm'];
     let primaryMethod = 'llm';
     let methodologyExplanation = '';
 
@@ -362,7 +365,7 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
       primaryMethod = 'rag';
       methodologyExplanation = `Diagnosis based on strong symptom-to-disease matching (${ragScore.toFixed(1)}%) when ML confidence was low. Final hybrid confidence: ${final_confidence.toFixed(1)}%.`;
     } else {
-      methodologiesUsed = ['llm', 'rag'];
+      methodsUsed = ['llm', 'rag'];
       primaryMethod = 'llm';
       methodologyExplanation = mlEnsemble
         ? `ML predicted "${mlEnsemble.disease}" with ${adjusted_ml.toFixed(1)}% confidence but was deprioritized. Diagnosis from LLM clinical reasoning.`

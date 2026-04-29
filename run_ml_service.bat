@@ -1,6 +1,10 @@
 @echo off
+cd /d %~dp0
 echo Starting MediCare AI ML Service...
 echo.
+
+REM Ensure we are in the repository root directory
+cd /d %~dp0
 
 REM Check if Python is installed
 python --version >nul 2>&1
@@ -25,14 +29,21 @@ if exist requirements.txt (
 REM Check if training data exists
 if not exist training_data.csv (
     echo ERROR: training_data.csv not found
-    echo Please ensure your CSV training data is in the current directory
+    echo Please ensure your CSV training data is in the repository root directory
     pause
     exit /b 1
 )
 
-REM Train models if not already trained
-if not exist models (
-    echo Training ML models...
+REM Ensure all model files exist before starting ML service
+set MISSING_MODELS=0
+for %%f in (tfidf_vectorizer.pkl label_encoder.pkl random_forest.pkl svm.pkl naive_bayes.pkl) do (
+    if not exist models\%%f (
+        set MISSING_MODELS=1
+    )
+)
+
+if %MISSING_MODELS%==1 (
+    echo One or more trained model files are missing. Training ML models now...
     python train_models.py
     if errorlevel 1 (
         echo ERROR: Model training failed
@@ -40,7 +51,7 @@ if not exist models (
         exit /b 1
     )
 ) else (
-    echo Using existing trained models...
+    echo All trained model files are present.
 )
 
 REM Start the ML service

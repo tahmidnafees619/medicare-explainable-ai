@@ -23,12 +23,45 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
   const [saving, setSaving] = useState(false);
   const [barWidth, setBarWidth] = useState(0);
 
-  useEffect(() => { setTimeout(() => setBarWidth(result.confidence), 100); }, [result.confidence]);
+  if (!result || result.error) {
+    return (
+      <div className="screen-fade max-w-[720px] mx-auto px-5 py-10">
+        <button onClick={onBack} className="flex items-center gap-1 text-muted-foreground text-sm mb-6 hover:text-foreground transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back to Chat
+        </button>
+        <div className="text-center py-20">
+          <AlertTriangle className="w-16 h-16 text-destructive mx-auto mb-4" />
+          <h2 className="text-xl font-heading font-bold text-foreground mb-2">No Results Available</h2>
+          <p className="text-muted-foreground mb-6">
+            {result?.error || "It looks like the analysis results are not available. Please try running the diagnosis again."}
+          </p>
+          <button onClick={onNewCheck} className="btn-primary">Start New Diagnosis</button>
+        </div>
+      </div>
+    );
+  }
 
-  if (!result) return null;
+  useEffect(() => {
+    if (typeof result.confidence === 'number') {
+      const timeoutId = setTimeout(() => setBarWidth(result.confidence), 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [result.confidence]);
 
-  const confidenceLabel = getConfidenceLabel(result.confidence);
-  const isWeakSignal = result.confidence < 22;
+  const confidenceValue = typeof result.confidence === 'number' ? result.confidence : 0;
+  const confidenceLabel = getConfidenceLabel(confidenceValue);
+  const isWeakSignal = confidenceValue < 22;
+
+  const mlBreakdown = result.methodology?.ml_models_used ?? {};
+  const mlModels = [
+    { key: 'rf_prob', label: 'Random Forest', confidence: mlBreakdown.rf_prob },
+    { key: 'svm_prob', label: 'SVM', confidence: mlBreakdown.svm_prob },
+    { key: 'nb_prob', label: 'Naive Bayes', confidence: mlBreakdown.nb_prob },
+  ].filter(m => typeof m.confidence === 'number');
+
+  const ragScore = result.rag_validation?.rag_score ?? result.rag_validation?.score ?? 0;
+  const ragMatched = result.rag_validation?.matched ?? result.rag_validation?.matchedSymptoms ?? [];
+  const ragMissing = result.rag_validation?.missing ?? result.rag_validation?.missingSymptoms ?? [];
 
   const handleSave = async () => {
     if (!user) { onToast('Please sign in to save', 'info'); return; }
@@ -144,23 +177,19 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
           </p>
 
           {/* ML model details if ML was used */}
-          {result.methodology.ml_models_used && (
+          {mlModels.length > 0 && (
             <>
               <div className="border-t border-border pt-3 mt-3">
                 <p className="text-xs font-semibold text-muted-foreground mb-2">ML Model Breakdown:</p>
                 <div className="space-y-2">
-                  {Object.entries(result.methodology.ml_models_used).map(([model, data]: [string, any]) => (
-                    <div key={model} className="flex items-center justify-between text-sm">
-                      <span className="capitalize text-muted-foreground">{model.replace('_', ' ')}</span>
+                  {mlModels.map(model => (
+                    <div key={model.key} className="flex items-center justify-between text-sm">
+                      <span className="capitalize text-muted-foreground">{model.label}</span>
                       <div className="flex items-center gap-2">
                         <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full rounded-full transition-all ${data.used ? 'bg-secondary' : 'bg-muted'}`}
-                            style={{ width: `${Math.min(data.confidence, 100)}%` }}
-                          />
+                          <div className="h-full rounded-full bg-secondary transition-all" style={{ width: `${Math.min(model.confidence ?? 0, 100)}%` }} />
                         </div>
-                        <span className="text-xs w-8 text-right font-mono">{data.confidence.toFixed(1)}%</span>
-                        {data.used && <Check className="w-3 h-3 text-secondary" />}
+                        <span className="text-xs w-8 text-right font-mono">{(model.confidence ?? 0).toFixed(1)}%</span>
                       </div>
                     </div>
                   ))}
@@ -172,13 +201,13 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
           {result.rag_validation && (
             <div className="border-t border-border pt-3 mt-3">
               <p className="text-xs font-semibold text-muted-foreground mb-2">RAG Symptom Validation:</p>
-              <p className="text-sm mb-3">Match score: <span className="font-semibold">{result.rag_validation.score.toFixed(1)}%</span></p>
+              <p className="text-sm mb-3">Match score: <span className="font-semibold">{ragScore.toFixed(1)}%</span></p>
               <div className="grid gap-3 md:grid-cols-2 text-sm">
                 <div>
                   <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Matching symptoms</p>
-                  {result.rag_validation.matchedSymptoms?.length > 0 ? (
+                  {ragMatched.length > 0 ? (
                     <ul className="list-disc list-inside text-muted-foreground">
-                      {result.rag_validation.matchedSymptoms.map((symptom: string) => (
+                      {ragMatched.map((symptom: string) => (
                         <li key={symptom}>{symptom}</li>
                       ))}
                     </ul>
@@ -188,9 +217,9 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Missing symptoms</p>
-                  {result.rag_validation.missingSymptoms?.length > 0 ? (
+                  {ragMissing.length > 0 ? (
                     <ul className="list-disc list-inside text-muted-foreground">
-                      {result.rag_validation.missingSymptoms.map((symptom: string) => (
+                      {ragMissing.map((symptom: string) => (
                         <li key={symptom}>{symptom}</li>
                       ))}
                     </ul>

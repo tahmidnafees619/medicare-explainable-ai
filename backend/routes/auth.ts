@@ -14,7 +14,8 @@ router.get('/', (req: Request, res: Response) => {
 // POST /api/auth/register
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const body = req.body || {};
+    const { name, email, password } = body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -77,7 +78,8 @@ router.post('/register', async (req: Request, res: Response) => {
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const body = req.body || {};
+    const { email, password } = body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password required' });

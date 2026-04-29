@@ -102,7 +102,7 @@ function generateFallbackFollowUpQuestions(symptoms: string[]): string[] {
   return Array.from(new Set(questions)).slice(0, 5);
 }
 
-async function callOllama(prompt: string, systemPrompt?: string, timeoutMs = 30000): Promise<string> {
+async function callOllama(prompt: string, systemPrompt?: string, timeoutMs = 100000): Promise<string> {
   try {
     const body: Record<string, string | boolean> = {
       model: OLLAMA_MODEL,
@@ -131,7 +131,11 @@ async function callOllama(prompt: string, systemPrompt?: string, timeoutMs = 300
 
     const data: OllamaResponse = await response.json();
     return data.response;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.error(`Ollama call timed out after ${timeoutMs}ms`);
+      throw new Error(`Ollama request timed out after ${timeoutMs}ms`);
+    }
     console.error('Ollama call failed:', error);
     throw error;
   }
