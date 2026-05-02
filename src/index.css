@@ -110,6 +110,48 @@
     @apply border-destructive ring-[3px] ring-destructive/30;
   }
 
+     /* ── ADD THESE TO YOUR EXISTING index.css UNDER @layer components ── */
+
+/* Gradient flow (hero button, gradient text) */
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+/* Orb float animations */
+@keyframes float1 {
+  0%, 100% { transform: translate(0,   0)  scale(1);    }
+  33%       { transform: translate(30px,-20px) scale(1.05); }
+  66%       { transform: translate(-20px,15px) scale(0.97); }
+}
+@keyframes float2 {
+  0%, 100% { transform: translate(0,   0)   scale(1);    }
+  33%       { transform: translate(-25px,20px) scale(1.04); }
+  66%       { transform: translate(20px,-15px) scale(0.98); }
+}
+@keyframes float3 {
+  0%, 100% { transform: translate(0,    0); }
+  50%       { transform: translate(15px,-25px); }
+}
+
+/* Glow pulse (CTA button) */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(124,158,245,0.35), 0 0 40px rgba(124,158,245,0.10); }
+  50%       { box-shadow: 0 0 32px rgba(124,158,245,0.55), 0 0 70px rgba(124,158,245,0.20), 0 0 110px rgba(184,168,240,0.12); }
+}
+
+/* Shimmer (gradient text, CTA card title) */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* Typewriter cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
   /* Chat bubble animations */
   .chat-bubble-enter {
     animation: chatSlideUp 0.25s ease forwards;
