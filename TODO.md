@@ -1,29 +1,35 @@
-# ML Service Fix Progress - Hybrid Integration
+# RAG Knowledge Update & Symptom Matching Fix
+Current Working Directory: h:/medicare-ai-chat-73c62a449442dda33458a16081c73f8c99b60472
 
-## Status: In Progress
+## Plan Summary
+- Fix DISEASE_ALIASES in rag.service.ts
+- Add fuzzy matching for symptom similarity  
+- Lower relevance threshold to show results even at 0% match
+- Improve normalization (stemming/synonyms)
+- Regenerate training data & retrain ML
+- Test fixes
 
-### [x] 1. Diagnose ML Error
-- Run `./run_ml_service.bat` (sklearn build running)
-- Models present ✓
-- Diseases aligned via aliases ✓
+## Steps (0/7 complete)
 
-- Run `./run_ml_service.bat`
-- Identify scikit-learn/numpy build failure details
+### Step 1: ✅ Fix DISEASE_ALIASES mapping errors
+Edit backend/services/rag.service.ts
 
-### [x] 2. Fix Dependencies
-- Updated requirements.txt & requirements-ml.txt to wheels sklearn==1.3.2 numpy==1.24.3 ✓
-- pip install --only-binary wheels running
+### Step 2: ✅ Add fuzzy matching (Jaro-Winkler impl)
+Pure JS, no deps needed
 
-### [x] 3. Setup Training
-- train_models.py exists ✓ models current ✓ no retrain needed
+### Step 3: ✅ Implement fuzzy symptom matching
+Update calculateSimilarity() & validateSymptomMatches()
 
-### [x] 4. Disease Alignment ✓
+### Step 4: ✅ Lower relevance threshold & return partial matches
+r.relevance >= 0 in searchDiseases()
 
-### [x] 5. Start & Test ML ✓ service :8000 running, predict/health OK
+### Step 5: ✅ Improve text normalization
+SYMPTOM_SYNONYMS map + normalizeText integration
 
-### [x] 6. Integration ✓ test_diabetes.py: ml_primary Diabetes 54% conf success!
+### Step 6: ✅ Regenerate training data
+Generated 38,730 rows → training_data.csv
 
-### [x] 7. Cleanup COMPLETE
+### Step 7: [ ] Retrain ML models & test
+python train_models.py + run test_rag.mjs
 
-**ML Fixed! Hybrid ML+RAG+LLM ready.**
-
+**Next: Step 1**

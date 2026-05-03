@@ -23,7 +23,64 @@ interface SearchResult {
 }
 
 function normalizeText(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9\s]/g, '');
+  // Apply synonyms first
+  const lower = text.toLowerCase();
+  for (const [synonym, canonicals] of Object.entries(SYMPTOM_SYNONYMS)) {
+    if (lower.includes(synonym)) {
+      return canonicals[0]; // Use first canonical form
+    }
+  }
+  return lower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ');
+}
+
+function jaroWinklerSimilarity(s1: string, s2: string): number {
+  // Jaro-Winkler distance implementation (0-1 score)
+  const len1 = s1.length;
+  const len2 = s2.length;
+  if (len1 === 0 && len2 === 0) return 1;
+  if (len1 === 0 || len2 === 0) return 0;
+
+  const maxDist = Math.floor(Math.max(len1, len2) / 2) - 1;
+  let matchCount = 0;
+  const matches1 = new Array(len1).fill(false);
+  const matches2 = new Array(len2).fill(false);
+
+  // Find matches
+  for (let i = 0; i < len1; i++) {
+    const start = Math.max(0, i - maxDist);
+    const end = Math.min(len2, i + maxDist + 1);
+    for (let j = start; j < end; j++) {
+      if (!matches2[j] && s1[i] === s2[j]) {
+        matches1[i] = true;
+        matches2[j] = true;
+        matchCount++;
+        break;
+      }
+    }
+  }
+
+  if (matchCount === 0) return 0;
+
+  // Transpositions
+  let transCount = 0;
+  for (let i = 0; i < len1; i++) {
+    if (matches1[i]) {
+      while (!matches2[i]) i++;
+    }
+  }
+  transCount /= 2;
+
+  const jaro = ((matchCount / len1) + (matchCount / len2) + ((matchCount - transCount) / matchCount)) / 3.0;
+
+  // Winkler prefix boost
+  const prefix = Math.min(4, Math.min(len1, len2));
+  let prefixMatches = 0;
+  for (let i = 0; i < prefix; i++) {
+    if (s1[i] === s2[i]) prefixMatches++;
+    else break;
+  }
+  const scaling = 0.1;
+  return jaro + scaling * prefixMatches * (1 - jaro);
 }
 
 /**
@@ -32,30 +89,89 @@ function normalizeText(text: string): string {
  */
 const DISEASE_ALIASES: Record<string, string[]> = {
   'acute bronchitis': ['Bronchitis'],
-  'cystitis': ['Urinary Tract Infection'],
-  'conjunctivitis due to allergy': ['Allergic Rhinitis'],
+  'cystitis': ['Urinary Tract Infection', 'Bladder Disorder'],
+  'conjunctivitis due to allergy': ['Allergic Rhinitis', 'Seasonal Allergies (Hay Fever)'],
   'esophagitis': ['GERD (Acid Reflux)'],
   'gastrointestinal hemorrhage': ['Gastroenteritis (Stomach Flu)'],
-  'infectious gastroenteritis': ['Gastroenteritis (Stomach Flu)'],
+  'infectious gastroenteritis': ['Gastroenteritis (Stomach Flu)', 'Infectious Gastroenteritis'],
   'pneumonia': ['Pneumonia'],
   'hypoglycemia': ['Diabetes Type 1', 'Diabetes Type 2'],
-  'gout': ['Arthritis'],
+  'gout': ['Arthritis', 'Gout'],
   'arthritis of the hip': ['Arthritis'],
-  'bursitis': ['Arthritis'],
-  'spondylosis': ['Arthritis'],
-  'diverticulitis': ['Appendicitis'],
-  'liver disease': ['Heart Disease'],
-  'nose disorder': ['Common Cold', 'Allergic Rhinitis'],
-  'fungal infection of the hair': ['Abnormal appearing skin'],
-  'marijuana abuse': ['Anxiety Disorder', 'Depression'],
-  'peripheral nerve disorder': ['Anxiety Disorder'],
-  'complex regional pain syndrome': ['Anxiety Disorder', 'Depression'],
-  'spontaneous abortion': ['Pain during pregnancy'],
-  'vaginal cyst': ['Urinary Tract Infection'],
-  'vulvodynia': ['Urinary Tract Infection'],
+  'bursitis': ['Arthritis', 'Bursitis'],
+  'spondylosis': ['Arthritis', 'Spondylosis'],
+  'diverticulitis': ['Diverticulosis'],
+  // Removed 'liver disease': ['Heart Disease'] - incorrect mapping
+  'nose disorder': ['Common Cold', 'Nose Disorder'],
+  'fungal infection of the hair': ['Fungal Infection Of The Skin'],
+  'marijuana abuse': ['Anxiety Disorder', 'Depression', 'Drug Abuse (Marijuana)'],
+  'peripheral nerve disorder': ['Peripheral Nerve Disorder'],
+  'complex regional pain syndrome': ['Complex Regional Pain Syndrome'],
+  'spontaneous abortion': ['Pain during pregnancy', 'Problem During Pregnancy'],
+  'vaginal cyst': ['Vaginal Cyst'],
+  'vulvodynia': ['Vulvodynia'],
   'sprain or strain': ['Injury to the arm'],
   'injury to the arm': ['Injury to the arm'],
-  'strep throat': ['Common Cold', 'Influenza (Flu)'],
+  'strep throat': ['Pharyngitis', 'Strep Throat'],
+};
+
+const SYMPTOM_SYNONYMS: Record<string, string[]> = {
+  'head hurts': ['headache'],
+  'headache or migraine': ['headache'],
+  'stomach ache': ['abdominal pain', 'sharp abdominal pain'],
+  'tummy pain': ['abdominal pain'],
+  'chest hurts': ['chest pain', 'sharp chest pain'],
+  'short of breath': ['shortness of breath'],
+  'hard to breathe': ['difficulty breathing', 'shortness of breath'],
+  'nauseous': ['nausea'],
+  'throwing up': ['vomiting'],
+  'hurts to pee': ['painful urination'],
+  'frequent peeing': ['frequent urination'],
+  'nervous': ['anxiety and nervousness'],
+  'sad': ['depression'],
+  'insomniac': ['insomnia'],
+  'heart racing': ['palpitations', 'increased heart rate'],
+  'dizzy': ['dizziness'],
+  'stiff neck': ['neck stiffness or tightness'],
+  'feverish': ['fever'],
+  'rashes': ['skin rash'],
+  'itching': ['itching of skin'],
+  'joint hurts': ['joint pain'],
+  'back hurts': ['back pain'],
+  'leg pain or cramps': ['leg pain', 'leg cramps or spasms'],
+  'arm hurts': ['arm pain'],
+  'tired all time': ['fatigue'],
+  'losing weight': ['recent weight loss'],
+  'thirsty a lot': ['thirst'],
+  'pee a lot': ['frequent urination', 'excessive urination at night'],
+  'blurry vision': ['diminished vision', 'spots or clouds in vision'],
+  'coughing': ['cough'],
+  'runny nose': ['nasal congestion', 'coryza'],
+  'sore throat pain': ['sore throat'],
+  'ear hurts': ['ear pain'],
+  'skin bumps': ['skin lesion', 'skin growth'],
+  'belly bloated': ['stomach bloating', 'abdominal distention'],
+  'diarrhea loose stool': ['diarrhea'],
+  'constipated': ['constipation'],
+  'burning pee': ['painful urination'],
+  'blood in stool': ['blood in stool', 'melena', 'rectal bleeding'],
+  'vomit blood': ['vomiting blood'],
+  'yellow skin': ['jaundice'],
+  'swollen legs': ['leg swelling', 'peripheral edema'],
+  'numb tingling': ['loss of sensation', 'paresthesia'],
+  'weak muscles': ['weakness'],
+  'confused': ['disturbance of memory', 'depressive or psychotic symptoms'],
+  'seeing spots': ['spots or clouds in vision'],
+  'ringing ears': ['ringing in ear'],
+  'trouble swallowing': ['difficulty in swallowing'],
+  'lump throat': ['lump in throat'],
+  'hoarse voice change': ['hoarse voice'],
+  'night sweats': ['sweating'],
+  'unexplained bruises': ['abnormal appearing skin'],
+  'easy bleeding': ['nosebleed', 'bleeding gums'],
+  'dark urine': ['blood in urine'],
+  'pale skin': ['abnormal appearing skin'],
+  'big lymph nodes': ['swollen lymph nodes'],
 };
 
 /**
@@ -96,13 +212,12 @@ function calculateSimilarity(symptoms: string[], diseaseSymptoms: string[]): num
   const normalizedDb = diseaseSymptoms.map(normalizeText);
   
   let matchCount = 0;
-  const matched: string[] = [];
   
   for (const inputSymptom of normalizedInput) {
     for (const dbSymptom of normalizedDb) {
-      if (dbSymptom.includes(inputSymptom) || inputSymptom.includes(dbSymptom)) {
+      // Fuzzy match: Jaro-Winkler > 0.7 (~70% similar)
+      if (jaroWinklerSimilarity(inputSymptom, dbSymptom) > 0.7) {
         matchCount++;
-        matched.push(dbSymptom);
         break;
       }
     }
@@ -137,7 +252,7 @@ export function searchDiseases(symptoms: string[]): SearchResult[] {
   });
   
   return results
-    .filter(r => r.relevance > 0)
+    .filter(r => r.relevance >= 0)
     .sort((a, b) => b.relevance - a.relevance)
     .slice(0, 10);
 }
@@ -218,7 +333,7 @@ export function validateSymptomMatches(
     weightedTotal += weight;
 
     const matched = normalizedInput.some(inputSymptom =>
-      normalizedDbSymptom.includes(inputSymptom) || inputSymptom.includes(normalizedDbSymptom)
+      jaroWinklerSimilarity(inputSymptom, normalizedDbSymptom) > 0.7
     );
 
     if (matched) {
