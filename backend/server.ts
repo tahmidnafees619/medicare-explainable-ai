@@ -110,7 +110,12 @@ app.listen(PORT, async () => {
   // Check ML service availability
   console.log('\n⏳ Checking ML service status...');
   try {
-    const mlHealth = await fetch(`${process.env.ML_SERVICE_URL || 'http://localhost:8000'}/health`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    const mlHealth = await fetch(`${process.env.ML_SERVICE_URL || 'http://localhost:8000'}/health`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
     if (mlHealth.ok) {
       const status = await mlHealth.json();
       if (status.models_trained) {

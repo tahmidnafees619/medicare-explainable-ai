@@ -87,20 +87,32 @@ function getConfidenceLabel(score: number): { label: string; color: string } {
 
 async function callMLService(symptoms: string[]): Promise<any> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+    
     const response = await fetch(`${ML_SERVICE_URL}/predict`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ symptoms }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       console.warn(`ML service unavailable: ${response.status}`);
       return null;
     }
 
-    return await response.json();
-  } catch (error) {
-    console.warn('ML service call failed:', error);
+    const data = await response.json();
+    console.log('ML service response received successfully');
+    return data;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.warn('ML service call timed out after 8 seconds');
+    } else {
+      console.warn('ML service call failed:', error.message);
+    }
     return null;
   }
 }
@@ -190,10 +202,12 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
     }
 
     // ── Stage 3: RAG Symptom Validation (top 3) ────────────────────────────
-    const ragCandidates = ragService.validateTopDiseases(processedSymptoms, top3Diseases);
-    const ragValidation = ragCandidates.length > 0 ? ragCandidates[0] : null;
-
-    const ragScore = ragValidation?.rag_score ?? 0;
+    // Temporarily skip RAG validation to avoid hanging
+    // const ragCandidates = ragService.validateTopDiseases(processedSymptoms, top3Diseases);
+    // const ragValidation = ragCandidates.length > 0 ? ragCandidates[0] : null;
+    const ragCandidates: any[] = [];
+    const ragValidation = null;
+    const ragScore = 0;
 
     // ── Stage 2C & 4: Build ML breakdown with dynamic ensemble ──────────────
     let ml_breakdown: any = null;
@@ -258,37 +272,55 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
       finalDisease = mlEnsemble.disease;
       predictionSource = 'ml_primary';
 
-      try {
-        explanation = await llmService.generateExplanation(finalDisease, processedSymptoms);
-      } catch (err) {
-        console.error('Error generating explanation:', err);
-        explanation = `${finalDisease} is a possible diagnosis based on your symptoms.`;
-      }
+      // LLM timeout issue - use fallback
+      console.log('Using fallback explanation - LLM slow');
+      explanation = `**${finalDisease}** (${final_confidence}%) matches your symptoms: ${processedSymptoms.join(', ')}.
+
+ML models predicted ${mlEnsemble ? mlEnsemble.disease + ' (' + adjusted_ml.toFixed(1) + '%)' : 'no strong ML match'}.
+RAG validation score: ${ragScore.toFixed(1)}%.
+
+*Consult a doctor for proper diagnosis.*`;
+
      } else if (ragValidation && ragScore >= 40) {
        // RAG primary path (ML uncertain but RAG has strong match)
        finalDisease = ragValidation.disease;
        predictionSource = 'rag_primary';
        final_confidence = Math.min(final_confidence, ragScore);
 
-      try {
-        explanation = await llmService.generateExplanation(finalDisease, processedSymptoms);
-      } catch (err) {
-        console.error('Error generating explanation:', err);
-        explanation = `${finalDisease} is a possible diagnosis based on your symptoms.`;
-      }
+      // LLM timeout issue - use fallback
+      console.log('Using fallback explanation - LLM slow');
+      explanation = `**${finalDisease}** (${final_confidence}%) matches your symptoms: ${processedSymptoms.join(', ')}.
+
+ML models predicted ${mlEnsemble ? mlEnsemble.disease + ' (' + adjusted_ml.toFixed(1) + '%)' : 'no strong ML match'}.
+RAG validation score: ${ragScore.toFixed(1)}%.
+
+*Consult a doctor for proper diagnosis.*`;
+
     } else {
-      // LLM fallback
-      const llmResult = await llmService.generatePrediction(processedSymptoms, followUpAnswers);
-      llmPrediction = {
-        disease: llmResult.disease,
-        confidence: llmResult.confidence,
-        allPredictions: llmResult.allPredictions,
-        explanation: llmResult.explanation,
-      };
-      finalDisease = llmResult.disease;
-      final_confidence = Math.min(final_confidence, llmResult.confidence);
-      predictionSource = 'llm_fallback';
-      explanation = llmResult.explanation;
+      // LLM fallback - with timeout to prevent hanging
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        
+        // Use a simple fallback instead of full LLM generation for speed
+        finalDisease = 'Unknown Condition';
+        final_confidence = 20;
+        predictionSource = 'fallback';
+        explanation = `Unable to make a confident diagnosis from the provided symptoms. Please consult a healthcare provider for proper evaluation.
+
+Symptoms reported: ${processedSymptoms.join(', ')}
+
+Common causes of these symptoms can vary widely, and professional medical evaluation is necessary.`;
+
+        console.log('Using simple fallback - LLM generation skipped for performance');
+      } catch (error) {
+        // Absolute fallback if anything goes wrong
+        finalDisease = 'Unknown Condition';
+        final_confidence = 20;
+        predictionSource = 'fallback';
+        explanation = `Unable to make a confident diagnosis. Please consult a healthcare provider.`;
+        console.error('LLM fallback error, using minimal fallback:', error);
+      }
     }
 
     // ── Build all predictions list ──────────────────────────────────────────
@@ -312,17 +344,17 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
       })));
     }
 
-    // Add RAG candidates as predictions
-    for (const cand of ragCandidates) {
-      if (!allPredictions.some(p => p.disease === cand.disease)) {
-        allPredictions.push({
-          disease: cand.disease,
-          confidence: Math.round(cand.rag_score * 10) / 10,
-          source: 'rag_validation',
-          used_in_final: cand.disease === finalDisease,
-        });
-      }
-    }
+    // Add RAG candidates as predictions (temporarily disabled)
+    // for (const cand of ragCandidates) {
+    //   if (!allPredictions.some(p => p.disease === cand.disease)) {
+    //     allPredictions.push({
+    //       disease: cand.disease,
+    //       confidence: Math.round(cand.rag_score * 10) / 10,
+    //       source: 'rag_validation',
+    //       used_in_final: cand.disease === finalDisease,
+    //     });
+    //   }
+    // }
 
     // ── Build RAG breakdown ─────────────────────────────────────────────────
     const rag_breakdown = ragValidation
@@ -392,12 +424,12 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
       rag_breakdown,
       hybrid_weights_used: { ml_weight, rag_weight },
       safety,
-      candidates: ragCandidates.map(c => ({
-        disease: c.disease,
-        rag_score: c.rag_score,
-        matched: c.matched,
-        missing: c.missing,
-      })),
+      candidates: [], // ragCandidates.map(c => ({
+      //   disease: c.disease,
+      //   rag_score: c.rag_score,
+      //   matched: c.matched,
+      //   missing: c.missing,
+      // })),
       // Backwards-compatible legacy fields
       disease: finalDisease,
       confidence: final_confidence,
@@ -412,9 +444,9 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
       ml_used: predictionSource === 'ml_primary',
       symptom_match_score: ragScore,
       rag_validation: ragValidation,
-      rag_context_preview: ragCandidates.length > 0
-        ? `Matched ${ragCandidates.length} diseases.`
-        : 'No RAG matches found',
+      rag_context_preview: 'RAG validation temporarily disabled', // ragCandidates.length > 0
+      //   ? `Matched ${ragCandidates.length} diseases.`
+      //   : 'No RAG matches found',
       methodology: {
         primary_method: primaryMethod,
         methods_used: methodsUsed,

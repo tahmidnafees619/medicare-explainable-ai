@@ -7,7 +7,7 @@ const runtimeProcess = globalThis as typeof globalThis & {
 };
 
 const OLLAMA_HOST = runtimeProcess.process?.env?.OLLAMA_HOST || 'http://localhost:11434';
-const OLLAMA_MODEL = runtimeProcess.process?.env?.OLLAMA_MODEL || 'llama3.2';
+const OLLAMA_MODEL = runtimeProcess.process?.env?.OLLAMA_MODEL || 'llama3.2:latest';
 
 interface OllamaResponse {
   model: string;
@@ -158,13 +158,15 @@ Return ONLY a JSON array of symptom strings, no other text.`;
     );
 
     try {
-      const symptoms = JSON.parse(result);
+      // Clean markdown code blocks and trim
+      let cleaned = result.replace(/^```(?:json)?\s*/m, '').replace(/\s*```$/m, '').trim();
+      const symptoms = JSON.parse(cleaned);
       if (Array.isArray(symptoms)) {
         return { symptoms };
       }
       return extractSymptomsLocally(userInput);
     } catch {
-      const lines = result.split('\n').filter(l => l.trim());
+      const lines = result.split('\n').filter(l => l.trim() && !l.includes('```'));
       return lines.length > 0 ? { symptoms: lines } : extractSymptomsLocally(userInput);
     }
   } catch (error) {
@@ -194,13 +196,15 @@ Return ONLY valid JSON array ["question1", "question2"], NO OTHER TEXT. Examples
     );
 
     try {
-      const questions = JSON.parse(result);
+      // Clean markdown code blocks and trim
+      let cleaned = result.replace(/^```(?:json)?\s*/m, '').replace(/\s*```$/m, '').trim();
+      const questions = JSON.parse(cleaned);
       if (Array.isArray(questions)) {
         return questions.slice(0, 5);
       }
       return generateFallbackFollowUpQuestions(symptoms);
     } catch {
-      const lines = result.split('\n').filter(l => l.trim()).slice(0, 5);
+      const lines = result.split('\n').filter(l => l.trim() && !l.includes('```')).slice(0, 5);
       return lines.length > 0 ? lines : generateFallbackFollowUpQuestions(symptoms);
     }
   } catch (error) {
@@ -235,20 +239,32 @@ Output format (JSON):
 
 Return ONLY valid JSON, no other text.`;
 
-  const result = await callOllama(
-    `Analyze and provide diagnosis for: ${context}`,
-    systemPrompt
-  );
-
   try {
-    const parsed = JSON.parse(result);
-    return {
-      disease: parsed.disease || 'Unknown',
-      confidence: parsed.confidence || 50,
-      allPredictions: parsed.allPredictions || [{ disease: parsed.disease || 'Unknown', confidence: parsed.confidence || 50 }],
-      explanation: parsed.explanation || 'Based on the symptoms provided.',
-    };
-  } catch {
+    const result = await callOllama(
+      `Analyze and provide diagnosis for: ${context}`,
+      systemPrompt
+    );
+
+    try {
+      // Clean markdown code blocks and trim
+      let cleaned = result.replace(/^```(?:json)?\s*/m, '').replace(/\s*```$/m, '').trim();
+      const parsed = JSON.parse(cleaned);
+      return {
+        disease: parsed.disease || 'Unknown',
+        confidence: parsed.confidence || 50,
+        allPredictions: parsed.allPredictions || [{ disease: parsed.disease || 'Unknown', confidence: parsed.confidence || 50 }],
+        explanation: parsed.explanation || 'Based on the symptoms provided.',
+      };
+    } catch {
+      return {
+        disease: 'Unable to determine',
+        confidence: 0,
+        allPredictions: [],
+        explanation: 'Unable to analyze symptoms. Please consult a healthcare provider.',
+      };
+    }
+  } catch (error) {
+    console.error('Prediction generation error:', error);
     return {
       disease: 'Unable to determine',
       confidence: 0,
