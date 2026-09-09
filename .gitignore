@@ -13,9 +13,14 @@ dist-ssr
 *.local
 
 # Environment variables (local dev only)
+# Only .env.example / .env.production templates belong in git - never a file
+# holding real values. Keep these patterns broad.
 .env
 .env.local
 .env.*.local
+.env.local.*
+.env.*.bak
+*.env.backup
 
 # Prisma
 /src/generated/prisma
@@ -27,6 +32,14 @@ prisma/.env
 
 # Build artifacts
 *.tsbuildinfo
+__pycache__/
+*.py[cod]
+
+# Local diagnostic / scratch output
+diag_results.txt
+diagnose_results.txt
+backend/backend-error.txt
+backend/backend-output.txt
 
 # Test results
 testResults_*.json
@@ -34,6 +47,7 @@ testResults_*.json
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+.vs/
 .idea
 .DS_Store
 *.suo

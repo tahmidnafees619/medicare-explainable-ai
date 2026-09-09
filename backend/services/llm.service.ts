@@ -129,7 +129,7 @@ async function callOllama(prompt: string, systemPrompt?: string, timeoutMs = 100
       throw new Error(`Ollama error: ${response.status}`);
     }
 
-    const data: OllamaResponse = await response.json();
+    const data = await response.json() as OllamaResponse;
     return data.response;
   } catch (error: any) {
     if (error.name === 'AbortError') {
@@ -215,7 +215,8 @@ Return ONLY valid JSON array ["question1", "question2"], NO OTHER TEXT. Examples
 
 export async function generatePrediction(
   symptoms: string[],
-  followUpAnswers: Array<{ question: string; answer: string }>
+  followUpAnswers: Array<{ question: string; answer: string }>,
+  timeoutMs = 30000
 ): Promise<PredictionResult> {
   const symptomsList = symptoms.join(', ');
   const answersList = followUpAnswers.map(a => `${a.question}: ${a.answer}`).join('; ');
@@ -239,38 +240,38 @@ Output format (JSON):
 
 Return ONLY valid JSON, no other text.`;
 
-  try {
-    const result = await callOllama(
-      `Analyze and provide diagnosis for: ${context}`,
-      systemPrompt
-    );
+  const unableToDetermine: PredictionResult = {
+    disease: 'Unable to determine',
+    confidence: 0,
+    allPredictions: [],
+    explanation: 'Unable to analyze symptoms. Please consult a healthcare provider.',
+  };
 
-    try {
-      // Clean markdown code blocks and trim
-      let cleaned = result.replace(/^```(?:json)?\s*/m, '').replace(/\s*```$/m, '').trim();
-      const parsed = JSON.parse(cleaned);
-      return {
-        disease: parsed.disease || 'Unknown',
-        confidence: parsed.confidence || 50,
-        allPredictions: parsed.allPredictions || [{ disease: parsed.disease || 'Unknown', confidence: parsed.confidence || 50 }],
-        explanation: parsed.explanation || 'Based on the symptoms provided.',
-      };
-    } catch {
-      return {
-        disease: 'Unable to determine',
-        confidence: 0,
-        allPredictions: [],
-        explanation: 'Unable to analyze symptoms. Please consult a healthcare provider.',
-      };
-    }
+  let result: string;
+  try {
+    result = await callOllama(
+      `Analyze and provide diagnosis for: ${context}`,
+      systemPrompt,
+      timeoutMs
+    );
   } catch (error) {
-    console.error('Prediction generation error:', error);
+    console.error('Prediction generation failed (Ollama call error):', error);
+    return unableToDetermine;
+  }
+
+  try {
+    // Clean markdown code blocks and trim
+    const cleaned = result.replace(/^```(?:json)?\s*/m, '').replace(/\s*```$/m, '').trim();
+    const parsed = JSON.parse(cleaned);
     return {
-      disease: 'Unable to determine',
-      confidence: 0,
-      allPredictions: [],
-      explanation: 'Unable to analyze symptoms. Please consult a healthcare provider.',
+      disease: parsed.disease || 'Unknown',
+      confidence: parsed.confidence || 50,
+      allPredictions: parsed.allPredictions || [{ disease: parsed.disease || 'Unknown', confidence: parsed.confidence || 50 }],
+      explanation: parsed.explanation || 'Based on the symptoms provided.',
     };
+  } catch (error) {
+    console.error('Prediction generation failed (could not parse model output):', error);
+    return unableToDetermine;
   }
 }
 
@@ -288,7 +289,8 @@ function generateFallbackExplanation(disease: string, symptoms: string[]): strin
 
 export async function generateExplanation(
   disease: string,
-  symptoms: string[]
+  symptoms: string[],
+  timeoutMs = 30000
 ): Promise<string> {
   const systemPrompt = `You are a medical explainer. Provide a clear, patient-friendly explanation of the diagnosis.
 
@@ -304,7 +306,8 @@ Do not use technical jargon without explanation.`;
   try {
     const result = await callOllama(
       `Explain what "${disease}" means for a patient with symptoms: ${symptoms.join(', ')}`,
-      systemPrompt
+      systemPrompt,
+      timeoutMs
     );
     if (result && result.trim().length > 0) {
       return result.trim();

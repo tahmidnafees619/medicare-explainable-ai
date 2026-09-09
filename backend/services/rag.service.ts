@@ -33,7 +33,7 @@ function normalizeText(text: string): string {
   return lower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ');
 }
 
-function jaroWinklerSimilarity(s1: string, s2: string): number {
+export function jaroWinklerSimilarity(s1: string, s2: string): number {
   // Jaro-Winkler distance implementation (0-1 score)
   const len1 = s1.length;
   const len2 = s2.length;
@@ -61,12 +61,15 @@ function jaroWinklerSimilarity(s1: string, s2: string): number {
 
   if (matchCount === 0) return 0;
 
-  // Transpositions
+  // Transpositions: walk both match lists in step. `k` indexes matches2 and is
+  // bounded by matchCount, so it can never run past the end of the array.
   let transCount = 0;
+  let k = 0;
   for (let i = 0; i < len1; i++) {
-    if (matches1[i]) {
-      while (!matches2[i]) i++;
-    }
+    if (!matches1[i]) continue;
+    while (!matches2[k]) k++;
+    if (s1[i] !== s2[k]) transCount++;
+    k++;
   }
   transCount /= 2;
 
@@ -393,20 +396,36 @@ export function validateTopDiseases(
   red_flags_present: string[];
   red_flags_missing: string[];
 }> {
-  return topDiseases
-    .slice(0, 3)
-    .map(diseaseName => {
-      const validation = validateSymptomMatches(symptoms, diseaseName);
-      return {
-        disease: validation.disease,
-        rag_score: validation.rag_score,
-        matched: validation.matchedSymptoms,
-        missing: validation.missingSymptoms,
-        red_flags_present: validation.red_flags_present,
-        red_flags_missing: validation.red_flags_missing,
-      };
-    })
-    .sort((a, b) => b.rag_score - a.rag_score);
+  // Several ML disease names can resolve to the same knowledge-base entry via
+  // DISEASE_ALIASES (e.g. "diabetes" and "diabetes type 2"), so de-duplicate on
+  // the resolved name and keep the best-scoring validation for each.
+  const byResolvedName = new Map<string, {
+    disease: string;
+    rag_score: number;
+    matched: string[];
+    missing: string[];
+    red_flags_present: string[];
+    red_flags_missing: string[];
+  }>();
+
+  for (const diseaseName of topDiseases) {
+    if (byResolvedName.size >= 3) break;
+
+    const validation = validateSymptomMatches(symptoms, diseaseName);
+    const existing = byResolvedName.get(validation.disease);
+    if (existing && existing.rag_score >= validation.rag_score) continue;
+
+    byResolvedName.set(validation.disease, {
+      disease: validation.disease,
+      rag_score: validation.rag_score,
+      matched: validation.matchedSymptoms,
+      missing: validation.missingSymptoms,
+      red_flags_present: validation.red_flags_present,
+      red_flags_missing: validation.red_flags_missing,
+    });
+  }
+
+  return Array.from(byResolvedName.values()).sort((a, b) => b.rag_score - a.rag_score);
 }
 
 export function augmentPrompt(symptoms: string[], userQuery?: string): string {

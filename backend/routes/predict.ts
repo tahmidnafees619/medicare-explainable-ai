@@ -8,6 +8,29 @@ const router = Router();
 // ML Service configuration
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
 
+type PredictionSource = 'ml_primary' | 'rag_primary' | 'llm_fallback' | 'fallback';
+
+/**
+ * Minimum calibrated ML confidence to treat the ensemble as the primary answer.
+ * The ML service scores against ~776 disease classes, where a correct top-1 pick
+ * carries a raw probability of only a few percent. It therefore reports a
+ * calibrated confidence (lift over chance + dominance over the runner-ups)
+ * rather than the raw probability, and this threshold is set against that
+ * calibrated scale: nonsense input lands near 20, real symptom sets near 40-55.
+ */
+const ML_PRIMARY_THRESHOLD = 35;
+
+/** Minimum RAG symptom-match score to lead with the knowledge-base match. */
+const RAG_PRIMARY_THRESHOLD = 40;
+
+/**
+ * Local Ollama generation takes ~25s warm and longer on a cold model load, so
+ * these are generous. If the model does not answer in time the caller falls
+ * back to a templated explanation rather than failing the request.
+ */
+const EXPLANATION_TIMEOUT_MS = 60000;
+const PREDICTION_TIMEOUT_MS = 60000;
+
 // ── Stage 1: Symptom Preprocessing ────────────────────────────────────────
 
 /**
@@ -188,26 +211,31 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
       mlModelPredictions = mlResult.model_predictions;
     }
 
-    // Get top 3 diseases from ML for RAG validation
-    const top3Diseases: string[] = mlEnsemble
-      ? [mlEnsemble.disease]
-      : [];
+    // Get top candidate diseases from ML for RAG validation. Prefer the
+    // ensemble's ranked top_k; fall back to the individual model picks.
+    const top3Diseases: string[] = [];
 
-    // Also include other model predictions if they differ
+    if (Array.isArray(mlResult?.top_k)) {
+      for (const entry of mlResult.top_k) {
+        if (entry?.disease && !top3Diseases.includes(entry.disease)) {
+          top3Diseases.push(entry.disease);
+        }
+      }
+    } else if (mlEnsemble) {
+      top3Diseases.push(mlEnsemble.disease);
+    }
+
     if (mlModelPredictions) {
       const otherDiseases = Object.values(mlModelPredictions)
         .map((m: any) => m.disease)
-        .filter((d: string) => d !== top3Diseases[0] && !top3Diseases.includes(d));
-      top3Diseases.push(...otherDiseases.slice(0, 2));
+        .filter((d: string) => d && !top3Diseases.includes(d));
+      top3Diseases.push(...otherDiseases);
     }
 
     // ── Stage 3: RAG Symptom Validation (top 3) ────────────────────────────
-    // Temporarily skip RAG validation to avoid hanging
-    // const ragCandidates = ragService.validateTopDiseases(processedSymptoms, top3Diseases);
-    // const ragValidation = ragCandidates.length > 0 ? ragCandidates[0] : null;
-    const ragCandidates: any[] = [];
-    const ragValidation = null;
-    const ragScore = 0;
+    const ragCandidates = ragService.validateTopDiseases(processedSymptoms, top3Diseases);
+    const ragValidation = ragCandidates.length > 0 ? ragCandidates[0] : null;
+    const ragScore = ragValidation ? ragValidation.rag_score : 0;
 
     // ── Stage 2C & 4: Build ML breakdown with dynamic ensemble ──────────────
     let ml_breakdown: any = null;
@@ -259,50 +287,48 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
     final_confidence = Math.max(0, Math.min(85, final_confidence)); // cap at 85
     final_confidence = Math.round(final_confidence * 10) / 10;
 
-    const { label: confidence_label, color: confidence_color } = getConfidenceLabel(final_confidence);
-
     // ── Determine final disease & prediction source ─────────────────────────
     let finalDisease: string;
-    let predictionSource: 'ml_primary' | 'llm_fallback' | 'rag_primary';
+    let predictionSource: PredictionSource;
     let llmPrediction: any = null;
     let explanation: string = '';
 
-    if (mlEnsemble && adjusted_ml >= 30) {
+    if (mlEnsemble && adjusted_ml >= ML_PRIMARY_THRESHOLD) {
       // ML primary path
       finalDisease = mlEnsemble.disease;
       predictionSource = 'ml_primary';
-
-      // LLM timeout issue - use fallback
-      console.log('Using fallback explanation - LLM slow');
-      explanation = `**${finalDisease}** (${final_confidence}%) matches your symptoms: ${processedSymptoms.join(', ')}.
-
-ML models predicted ${mlEnsemble ? mlEnsemble.disease + ' (' + adjusted_ml.toFixed(1) + '%)' : 'no strong ML match'}.
-RAG validation score: ${ragScore.toFixed(1)}%.
-
-*Consult a doctor for proper diagnosis.*`;
-
-     } else if (ragValidation && ragScore >= 40) {
-       // RAG primary path (ML uncertain but RAG has strong match)
-       finalDisease = ragValidation.disease;
-       predictionSource = 'rag_primary';
-       final_confidence = Math.min(final_confidence, ragScore);
-
-      // LLM timeout issue - use fallback
-      console.log('Using fallback explanation - LLM slow');
-      explanation = `**${finalDisease}** (${final_confidence}%) matches your symptoms: ${processedSymptoms.join(', ')}.
-
-ML models predicted ${mlEnsemble ? mlEnsemble.disease + ' (' + adjusted_ml.toFixed(1) + '%)' : 'no strong ML match'}.
-RAG validation score: ${ragScore.toFixed(1)}%.
-
-*Consult a doctor for proper diagnosis.*`;
-
+      explanation = await llmService.generateExplanation(
+        finalDisease,
+        processedSymptoms,
+        EXPLANATION_TIMEOUT_MS
+      );
+    } else if (ragValidation && ragScore >= RAG_PRIMARY_THRESHOLD) {
+      // RAG primary path (ML uncertain but RAG has strong symptom match)
+      finalDisease = ragValidation.disease;
+      predictionSource = 'rag_primary';
+      final_confidence = Math.min(final_confidence, ragScore);
+      explanation = await llmService.generateExplanation(
+        finalDisease,
+        processedSymptoms,
+        EXPLANATION_TIMEOUT_MS
+      );
     } else {
-      // LLM fallback - with timeout to prevent hanging
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-        
-        // Use a simple fallback instead of full LLM generation for speed
+      // LLM fallback: neither ML nor RAG is confident, so ask the model to
+      // reason over the symptoms directly rather than giving up outright.
+      llmPrediction = await llmService.generatePrediction(
+        processedSymptoms,
+        followUpAnswers,
+        PREDICTION_TIMEOUT_MS
+      );
+
+      if (llmPrediction && llmPrediction.confidence > 0 && llmPrediction.disease !== 'Unable to determine') {
+        finalDisease = llmPrediction.disease;
+        predictionSource = 'llm_fallback';
+        // The LLM is the weakest of the three signals; keep its confidence
+        // below the band where ML/RAG results live.
+        final_confidence = Math.round(Math.min(llmPrediction.confidence, 45) * 10) / 10;
+        explanation = llmPrediction.explanation;
+      } else {
         finalDisease = 'Unknown Condition';
         final_confidence = 20;
         predictionSource = 'fallback';
@@ -311,22 +337,15 @@ RAG validation score: ${ragScore.toFixed(1)}%.
 Symptoms reported: ${processedSymptoms.join(', ')}
 
 Common causes of these symptoms can vary widely, and professional medical evaluation is necessary.`;
-
-        console.log('Using simple fallback - LLM generation skipped for performance');
-      } catch (error) {
-        // Absolute fallback if anything goes wrong
-        finalDisease = 'Unknown Condition';
-        final_confidence = 20;
-        predictionSource = 'fallback';
-        explanation = `Unable to make a confident diagnosis. Please consult a healthcare provider.`;
-        console.error('LLM fallback error, using minimal fallback:', error);
       }
     }
+
+    const { label: confidence_label, color: confidence_color } = getConfidenceLabel(final_confidence);
 
     // ── Build all predictions list ──────────────────────────────────────────
     const allPredictions: any[] = [];
 
-    if (mlEnsemble && adjusted_ml >= 30) {
+    if (mlEnsemble && adjusted_ml >= ML_PRIMARY_THRESHOLD) {
       allPredictions.push({
         disease: mlEnsemble.disease,
         confidence: Math.round(adjusted_ml * 10) / 10,
@@ -344,17 +363,17 @@ Common causes of these symptoms can vary widely, and professional medical evalua
       })));
     }
 
-    // Add RAG candidates as predictions (temporarily disabled)
-    // for (const cand of ragCandidates) {
-    //   if (!allPredictions.some(p => p.disease === cand.disease)) {
-    //     allPredictions.push({
-    //       disease: cand.disease,
-    //       confidence: Math.round(cand.rag_score * 10) / 10,
-    //       source: 'rag_validation',
-    //       used_in_final: cand.disease === finalDisease,
-    //     });
-    //   }
-    // }
+    // Add RAG candidates as predictions
+    for (const cand of ragCandidates) {
+      if (!allPredictions.some(p => p.disease === cand.disease)) {
+        allPredictions.push({
+          disease: cand.disease,
+          confidence: Math.round(cand.rag_score * 10) / 10,
+          source: 'rag_validation',
+          used_in_final: cand.disease === finalDisease,
+        });
+      }
+    }
 
     // ── Build RAG breakdown ─────────────────────────────────────────────────
     const rag_breakdown = ragValidation
@@ -384,24 +403,32 @@ Common causes of these symptoms can vary widely, and professional medical evalua
     }
 
     // ── Build Methodology Explanation ───────────────────────────────────────
-    let methodsUsed: string[] = ['llm'];
-    let primaryMethod = 'llm';
-    let methodologyExplanation = '';
+    // These strings are reported to the client, so they must describe what
+    // actually ran rather than what the pipeline is capable of running.
+    let methodsUsed: string[];
+    let primaryMethod: string;
+    let methodologyExplanation: string;
 
     if (predictionSource === 'ml_primary') {
-      methodsUsed.push('ml', 'rag');
+      methodsUsed = ['ml', 'rag', 'llm'];
       primaryMethod = 'ml';
-      methodologyExplanation = `Diagnosis generated primarily through ML ensemble analysis (${adjusted_ml.toFixed(1)}% confidence) and validated by symptom matching (${ragScore.toFixed(1)}%). Final hybrid confidence: ${final_confidence.toFixed(1)}%.`;
+      methodologyExplanation = `Diagnosis generated primarily through ML ensemble analysis (${adjusted_ml.toFixed(1)}% calibrated confidence) and validated by symptom matching (${ragScore.toFixed(1)}%). Final hybrid confidence: ${final_confidence.toFixed(1)}%.`;
     } else if (predictionSource === 'rag_primary') {
-      methodsUsed.push('rag');
+      methodsUsed = ['rag', 'llm'];
       primaryMethod = 'rag';
-      methodologyExplanation = `Diagnosis based on strong symptom-to-disease matching (${ragScore.toFixed(1)}%) when ML confidence was low. Final hybrid confidence: ${final_confidence.toFixed(1)}%.`;
-    } else {
+      methodologyExplanation = `Diagnosis based on strong symptom-to-disease matching (${ragScore.toFixed(1)}%) when ML confidence was low (${adjusted_ml.toFixed(1)}%). Final hybrid confidence: ${final_confidence.toFixed(1)}%.`;
+    } else if (predictionSource === 'llm_fallback') {
       methodsUsed = ['llm', 'rag'];
       primaryMethod = 'llm';
       methodologyExplanation = mlEnsemble
-        ? `ML predicted "${mlEnsemble.disease}" with ${adjusted_ml.toFixed(1)}% confidence but was deprioritized. Diagnosis from LLM clinical reasoning.`
+        ? `ML predicted "${mlEnsemble.disease}" at ${adjusted_ml.toFixed(1)}% and symptom matching reached ${ragScore.toFixed(1)}%, both below the confidence thresholds. Diagnosis from LLM clinical reasoning.`
         : `ML service unavailable. Diagnosis from LLM clinical reasoning.`;
+    } else {
+      methodsUsed = ['llm', 'rag'];
+      primaryMethod = 'none';
+      methodologyExplanation = mlEnsemble
+        ? `No method reached a usable confidence level (ML ${adjusted_ml.toFixed(1)}%, symptom match ${ragScore.toFixed(1)}%, LLM reasoning inconclusive). No diagnosis was made.`
+        : `ML service unavailable and LLM reasoning was inconclusive. No diagnosis was made.`;
     }
 
     // ── Safety ───────────────────────────────────────────────────────────────
@@ -424,12 +451,12 @@ Common causes of these symptoms can vary widely, and professional medical evalua
       rag_breakdown,
       hybrid_weights_used: { ml_weight, rag_weight },
       safety,
-      candidates: [], // ragCandidates.map(c => ({
-      //   disease: c.disease,
-      //   rag_score: c.rag_score,
-      //   matched: c.matched,
-      //   missing: c.missing,
-      // })),
+      candidates: ragCandidates.map(c => ({
+        disease: c.disease,
+        rag_score: c.rag_score,
+        matched: c.matched,
+        missing: c.missing,
+      })),
       // Backwards-compatible legacy fields
       disease: finalDisease,
       confidence: final_confidence,
@@ -444,9 +471,9 @@ Common causes of these symptoms can vary widely, and professional medical evalua
       ml_used: predictionSource === 'ml_primary',
       symptom_match_score: ragScore,
       rag_validation: ragValidation,
-      rag_context_preview: 'RAG validation temporarily disabled', // ragCandidates.length > 0
-      //   ? `Matched ${ragCandidates.length} diseases.`
-      //   : 'No RAG matches found',
+      rag_context_preview: ragCandidates.length > 0
+        ? `Matched ${ragCandidates.length} diseases.`
+        : 'No RAG matches found',
       methodology: {
         primary_method: primaryMethod,
         methods_used: methodsUsed,
@@ -475,7 +502,7 @@ router.get('/diseases', async (req: AuthRequest, res: Response) => {
 
 router.get('/disease/:name', async (req: AuthRequest, res: Response) => {
   try {
-    const { name } = req.params;
+    const name = String(req.params.name);
     const info = ragService.getDiseaseInfo(name);
     
     if (!info) {

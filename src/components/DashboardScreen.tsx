@@ -31,7 +31,7 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
 
   useEffect(() => { loadData(); }, []);
 
-  const handleDeleteReminder = async (id: number) => {
+  const handleDeleteReminder = async (id: string) => {
     if (!confirm('Delete this reminder?')) return;
     const res = await deleteReminder(id);
     if (res.error) { onToast(res.error, 'error'); return; }
@@ -39,7 +39,7 @@ export default function DashboardScreen({ user, onStartCheck, onToast }: Props) 
     onToast('Reminder deleted', 'success');
   };
 
-  const handleMarkDone = async (id: number) => {
+  const handleMarkDone = async (id: string) => {
     const res = await markReminderDone(id);
     if (res.error) { onToast(res.error, 'error'); return; }
     onToast('Marked as done!', 'success');

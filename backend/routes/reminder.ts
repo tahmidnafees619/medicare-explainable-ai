@@ -78,9 +78,9 @@ router.get('/active', authMiddleware, async (req: AuthRequest, res: Response) =>
 router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const idParam = req.params.id;
-    const id = parseInt(idParam as string, 10);
-    if (isNaN(id)) return res.status(400).json({ error: 'Invalid reminder id' });
+    // Reminder ids are cuid strings, not integers.
+    const id = String(req.params.id);
+    if (!id) return res.status(400).json({ error: 'Invalid reminder id' });
 
     const { medicineName, dosage, frequency, startDate, reminderTime, notes } = req.body;
 
@@ -113,7 +113,7 @@ router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
 router.put('/:id/mark-done', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     const reminder = await prisma.reminder.findUnique({
       where: { id },
@@ -143,7 +143,7 @@ router.put('/:id/mark-done', authMiddleware, async (req: AuthRequest, res: Respo
 router.delete('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     const reminder = await prisma.reminder.findUnique({
       where: { id },

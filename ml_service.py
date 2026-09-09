@@ -10,6 +10,16 @@ This service works alongside the LLM + RAG system for improved accuracy.
 """
 
 import os
+import sys
+
+# Windows consoles default to a legacy code page (cp1252) that cannot encode the
+# emoji in this file's log output, which crashed the service on startup. Force
+# UTF-8 before anything prints.
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 import pandas as pd
 import numpy as np
 from flask import Flask, request, jsonify
@@ -98,6 +108,7 @@ class MediCareMLService:
 
         predictions: Dict[str, Any] = {}
         model_scores: List[float] = []
+        proba_vectors: List[np.ndarray] = []
 
         for name, model in self.models.items():
             if hasattr(model, 'predict_proba'):
@@ -111,6 +122,7 @@ class MediCareMLService:
                     'confidence': confidence,
                 }
                 model_scores.append(confidence)
+                proba_vectors.append(proba)
             else:
                 pred_idx = model.predict(X)[0]
                 pred_disease = self.label_encoder.inverse_transform([pred_idx])[0]
@@ -127,7 +139,6 @@ class MediCareMLService:
                     'confidence': 0.0,
                 },
                 'model_predictions': predictions,
-                'all_diseases': self.label_encoder.classes_.tolist(),
             }
 
         # ── Stage 2A: Softmax weighting ────────────────────────────────────
@@ -159,17 +170,63 @@ class MediCareMLService:
         top_model_idx = int(np.argmax(model_scores))
         top_model = model_names[top_model_idx]
 
+        # ── Stage 2D: True ensemble over probability vectors ───────────────
+        # Combine the per-class probability vectors using the dynamic weights
+        # rather than deferring to whichever single model was most confident.
+        n_classes = len(self.label_encoder.classes_)
+        if proba_vectors:
+            proba_weights = softmax([model_scores[i] for i in range(len(proba_vectors))])
+            ensemble_proba = np.average(np.vstack(proba_vectors), axis=0, weights=proba_weights)
+        else:
+            ensemble_proba = np.full(n_classes, 1.0 / n_classes)
+
+        top_k_idx = np.argsort(ensemble_proba)[::-1][:5]
+        top_k = [
+            {
+                'disease': self.label_encoder.inverse_transform([int(i)])[0],
+                'probability': round(float(ensemble_proba[int(i)] * 100), 2),
+            }
+            for i in top_k_idx
+        ]
+
+        ensemble_disease = top_k[0]['disease']
+        p1 = float(ensemble_proba[int(top_k_idx[0])])
+
+        # ── Stage 2E: Calibrated confidence for a many-class problem ───────
+        # A raw top-1 probability of ~4% looks meaningless but is ~30x the
+        # uniform baseline when there are 776 classes. Score two signals:
+        #   lift      - how far above chance the top pick is (log-scaled, so a
+        #               perfect classifier maps to 100)
+        #   dominance - how much of the plausible-candidate mass it holds
+        uniform = 1.0 / n_classes
+        lift = p1 / uniform if uniform > 0 else 0.0
+        lift_score = 0.0
+        if lift > 1:
+            lift_score = min(100.0, 100.0 * float(np.log10(lift)) / float(np.log10(n_classes)))
+
+        top5_mass = float(sum(ensemble_proba[int(i)] for i in top_k_idx))
+        dominance = (p1 / top5_mass) if top5_mass > 0 else 0.0
+
+        calibrated_confidence = 0.6 * lift_score + 0.4 * (dominance * 100.0)
+        # Model disagreement still erodes confidence.
+        calibrated_confidence = max(0.0, calibrated_confidence - disagreement_penalty)
+        calibrated_confidence = round(min(95.0, calibrated_confidence), 1)
+
         return {
             'ensemble_prediction': {
-                'disease': predictions[top_model]['disease'],
-                'confidence': round(adjusted_ml, 1),
+                'disease': ensemble_disease,
+                'confidence': calibrated_confidence,
+                'raw_probability': round(p1 * 100, 2),
             },
+            'top_k': top_k,
+            'calibrated_confidence': calibrated_confidence,
+            'raw_top1_probability': round(p1 * 100, 2),
+            'n_classes': n_classes,
             'model_predictions': predictions,
-            'all_diseases': self.label_encoder.classes_.tolist(),
             'dynamic_weights': dynamic_weights,
             'weighted_ml_raw': round(weighted_ml_raw, 1),
             'disagreement_penalty': round(disagreement_penalty, 1),
-            'adjusted_ml': round(adjusted_ml, 1),
+            'adjusted_ml': calibrated_confidence,
             'model_agreement_level': agreement_level,
             'top_model': top_model,
         }
@@ -357,5 +414,12 @@ if __name__ == '__main__':
             print("ERROR: training_data.csv not found. Cannot train models.")
             raise SystemExit(1)
 
-    print("Starting MediCare ML Service on http://localhost:8000")
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    # debug=True enables the Werkzeug interactive debugger, which allows
+    # arbitrary code execution for anyone who can reach the port. Opt in
+    # explicitly via ML_DEBUG=1 rather than shipping it on by default.
+    debug = os.environ.get('ML_DEBUG', '').lower() in ('1', 'true', 'yes')
+    host = os.environ.get('ML_HOST', '127.0.0.1')
+    port = int(os.environ.get('ML_PORT', '8000'))
+
+    print(f"Starting MediCare ML Service on http://{host}:{port}")
+    app.run(host=host, port=port, debug=debug)

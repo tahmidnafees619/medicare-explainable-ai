@@ -57,7 +57,7 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
 router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     const session = await prisma.chatSession.findUnique({
       where: { id },
@@ -86,7 +86,7 @@ router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
 router.delete('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     const session = await prisma.chatSession.findUnique({
       where: { id },

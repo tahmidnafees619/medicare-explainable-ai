@@ -1,3 +1,9 @@
+# Python dependencies for the ML service (ml_service.py) and the offline
+# training pipeline (train_models.py).
+#
+# Lower bounds reflect the versions the committed models in models/*.pkl were
+# trained and verified against. Do not pin scikit-learn below 1.6 - the stored
+# pickles will not load.
 Flask==3.0.0
 Flask-CORS==4.0.0
 scikit-learn>=1.6.0

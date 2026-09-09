@@ -21,6 +21,15 @@ Output:
 """
 
 import os
+import sys
+
+# Windows consoles default to a legacy code page (cp1252) that cannot encode the
+# emoji in this script's progress output. Force UTF-8 before anything prints.
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split

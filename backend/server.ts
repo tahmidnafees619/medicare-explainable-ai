@@ -117,7 +117,7 @@ app.listen(PORT, async () => {
     });
     clearTimeout(timeoutId);
     if (mlHealth.ok) {
-      const status = await mlHealth.json();
+      const status = await mlHealth.json() as { models_trained?: boolean };
       if (status.models_trained) {
         console.log('✅ ML service ready with pre-trained models');
       } else {

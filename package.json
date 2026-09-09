@@ -13,7 +13,15 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "npm run typecheck:app && npm run typecheck:backend",
+    "typecheck:app": "tsc --noEmit -p tsconfig.app.json",
+    "typecheck:backend": "tsc --noEmit -p tsconfig.backend.json",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "ml": "python ml_service.py",
+    "ml:train": "python train_models.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -88,6 +96,8 @@
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.3.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.6.0",
     "@types/pg": "^8.20.0",

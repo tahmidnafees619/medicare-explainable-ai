@@ -60,10 +60,10 @@ router.get('/history', authMiddleware, async (req: AuthRequest, res: Response) =
 router.get('/:sessionId', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { sessionId } = req.params;
+    const sessionId = String(req.params.sessionId);
 
     const session = await prisma.chatSession.findUnique({
-      where: { id: parseInt(sessionId) },
+      where: { id: String(sessionId) },
       include: {
         followUpQA: {
           orderBy: { createdAt: 'asc' },
@@ -91,7 +91,7 @@ router.get('/:sessionId', authMiddleware, async (req: AuthRequest, res: Response
 router.post('/:sessionId/followup', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { sessionId } = req.params;
+    const sessionId = String(req.params.sessionId);
     const { question, answer, questionIndex } = req.body;
 
     if (!question || !answer === undefined) {
@@ -100,7 +100,7 @@ router.post('/:sessionId/followup', authMiddleware, async (req: AuthRequest, res
 
     // Verify session belongs to user
     const session = await prisma.chatSession.findUnique({
-      where: { id: parseInt(sessionId) },
+      where: { id: String(sessionId) },
     });
 
     if (!session) {
@@ -114,7 +114,7 @@ router.post('/:sessionId/followup', authMiddleware, async (req: AuthRequest, res
     // Create follow-up Q&A
     const followUp = await prisma.followUpQA.create({
       data: {
-        chatId: parseInt(sessionId),
+        chatId: String(sessionId),
         question,
         answer,
         questionIndex: questionIndex || 0,
