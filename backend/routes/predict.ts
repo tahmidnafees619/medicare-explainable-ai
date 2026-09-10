@@ -356,13 +356,30 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
     // headline result, scaled by its standing relative to the top candidate.
     const topProbability = candidateEvidence[0]?.entry?.probability || 0;
 
-    const differential = candidateEvidence.map(({ entry, validation }, index) => {
-      const relative = topProbability > 0 ? (entry.probability || 0) / topProbability : 0;
-      const candidateMl = adjusted_ml * relative;
-      const candidateScore = Math.max(
-        0,
-        Math.min(85, (ml_weight * candidateMl) + (rag_weight * validation.rag_score))
-      );
+    // Several ML class names resolve to the same knowledge-base entry
+    // ("Diabetes" and "Diabetes Type 2" both land on "Diabetes"), which would
+    // otherwise list the same condition twice in one shortlist.
+    const seenDiseases = new Set<string>();
+    let previousScore = Number.POSITIVE_INFINITY;
+
+    const differential = candidateEvidence
+      .filter(({ entry, validation }) => {
+        const name = validation.disease || entry.disease;
+        if (seenDiseases.has(name)) return false;
+        seenDiseases.add(name);
+        return true;
+      })
+      .map(({ entry, validation }, index) => {
+        const relative = topProbability > 0 ? (entry.probability || 0) / topProbability : 0;
+        const candidateMl = adjusted_ml * relative;
+        const blended = (ml_weight * candidateMl) + (rag_weight * validation.rag_score);
+
+        // The list stays in ML confidence order (measured to beat re-ranking by
+        // RAG), but once RAG evidence is blended in a lower-ranked candidate can
+        // out-score the one above it, which reads as a bug. Clamp to the running
+        // minimum so the displayed score never contradicts the ordering.
+        const candidateScore = Math.max(0, Math.min(85, blended, previousScore));
+        previousScore = candidateScore;
 
       return {
         rank: index + 1,
