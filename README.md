@@ -177,7 +177,7 @@ npm run db:studio    # DB viewer
 
 ## 👨‍💻 Developer
 
-**Tahmid Nafees** — design, architecture and implementation
+**Md. Tahmidur Rahman Nafees** — design, architecture and implementation
 [GitHub @tahmidnafees619](https://github.com/tahmidnafees619)
 
 A detailed write-up of the engineering decisions, benchmarks and known
