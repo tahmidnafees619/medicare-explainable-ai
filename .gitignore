@@ -65,3 +65,9 @@ backend/*.txt
 .sixth/
 .tsupgrader/
 .github/modernize/
+
+# Large ML artifacts - exceed GitHub's 100MB limit. See docs/MODELS.md:
+# rebuild with `npm run ml:train`, or download from the GitHub Release.
+models/svm.pkl
+models/random_forest.pkl
+datasets/Final_Augmented_dataset_Diseases_and_Symptoms.csv

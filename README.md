@@ -110,8 +110,8 @@ backend/                Express + TypeScript API
 prisma/schema.prisma    Single source of truth for the DB schema
 ml_service.py           Flask ML ensemble service (:8000)
 train_models.py         Offline training pipeline -> models/*.pkl
-datasets/               Training + RAG CSV data
-models/                 Pre-trained model pickles
+datasets/               CSV data (the 182MB training set is not committed)
+models/                 Model pickles (large ones not committed - see docs/MODELS.md)
 docs/                   Setup guides, security notes, TODO backlog
 tools/diagnostics/      Ad-hoc probe scripts (not part of the test suite)
 ```
