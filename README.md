@@ -175,5 +175,14 @@ npm run db:studio    # DB viewer
 3. `npm test && npm run typecheck` before pushing
 4. Test with Ollama running
 
+## 👨‍💻 Developer
+
+**Tahmid Nafees** — design, architecture and implementation
+[GitHub @tahmidnafees619](https://github.com/tahmidnafees619)
+
+A detailed write-up of the engineering decisions, benchmarks and known
+limitations is in [docs/PROJECT_REPORT.md](docs/PROJECT_REPORT.md).
+
 ## 📄 License
-MIT
+[MIT](LICENSE) — see the licence file for the additional "not a medical device"
+notice.
