@@ -1,0 +1,17 @@
+# Normalise line endings so Windows/macOS/Linux checkouts stay consistent.
+* text=auto eol=lf
+
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+*.png  binary
+*.ico  binary
+*.pkl  binary
+*.db   binary
+
+# Keep generated lockfiles out of diffs and language stats.
+package-lock.json linguist-generated=true
+
+# Datasets and model artifacts are data, not source.
+datasets/*   linguist-vendored
+models/*     linguist-vendored

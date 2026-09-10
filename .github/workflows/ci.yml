@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  web:
+    name: Typecheck, test & build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Typecheck (frontend + backend)
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  ml:
+    name: ML service imports
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      # Models are not committed (see docs/MODELS.md), so this verifies the
+      # service and training pipeline import cleanly rather than running them.
+      - name: Import check
+        run: |
+          python -c "import ast,sys; ast.parse(open('ml_service.py',encoding='utf-8').read()); print('ml_service.py parses')"
+          python -c "import ast,sys; ast.parse(open('train_models.py',encoding='utf-8').read()); print('train_models.py parses')"

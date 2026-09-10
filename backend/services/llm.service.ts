@@ -320,6 +320,102 @@ Do not use technical jargon without explanation.`;
   }
 }
 
+export interface DifferentialCandidate {
+  disease: string;
+  strength: string;
+  matched: string[];
+  missingCore: string[];
+}
+
+function generateFallbackDifferential(
+  candidates: DifferentialCandidate[],
+  symptoms: string[]
+): string {
+  if (candidates.length === 0) {
+    return `No condition matched your symptoms (${symptoms.join(', ')}) closely enough to list. Please consult a healthcare provider.`;
+  }
+
+  const lines = [
+    `Your symptoms (${symptoms.join(', ')}) are most similar to the following conditions. These are pattern matches, not a diagnosis, and they are listed strongest first.`,
+    '',
+  ];
+
+  candidates.forEach((c, i) => {
+    lines.push(`${i + 1}. ${c.disease} — ${c.strength} match`);
+    if (c.matched.length > 0) {
+      lines.push(`   Supports it: ${c.matched.slice(0, 5).join(', ')}`);
+    }
+    if (c.missingCore.length > 0) {
+      lines.push(`   Argues against it: you did not report ${c.missingCore.slice(0, 5).join(', ')}, which this condition usually causes.`);
+    }
+    lines.push('');
+  });
+
+  lines.push('Only a clinician can distinguish between these. Seek care promptly if your symptoms are severe or worsening.');
+  return lines.join('\n');
+}
+
+/**
+ * Explain a ranked differential rather than defending a single answer.
+ *
+ * The single-disease prompt reliably produced a fluent clinical narrative for
+ * whatever the model ranked first, which reads as authoritative even when the
+ * defining symptoms of that condition are absent. This asks the model to weigh
+ * the candidates against each other and to state what argues against each.
+ */
+export async function generateDifferentialExplanation(
+  candidates: DifferentialCandidate[],
+  symptoms: string[],
+  timeoutMs = 60000
+): Promise<string> {
+  if (candidates.length === 0) {
+    return generateFallbackDifferential(candidates, symptoms);
+  }
+
+  const systemPrompt = `You are explaining a symptom-checker result to a patient. You are given a RANKED LIST of possible conditions produced by a statistical symptom matcher, with the evidence for and against each.
+
+Rules (MANDATORY):
+- These are pattern matches, NOT a diagnosis. Never say the patient "has" a condition.
+- Discuss the candidates AS A LIST. Compare them. Do not pick a winner.
+- For each candidate, say plainly what supports it AND what argues against it. The "not reported" symptoms are important evidence against a condition - mention them.
+- If a top candidate is missing its defining symptoms, say so explicitly and explain that this makes it less likely despite its ranking.
+- Use plain language a non-medical person understands. No jargon without explanation.
+- Be brief: about one short paragraph per condition, then one closing line.
+- End by advising the patient to see a clinician, and to seek urgent care if symptoms are severe.
+- Do not invent symptoms the patient did not report.`;
+
+  const candidateBlock = candidates
+    .map((c, i) => {
+      const supports = c.matched.length > 0 ? c.matched.slice(0, 6).join(', ') : 'none recorded';
+      const against = c.missingCore.length > 0
+        ? c.missingCore.slice(0, 6).join(', ')
+        : 'none - the patient reported its defining symptoms';
+      return `${i + 1}. ${c.disease} (match strength: ${c.strength})
+   Reported symptoms consistent with it: ${supports}
+   Defining symptoms NOT reported by the patient: ${against}`;
+    })
+    .join('\n');
+
+  const prompt = `Patient reported: ${symptoms.join(', ')}
+
+Ranked candidate conditions:
+${candidateBlock}
+
+Explain this shortlist to the patient following your rules.`;
+
+  try {
+    const result = await callOllama(prompt, systemPrompt, timeoutMs);
+    if (result && result.trim().length > 0) {
+      return result.trim();
+    }
+    console.warn('Ollama returned empty differential, using fallback');
+    return generateFallbackDifferential(candidates, symptoms);
+  } catch (error) {
+    console.error('Ollama differential failed, using fallback:', error);
+    return generateFallbackDifferential(candidates, symptoms);
+  }
+}
+
 export async function healthCheck(): Promise<boolean> {
   try {
     const response = await fetch(`${OLLAMA_HOST}/api/tags`);

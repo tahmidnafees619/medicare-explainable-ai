@@ -181,33 +181,44 @@ const SYMPTOM_SYNONYMS: Record<string, string[]> = {
  * Look up a disease in the knowledge base, trying exact match first,
  * then aliases if no exact match is found.
  */
+function diseaseTokens(name: string): string[] {
+  return normalizeText(name).split(/\s+/).filter(Boolean);
+}
+
+/** True when every word of `needle` appears as a whole word in `haystack`. */
+function isWordSubset(needle: string[], haystack: string[]): boolean {
+  return needle.length > 0 && needle.every(token => haystack.includes(token));
+}
+
 function findDiseaseInKB(diseaseName: string): Disease | undefined {
   const diseases = medicalKnowledge as Disease[];
   const normalizedTarget = normalizeText(diseaseName);
+  const targetTokens = diseaseTokens(diseaseName);
 
-  // Try exact or substring match first
-  const exactMatch = diseases.find(
-    d => normalizeText(d.disease) === normalizedTarget ||
-         normalizeText(d.disease).includes(normalizedTarget) ||
-         normalizedTarget.includes(normalizeText(d.disease))
-  );
+  // 1. An exact name match always wins, and is checked against every entry
+  //    before any looser rule gets a chance.
+  const exactMatch = diseases.find(d => normalizeText(d.disease) === normalizedTarget);
   if (exactMatch) return exactMatch;
 
-  // Try aliases
-  const aliases = DISEASE_ALIASES[diseaseName];
+  // 2. Declared aliases. Keys are lowercase, so normalise before looking up -
+  //    the ML service emits Title Case names like "Acute Bronchitis".
+  const aliases = DISEASE_ALIASES[normalizedTarget] ?? DISEASE_ALIASES[diseaseName];
   if (aliases) {
     for (const alias of aliases) {
       const normalizedAlias = normalizeText(alias);
-      const aliasMatch = diseases.find(
-        d => normalizeText(d.disease) === normalizedAlias ||
-             normalizeText(d.disease).includes(normalizedAlias) ||
-             normalizedAlias.includes(normalizeText(d.disease))
-      );
+      const aliasMatch = diseases.find(d => normalizeText(d.disease) === normalizedAlias);
       if (aliasMatch) return aliasMatch;
     }
   }
 
-  return undefined;
+  // 3. Whole-word containment in either direction.
+  //    Plain substring matching is deliberately NOT used: "flu" is a substring
+  //    of "reflux", which silently resolved influenza to
+  //    "Gastroesophageal Reflux Disease (Gerd)".
+  return diseases.find(d => {
+    const candidateTokens = diseaseTokens(d.disease);
+    return isWordSubset(targetTokens, candidateTokens) || isWordSubset(candidateTokens, targetTokens);
+  });
 }
 
 function calculateSimilarity(symptoms: string[], diseaseSymptoms: string[]): number {
@@ -292,6 +303,10 @@ export interface SymptomValidationResult {
   rag_score: number;
   red_flags_present: string[];
   red_flags_missing: string[];
+  /** Defining ("core") symptoms of this disease that the patient did NOT report. */
+  missingCoreSymptoms: string[];
+  /** Defining symptoms the patient DID report. */
+  matchedCoreSymptoms: string[];
 }
 
 /**
@@ -312,6 +327,8 @@ export function validateSymptomMatches(
       rag_score: 0,
       red_flags_present: [],
       red_flags_missing: [],
+      missingCoreSymptoms: [],
+      matchedCoreSymptoms: [],
     };
   }
 
@@ -372,6 +389,24 @@ export function validateSymptomMatches(
     ragScore = Math.min(100, ragScore * 1.15);
   }
 
+  // Which of this disease's DEFINING symptoms did the patient actually report?
+  // Checked against the raw core list rather than the matched/missing split, so
+  // a core symptom that is not also listed in `symptoms` is still evaluated.
+  const matchedCoreSymptoms: string[] = [];
+  const missingCoreSymptoms: string[] = [];
+
+  for (const core of disease.core_symptoms || []) {
+    const normalizedCore = normalizeText(core);
+    const present = normalizedInput.some(inputSymptom =>
+      jaroWinklerSimilarity(inputSymptom, normalizedCore) > 0.7
+    );
+    if (present) {
+      matchedCoreSymptoms.push(core);
+    } else {
+      missingCoreSymptoms.push(core);
+    }
+  }
+
   return {
     disease: disease.disease,
     matchedSymptoms,
@@ -379,6 +414,8 @@ export function validateSymptomMatches(
     rag_score: Math.round(ragScore * 10) / 10,
     red_flags_present: redFlagsPresent,
     red_flags_missing: redFlagsMissing,
+    missingCoreSymptoms,
+    matchedCoreSymptoms,
   };
 }
 
@@ -395,6 +432,8 @@ export function validateTopDiseases(
   missing: string[];
   red_flags_present: string[];
   red_flags_missing: string[];
+  missing_core: string[];
+  matched_core: string[];
 }> {
   // Several ML disease names can resolve to the same knowledge-base entry via
   // DISEASE_ALIASES (e.g. "diabetes" and "diabetes type 2"), so de-duplicate on
@@ -406,6 +445,8 @@ export function validateTopDiseases(
     missing: string[];
     red_flags_present: string[];
     red_flags_missing: string[];
+    missing_core: string[];
+    matched_core: string[];
   }>();
 
   for (const diseaseName of topDiseases) {
@@ -422,6 +463,8 @@ export function validateTopDiseases(
       missing: validation.missingSymptoms,
       red_flags_present: validation.red_flags_present,
       red_flags_missing: validation.red_flags_missing,
+      missing_core: validation.missingCoreSymptoms,
+      matched_core: validation.matchedCoreSymptoms,
     });
   }
 

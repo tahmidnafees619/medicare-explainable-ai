@@ -75,6 +75,20 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
 
   const otherPredictions = (result.all_predictions || []).slice(1);
 
+  // Ranked shortlist from the backend. Measured top-1 accuracy is ~45% while
+  // top-5 is ~64%, so the list is the honest unit to show - a single headline
+  // disease overstates what this model can support.
+  const differential: any[] = Array.isArray(result.differential) ? result.differential : [];
+
+  const strengthClass = (strength: string) => {
+    switch (strength) {
+      case 'Strong': return 'bg-green-100 text-green-700';
+      case 'Moderate': return 'bg-amber-100 text-amber-700';
+      case 'Weak': return 'bg-orange-100 text-orange-700';
+      default: return 'bg-red-100 text-red-700';
+    }
+  };
+
   return (
     <div className="screen-fade max-w-[720px] mx-auto px-5 py-10">
       <button onClick={onBack} className="flex items-center gap-1 text-muted-foreground text-sm mb-6 hover:text-foreground transition-colors">
@@ -96,47 +110,106 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
         <p className="text-xs text-muted-foreground">{new Date().toLocaleString()}</p>
       </div>
 
-      {/* Main prediction */}
-      {!isWeakSignal ? (
-        <div className="card-medicare border-2 border-primary-light p-7 mb-4">
-          <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
-            <h2 className="font-heading font-extrabold text-2xl">{result.disease}</h2>
-            <span className="bg-primary-light text-primary font-heading font-bold text-sm px-3 py-1 rounded-full">{result.confidence}% match</span>
+      {/* Ranked shortlist - the differential, not a verdict */}
+      {differential.length > 0 ? (
+        <div className="mb-4">
+          {result.prediction_source === 'fallback' && (
+            <div className="card-medicare border-2 border-red-200 bg-red-50/40 p-5 mb-3">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <h2 className="font-heading font-extrabold text-lg text-red-700 mb-1">
+                    No usable match found
+                  </h2>
+                  <p className="text-sm text-red-700/90">
+                    Nothing matched your symptoms strongly enough to suggest a condition. The items
+                    below are the nearest patterns found, but all are weak — please read them as
+                    "nothing conclusive", not as possibilities worth acting on.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="card-medicare border-2 border-primary-light p-5 mb-3">
+            <h2 className="font-heading font-extrabold text-xl mb-1">Closest symptom matches</h2>
+            <p className="text-sm text-muted-foreground">
+              These conditions have symptom patterns similar to what you described, strongest first.
+              This is a similarity ranking, <span className="font-semibold">not a diagnosis</span> — the
+              correct condition is often further down the list, and may not be listed at all.
+            </p>
           </div>
-          <span className={`${confidenceLabel.colorClass} text-xs px-3 py-1 rounded-full font-semibold`}>{confidenceLabel.label}</span>
-          <div className="mt-5">
-            <div className="flex justify-between text-sm mb-1.5">
-              <span className="text-muted-foreground">Confidence Level</span>
-              <span className="font-heading font-bold">{result.confidence}%</span>
-            </div>
-            <div className="h-2.5 bg-border rounded-full overflow-hidden">
-              <div className="h-full rounded-full bg-gradient-to-r from-primary to-purple confidence-bar-fill" style={{ width: `${barWidth}%` }} />
-            </div>
+
+          <div className="space-y-3">
+            {differential.map((c: any) => (
+              <div
+                key={c.rank}
+                className={`card-medicare p-5 ${c.rank === 1 ? 'border-2 border-primary-light' : 'bg-surface2'}`}
+              >
+                <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
+                  <h3 className={`font-heading font-bold ${c.rank === 1 ? 'text-xl' : 'text-base'}`}>
+                    <span className="text-muted-foreground mr-2">{c.rank}.</span>{c.disease}
+                  </h3>
+                  <span className={`${strengthClass(c.strength)} text-xs px-3 py-1 rounded-full font-semibold whitespace-nowrap`}>
+                    {c.strength} match
+                  </span>
+                </div>
+
+                {c.missing_defining_evidence && (
+                  <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl p-3 mb-3">
+                    <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <p className="text-xs text-red-700">
+                      You reported <span className="font-semibold">none</span> of this condition's
+                      defining symptoms. It ranks here on general symptoms only, which makes it
+                      considerably less likely than its position suggests.
+                    </p>
+                  </div>
+                )}
+
+                {c.matched_symptoms?.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1.5">What points to it</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {c.matched_symptoms.map((s: string) => (
+                        <span key={s} className="bg-green-100 text-green-700 text-xs px-2.5 py-1 rounded-full font-medium">{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {c.missing_core_symptoms?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground mb-1.5">
+                      What argues against it — usually present, but you did not report:
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {c.missing_core_symptoms.map((s: string) => (
+                        <span key={s} className="bg-surface2 border border-border text-muted-foreground text-xs px-2.5 py-1 rounded-full font-medium">{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-      ) : (
+      ) : isWeakSignal ? (
         <div className="card-medicare border-2 border-red-200 bg-red-50/30 p-7 mb-4">
           <h2 className="font-heading font-extrabold text-xl text-red-700 mb-2">No strong match found. Results below are weak signals only.</h2>
           <span className={`${confidenceLabel.colorClass} text-xs px-3 py-1 rounded-full font-semibold`}>{confidenceLabel.label}</span>
         </div>
-      )}
-
-      {/* All predictions (muted when weak signal) */}
-      {(otherPredictions.length > 0 || isWeakSignal) && (
-        <div className="mb-4">
-          <h3 className="font-heading font-bold text-base mb-3">{isWeakSignal ? 'Weak Signals' : 'Other Possibilities'}</h3>
-          <div className={`space-y-2 ${isWeakSignal ? 'opacity-70' : ''}`}>
-            {(isWeakSignal ? result.all_predictions || [] : otherPredictions).map((p: any, i: number) => (
-              <div key={i} className="card-medicare bg-surface2 p-4 flex items-center justify-between">
-                <span className="font-heading font-semibold text-sm">{p.disease}</span>
-                <div className="flex items-center gap-3">
-                  <div className="w-24 h-2 bg-border rounded-full overflow-hidden">
-                    <div className="h-full rounded-full confidence-bar-fill" style={{ width: `${p.confidence}%`, background: i === 0 ? 'hsl(var(--accent))' : 'hsl(var(--accent2))' }} />
-                  </div>
-                  <span className="text-sm font-semibold text-muted-foreground w-12 text-right">{p.confidence}%</span>
-                </div>
-              </div>
-            ))}
+      ) : (
+        <div className="card-medicare border-2 border-primary-light p-7 mb-4">
+          <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
+            <h2 className="font-heading font-extrabold text-2xl">{result.disease}</h2>
+            <span className={`${strengthClass(result.top_result?.strength)} font-heading font-bold text-sm px-3 py-1 rounded-full`}>
+              {result.top_result?.strength || confidenceLabel.label}
+            </span>
+          </div>
+          <div className="mt-5">
+            <div className="h-2.5 bg-border rounded-full overflow-hidden">
+              <div className="h-full rounded-full bg-gradient-to-r from-primary to-purple confidence-bar-fill" style={{ width: `${barWidth}%` }} />
+            </div>
           </div>
         </div>
       )}
@@ -238,10 +311,15 @@ export default function ResultsScreen({ result, user, onBack, onNewCheck, onDash
         <div className="card-medicare p-7 mb-4">
           <div className="flex items-center gap-2 mb-1">
             <Sparkles className="w-5 h-5 text-primary" />
-            <h3 className="font-heading font-bold text-base">AI Explanation</h3>
+            <h3 className="font-heading font-bold text-base">
+              {differential.length > 0 ? 'Comparing these possibilities' : 'AI Explanation'}
+            </h3>
             {result.explanation_pending && <span className="text-xs text-muted-foreground animate-pulse">Generating...</span>}
           </div>
-          <p className="text-xs text-muted-foreground mb-3">Generated by AI (llama3.2) — informational purposes only</p>
+          <p className="text-xs text-muted-foreground mb-3">
+            Written by a local AI (llama3.2) from the match data above. It can be confidently wrong —
+            it is describing a statistical pattern match, not examining you.
+          </p>
           <div className="text-[15px] leading-[1.8] text-muted-foreground" style={{ whiteSpace: 'pre-line' }}>
             {result.explanation || <span className="italic text-muted-foreground">Detailed explanation is being generated...</span>}
           </div>

@@ -7,6 +7,8 @@ import ChatScreen from '@/components/ChatScreen';
 import ResultsScreen from '@/components/ResultsScreen';
 import DashboardScreen from '@/components/DashboardScreen';
 import ToastContainer, { ToastItem } from '@/components/ToastContainer';
+import AuroraBackdrop from '@/components/AuroraBackdrop';
+import { usePointerField } from '@/hooks/use-pointer-fx';
 import { logoutUser } from '@/api/config';
 
 type Screen = 'landing' | 'about' | 'auth' | 'chat' | 'results' | 'dashboard';
@@ -20,6 +22,7 @@ export default function Index() {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const shellRef = usePointerField<HTMLDivElement>();
 
   useEffect(() => {
     const t = localStorage.getItem('medai_token');
@@ -49,7 +52,7 @@ export default function Index() {
 
   // Navbar for authenticated screens
   const Navbar = () => (
-    <nav className="sticky top-0 z-[100] bg-card border-b border-border h-16 flex items-center px-6 justify-between">
+    <nav className="glass-shell sticky top-0 z-[100] border-b border-white/50 h-16 flex items-center px-6 justify-between">
       <div className="flex items-center gap-2 cursor-pointer" onClick={() => setScreen('chat')}>
         <Stethoscope className="w-6 h-6 text-primary" />
         <span className="font-heading font-bold text-lg text-primary">MediCare AI</span>
@@ -64,7 +67,7 @@ export default function Index() {
             {initials}
           </button>
           {showDropdown && (
-            <div className="absolute right-0 top-12 bg-card border border-border rounded-xl shadow-card p-2 min-w-[180px] z-50">
+            <div className="glass-menu absolute right-0 top-12 rounded-xl p-2 min-w-[180px] z-50">
               <div className="px-3 py-2 border-b border-border mb-1">
                 <p className="font-heading font-bold text-sm">👤 {user?.name}</p>
               </div>
@@ -79,7 +82,7 @@ export default function Index() {
 
   // Sidebar for desktop chat
   const Sidebar = () => (
-    <aside className="hidden md:flex flex-col w-[280px] border-r border-border bg-card p-5 shrink-0">
+    <aside className="glass-sidebar hidden md:flex flex-col w-[280px] p-5 shrink-0">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-11 h-11 rounded-full gradient-avatar flex items-center justify-center text-white font-heading font-bold">{initials}</div>
         <div>
@@ -95,7 +98,7 @@ export default function Index() {
           { icon: LogOut, label: 'Sign Out', onClick: handleLogout, active: false },
         ].map(item => (
           <button key={item.label} onClick={item.onClick}
-            className={`w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm transition-colors ${item.active ? 'bg-primary-light text-primary font-heading font-semibold' : 'text-muted-foreground hover:bg-muted'}`}>
+            className={`w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm transition-colors ${item.active ? 'nav-item-active text-primary font-heading font-semibold' : 'text-muted-foreground hover:bg-white/60'}`}>
             <item.icon className="w-4 h-4" /> {item.label}
           </button>
         ))}
@@ -111,7 +114,7 @@ export default function Index() {
 
   // Mobile bottom tabs
   const MobileTabs = () => (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border h-[60px] flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
+    <nav className="glass-shell md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-white/50 h-[60px] flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
       {[
         { icon: MessageCircle, label: 'Chat', s: 'chat' as Screen },
         { icon: ClipboardList, label: 'History', s: 'dashboard' as Screen },
@@ -147,9 +150,12 @@ export default function Index() {
         <AuthScreen initialTab={authTab} onBack={() => setScreen('landing')} onAuth={handleAuth} />
       )}
       {(screen === 'chat' || screen === 'results' || screen === 'dashboard') && (
-        <div className="flex flex-col h-screen">
+        <div ref={shellRef} className="relative flex flex-col h-screen pointer-spotlight">
+          {/* Same backdrop as the landing page, dialled back so the denser UI
+              here keeps its text contrast through the glass. */}
+          <AuroraBackdrop variant="subtle" />
           <Navbar />
-          <div className="flex flex-1 overflow-hidden">
+          <div className="relative z-10 flex flex-1 overflow-hidden min-h-0">
             {screen === 'chat' && <Sidebar />}
             <main className="flex-1 flex flex-col overflow-hidden">
               {screen === 'chat' && (

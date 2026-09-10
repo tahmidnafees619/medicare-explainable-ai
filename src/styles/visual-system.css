@@ -1,0 +1,416 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHARED VISUAL SYSTEM
+   Aurora backdrop, frosted glass, pointer-reactive lighting, motion.
+
+   Performance contract for everything in this file:
+     - Only `transform`, `translate` and `opacity` are ever animated. `filter`
+       and `backdrop-filter` are set once and never transitioned, because
+       animating them forces a full repaint every frame.
+     - Pointer effects read CSS custom properties (--mx/--my/--cx/--cy) that a
+       rAF loop writes straight to the DOM, so React never re-renders on move.
+     - Every animation is disabled under prefers-reduced-motion at the bottom.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Registering the property is what makes an angle animatable in a gradient. */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@layer utilities {
+  /* ── Layer 0: aurora backdrop ─────────────────────────────────────────── */
+  .aurora-field {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .aurora-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    will-change: transform;
+    /* --depth controls how far this blob tracks the pointer (parallax). */
+    translate:
+      calc((var(--mx, 0.5) - 0.5) * var(--depth, 20px) * 2)
+      calc((var(--my, 0.5) - 0.5) * var(--depth, 20px) * 2);
+  }
+
+  .aurora-blob-1 {
+    width: 46vw;
+    height: 46vw;
+    min-width: 380px;
+    min-height: 380px;
+    top: -12vh;
+    left: -6vw;
+    background: radial-gradient(circle at 30% 30%, hsl(222 95% 78% / 0.75), transparent 68%);
+    animation: auroraDrift1 23s ease-in-out infinite;
+  }
+
+  .aurora-blob-2 {
+    width: 42vw;
+    height: 42vw;
+    min-width: 340px;
+    min-height: 340px;
+    top: -6vh;
+    right: -8vw;
+    background: radial-gradient(circle at 60% 40%, hsl(260 88% 82% / 0.7), transparent 68%);
+    animation: auroraDrift2 31s ease-in-out infinite;
+  }
+
+  .aurora-blob-3 {
+    width: 40vw;
+    height: 40vw;
+    min-width: 320px;
+    min-height: 320px;
+    top: 34vh;
+    left: 20vw;
+    background: radial-gradient(circle at 50% 50%, hsl(340 92% 84% / 0.55), transparent 66%);
+    animation: auroraDrift3 37s ease-in-out infinite;
+  }
+
+  .aurora-blob-4 {
+    width: 34vw;
+    height: 34vw;
+    min-width: 260px;
+    min-height: 260px;
+    top: 58vh;
+    right: 6vw;
+    background: radial-gradient(circle at 40% 60%, hsl(30 100% 84% / 0.5), transparent 66%);
+    animation: auroraDrift4 29s ease-in-out infinite;
+  }
+
+  /* Durations are coprime so the composite loop never visibly repeats. */
+  @keyframes auroraDrift1 {
+    0%,
+    100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(6vw, 8vh, 0) scale(1.14); }
+  }
+
+  @keyframes auroraDrift2 {
+    0%,
+    100% { transform: translate3d(0, 0, 0) scale(1.06); }
+    50% { transform: translate3d(-7vw, 10vh, 0) scale(0.92); }
+  }
+
+  @keyframes auroraDrift3 {
+    0%,
+    100% { transform: translate3d(0, 0, 0) scale(0.95); }
+    50% { transform: translate3d(9vw, -7vh, 0) scale(1.12); }
+  }
+
+  @keyframes auroraDrift4 {
+    0%,
+    100% { transform: translate3d(0, 0, 0) scale(1.08); }
+    50% { transform: translate3d(-6vw, -9vh, 0) scale(0.94); }
+  }
+
+  /* Fill-rate guard: huge blur radii are expensive on mobile GPUs. */
+  @media (max-width: 640px) {
+    .aurora-blob { filter: blur(56px); }
+    .aurora-blob-3,
+    .aurora-blob-4 { display: none; }
+  }
+
+  /* ── Grain: the detail separating premium glass from cheap glass ──────── */
+  .grain-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── Layer 1: pointer-tracked spotlight ───────────────────────────────── */
+  .pointer-spotlight::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(
+      620px circle at var(--mpx, 50%) var(--mpy, 40%),
+      hsl(222 95% 70% / 0.16),
+      hsl(260 85% 75% / 0.07) 40%,
+      transparent 68%
+    );
+  }
+
+  /* ── Layer 2: frosted glass ───────────────────────────────────────────── */
+  .glass-panel {
+    background: linear-gradient(135deg, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0.38));
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgb(255 255 255 / 0.65);
+    /* Tinted shadows, never neutral black - this is what reads as "designed". */
+    box-shadow:
+      0 10px 30px -12px hsl(222 60% 55% / 0.3),
+      0 30px 60px -30px hsl(260 60% 55% / 0.28),
+      inset 0 1px 0 rgb(255 255 255 / 0.85);
+  }
+
+  .glass-nav {
+    background: rgb(255 255 255 / 0.55);
+    backdrop-filter: blur(14px) saturate(170%);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    border-bottom: 1px solid rgb(255 255 255 / 0.5);
+    transition: background 300ms ease, box-shadow 300ms ease, border-color 300ms ease;
+  }
+
+  .glass-nav[data-scrolled="true"] {
+    background: rgb(255 255 255 / 0.8);
+    border-bottom-color: hsl(var(--border));
+    box-shadow: 0 6px 24px -12px hsl(222 60% 55% / 0.35);
+  }
+
+  .glass-pill {
+    background: linear-gradient(135deg, rgb(255 255 255 / 0.8), rgb(255 255 255 / 0.45));
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgb(255 255 255 / 0.7);
+    box-shadow:
+      0 6px 18px -8px hsl(222 60% 55% / 0.28),
+      inset 0 1px 0 rgb(255 255 255 / 0.9);
+  }
+
+  /* Solid fallback where backdrop-filter is unsupported. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass-panel,
+    .glass-pill { background: rgb(255 255 255 / 0.95); }
+    .glass-nav { background: rgb(255 255 255 / 0.97); }
+  }
+
+  /* ── Layer 3: 3D tilt + specular glare ────────────────────────────────── */
+  .tilt-card {
+    transform-style: preserve-3d;
+    transition:
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tilt-glare {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  /* Tilt only where there is a real cursor - never on touch. */
+  @media (hover: hover) and (pointer: fine) {
+    .tilt-card {
+      transform:
+        perspective(900px)
+        rotateX(calc(var(--ty, 0) * -7deg))
+        rotateY(calc(var(--tx, 0) * 7deg));
+    }
+
+    .tilt-card[data-hovered="true"] {
+      transform:
+        perspective(900px)
+        rotateX(calc(var(--ty, 0) * -7deg))
+        rotateY(calc(var(--tx, 0) * 7deg))
+        translate3d(0, -6px, 0)
+        scale(1.015);
+      box-shadow:
+        0 20px 45px -15px hsl(222 60% 55% / 0.38),
+        0 40px 80px -40px hsl(260 60% 55% / 0.32),
+        inset 0 1px 0 rgb(255 255 255 / 0.9);
+    }
+
+    .tilt-glare {
+      transition: opacity 320ms ease;
+      background: radial-gradient(
+        260px circle at var(--cx, 50%) var(--cy, 50%),
+        rgb(255 255 255 / 0.55),
+        transparent 62%
+      );
+    }
+
+    .tilt-card[data-hovered="true"] .tilt-glare { opacity: 1; }
+  }
+
+  /* ── Animated conic border for the primary CTA ────────────────────────── */
+  .cta-glow {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .cta-glow::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 9999px;
+    z-index: -1;
+    background: conic-gradient(
+      from var(--angle),
+      hsl(var(--primary)),
+      hsl(var(--purple)),
+      hsl(var(--accent)),
+      hsl(var(--accent2)),
+      hsl(var(--primary))
+    );
+    animation: spinAngle 6s linear infinite;
+    opacity: 0.9;
+  }
+
+  .cta-glow::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: 9999px;
+    z-index: -2;
+    background: conic-gradient(
+      from var(--angle),
+      hsl(var(--primary)),
+      hsl(var(--purple)),
+      hsl(var(--accent)),
+      hsl(var(--accent2)),
+      hsl(var(--primary))
+    );
+    filter: blur(20px);
+    opacity: 0;
+    transition: opacity 300ms ease;
+    animation: spinAngle 6s linear infinite;
+  }
+
+  .cta-glow:hover::after { opacity: 0.55; }
+
+  @keyframes spinAngle {
+    to { --angle: 360deg; }
+  }
+
+  /* Magnetic pull toward the cursor. */
+  .magnetic {
+    transition: translate 300ms cubic-bezier(0.22, 1, 0.36, 1);
+    translate: calc(var(--pull-x, 0) * 1px) calc(var(--pull-y, 0) * 1px);
+  }
+
+  /* ── Scroll reveal with staggered focus-in ────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(6px);
+    transition:
+      opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 760ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 760ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--i, 0) * 80ms);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  /* ── Hero headline: animated gradient sweep ───────────────────────────── */
+  .gradient-text-animated {
+    background: linear-gradient(
+      110deg,
+      hsl(var(--primary)),
+      hsl(var(--purple)),
+      hsl(var(--accent)),
+      hsl(var(--purple)),
+      hsl(var(--primary))
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientSweep 9s ease-in-out infinite;
+  }
+
+  @keyframes gradientSweep {
+    0%,
+    100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* ── ECG pulse trace (medical motif) ──────────────────────────────────── */
+  .ecg-trace {
+    stroke-dasharray: 240 1400;
+    animation: ecgSweep 5s linear infinite;
+  }
+
+  @keyframes ecgSweep {
+    from { stroke-dashoffset: 1400; }
+    to { stroke-dashoffset: -240; }
+  }
+
+  /* Flow line connecting the How-It-Works steps. */
+  .flow-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1600ms cubic-bezier(0.22, 1, 0.36, 1) 260ms;
+  }
+
+  .flow-line.is-visible { stroke-dashoffset: 0; }
+
+  .float-slow { animation: floatSlow 7s ease-in-out infinite; }
+
+  @keyframes floatSlow {
+    0%,
+    100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+  }
+
+  .badge-pulse::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    animation: badgePulse 2.8s ease-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes badgePulse {
+    0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.45); }
+    70% { box-shadow: 0 0 0 14px hsl(var(--primary) / 0); }
+    100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); }
+  }
+}
+
+/* ═══ Accessibility: motion is opt-out, and the opt-out is total ═══════════ */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob,
+  .cta-glow::before,
+  .cta-glow::after,
+  .gradient-text-animated,
+  .ecg-trace,
+  .float-slow,
+  .badge-pulse::after {
+    animation: none !important;
+  }
+
+  .aurora-blob { translate: none !important; }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  .flow-line {
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+
+  .tilt-card {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .magnetic {
+    translate: none !important;
+    transition: none !important;
+  }
+
+  .pointer-spotlight::before { display: none !important; }
+}

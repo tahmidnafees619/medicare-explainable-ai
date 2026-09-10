@@ -85,7 +85,8 @@ npm run ml                      # http://localhost:8000
 Without it the backend falls back to LLM-only reasoning and confidence drops
 sharply. Models load from `models/*.pkl`; retrain with `npm run ml:train`.
 
-On Windows you can start everything with `start-all-services.bat`.
+On Windows you can start everything with `start.bat` (installs deps, sets up the
+database, trains models if missing, then launches all three services).
 
 ## 🔌 Ports
 | Service | Port | Required? |

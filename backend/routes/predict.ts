@@ -43,21 +43,57 @@ function normalizeSymptom(text: string): string {
 /**
  * Synonym expansion map – maps common user terms to standardized KB forms
  */
+/**
+ * Maps everyday wording AND clinical jargon onto the vocabulary the models were
+ * actually trained on.
+ *
+ * Two rules, both learned the hard way:
+ *  1. The KEY must be a term that exists in the training data. Mapping
+ *     "nasal congestion" (a real dataset column) onto "runny nose" (which is
+ *     not one) actively destroyed signal.
+ *  2. The LLM extractor frequently returns jargon - "polyuria", "polydipsia",
+ *     "hyperhidrosis" - none of which are in the dataset vocabulary. Left
+ *     unmapped, a textbook diabetes description was predicted as Primary
+ *     Thrombocythemia.
+ */
 const SYMPTOM_SYNONYMS: Record<string, string[]> = {
   headache: ['cephalgia', 'head pain', 'head hurts', 'migraine'],
-  rash: ['skin rash', 'eruption', 'itchy rash', 'blisters'],
-  fever: ['temperature', 'hot body', 'high temperature'],
-  'runny nose': ['stuffy nose', 'blocked nose', 'nasal congestion'],
-  'sore throat': ['throat pain'],
+  'skin rash': ['rash', 'eruption', 'itchy rash', 'blisters', 'exanthem'],
+  'itching of skin': ['pruritus', 'itchy skin', 'itching'],
+  fever: ['temperature', 'hot body', 'high temperature', 'pyrexia', 'febrile'],
+  chills: ['shivering', 'rigors'],
+  'nasal congestion': ['runny nose', 'stuffy nose', 'blocked nose', 'rhinitis', 'rhinorrhea', 'coryza'],
+  sneezing: ['sneeze'],
+  'sore throat': ['throat pain', 'pharyngitis', 'painful throat'],
   cough: ['coughing'],
-  nausea: ['nauseous'],
-  vomiting: ['vomit', 'throwing up'],
-  diarrhea: ['loose stool'],
-  'abdominal pain': ['stomach pain', 'stomach ache', 'abdomen pain'],
-  'shortness of breath': ['breathing trouble', 'difficulty breathing', 'breathless'],
-  'chest pain': ['chest tightness'],
-  'body aches': ['body pain', 'muscle pain', 'muscle ache'],
-  fatigue: ['tired', 'weakness', 'weak', 'extreme fatigue'],
+  nausea: ['nauseous', 'queasy'],
+  vomiting: ['vomit', 'throwing up', 'emesis'],
+  diarrhea: ['loose stool', 'loose stools', 'watery stool'],
+  'sharp abdominal pain': ['abdominal pain', 'stomach pain', 'stomach ache', 'abdomen pain', 'belly pain'],
+  'shortness of breath': ['breathing trouble', 'difficulty breathing', 'breathless', 'dyspnea', 'dyspnoea'],
+  'sharp chest pain': ['chest pain', 'chest tightness', 'angina'],
+  'difficulty breathing': ['laboured breathing', 'labored breathing'],
+  wheezing: ['wheeze', 'whistling breath'],
+  sweating: ['hyperhidrosis', 'diaphoresis', 'excessive sweating', 'sweats', 'night sweats'],
+  thirst: ['polydipsia', 'excessive thirst', 'increased thirst', 'very thirsty'],
+  'frequent urination': ['polyuria', 'urinary frequency', 'urinating frequently', 'peeing a lot'],
+  'excessive urination at night': ['nocturia'],
+  'painful urination': ['dysuria', 'burning urination', 'burning when urinating', 'burns when i urinate'],
+  'recent weight loss': ['weight loss', 'losing weight', 'unintentional weight loss'],
+  'diminished vision': ['blurry vision', 'blurred vision', 'vision problems'],
+  dizziness: ['vertigo', 'lightheadedness', 'light headed', 'dizzy'],
+  'neck stiffness or tightness': ['stiff neck', 'neck stiffness', 'nuchal rigidity'],
+  'joint pain': ['arthralgia', 'painful joints'],
+  'muscle pain': ['myalgia', 'body aches', 'body pain', 'muscle ache'],
+  'back pain': ['backache', 'back ache'],
+  palpitations: ['heart racing', 'racing heart', 'increased heart rate'],
+  'loss of appetite': ['anorexia', 'no appetite', 'poor appetite'],
+  'difficulty in swallowing': ['dysphagia', 'trouble swallowing'],
+  jaundice: ['yellow skin', 'yellowing of the skin', 'yellow eyes'],
+  fatigue: ['tired', 'weakness', 'weak', 'extreme fatigue', 'lethargy', 'malaise', 'exhausted'],
+  insomnia: ['cannot sleep', 'trouble sleeping', 'sleeplessness'],
+  depression: ['depressed', 'feeling low', 'low mood'],
+  'anxiety and nervousness': ['anxiety', 'anxious', 'nervous'],
 };
 
 /**
@@ -104,6 +140,20 @@ function getConfidenceLabel(score: number): { label: string; color: string } {
   if (score >= 50) return { label: 'Possible match', color: 'amber' };
   if (score >= 30) return { label: 'Low confidence match', color: 'orange' };
   return { label: 'Weak signal only', color: 'red' };
+}
+
+/**
+ * Coarse strength band for a candidate.
+ *
+ * Measured top-1 accuracy on a fixed case battery is ~45%, so a figure like
+ * "40.7%" implies a calibrated probability this system does not have. Bands
+ * communicate the ordering without inventing precision.
+ */
+function getStrengthBand(score: number): string {
+  if (score >= 55) return 'Strong';
+  if (score >= 40) return 'Moderate';
+  if (score >= 28) return 'Weak';
+  return 'Very weak';
 }
 
 // ── Helper: Call ML Service ───────────────────────────────────────────────
@@ -237,6 +287,18 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
     const ragValidation = ragCandidates.length > 0 ? ragCandidates[0] : null;
     const ragScore = ragValidation ? ragValidation.rag_score : 0;
 
+    // ── Stage 3B: Gather per-candidate evidence for the top 3 ───────────────
+    // The ML ordering is preserved deliberately. Re-ranking these candidates by
+    // RAG score was measured to REDUCE top-1 accuracy, because the ML models
+    // were trained from the same knowledge base that RAG validates against -
+    // the two signals are correlated, so RAG cannot act as an independent
+    // corrective. RAG is therefore used to annotate evidence, not to re-order.
+    const topK: any[] = Array.isArray(mlResult?.top_k) ? mlResult.top_k.slice(0, 3) : [];
+    const candidateEvidence = topK.map((entry: any) => ({
+      entry,
+      validation: ragService.validateSymptomMatches(processedSymptoms, entry.disease),
+    }));
+
     // ── Stage 2C & 4: Build ML breakdown with dynamic ensemble ──────────────
     let ml_breakdown: any = null;
     let adjusted_ml = 0;
@@ -287,6 +349,39 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
     final_confidence = Math.max(0, Math.min(85, final_confidence)); // cap at 85
     final_confidence = Math.round(final_confidence * 10) / 10;
 
+    // ── Stage 4B: Build the ranked differential ─────────────────────────────
+    // Measured top-1 accuracy is ~45% but top-5 is ~64%, so the shortlist
+    // carries substantially more of the truth than any single answer. Each
+    // candidate keeps its ML rank and is scored on the same ML/RAG blend as the
+    // headline result, scaled by its standing relative to the top candidate.
+    const topProbability = candidateEvidence[0]?.entry?.probability || 0;
+
+    const differential = candidateEvidence.map(({ entry, validation }, index) => {
+      const relative = topProbability > 0 ? (entry.probability || 0) / topProbability : 0;
+      const candidateMl = adjusted_ml * relative;
+      const candidateScore = Math.max(
+        0,
+        Math.min(85, (ml_weight * candidateMl) + (rag_weight * validation.rag_score))
+      );
+
+      return {
+        rank: index + 1,
+        disease: validation.disease || entry.disease,
+        strength: getStrengthBand(candidateScore),
+        match_score: Math.round(candidateScore * 10) / 10,
+        ml_probability: entry.probability,
+        rag_score: validation.rag_score,
+        matched_symptoms: validation.matchedSymptoms.slice(0, 8),
+        matched_core_symptoms: validation.matchedCoreSymptoms.slice(0, 8),
+        missing_core_symptoms: validation.missingCoreSymptoms.slice(0, 8),
+        // The signature failure mode of this model: a highly ranked condition
+        // whose defining symptoms the patient never reported.
+        missing_defining_evidence:
+          validation.missingCoreSymptoms.length > 0 &&
+          validation.matchedCoreSymptoms.length === 0,
+      };
+    });
+
     // ── Determine final disease & prediction source ─────────────────────────
     let finalDisease: string;
     let predictionSource: PredictionSource;
@@ -294,11 +389,18 @@ router.post('/diagnose', authMiddleware, async (req: AuthRequest, res: Response)
     let explanation: string = '';
 
     if (mlEnsemble && adjusted_ml >= ML_PRIMARY_THRESHOLD) {
-      // ML primary path
+      // ML primary path. The explanation covers the whole shortlist rather than
+      // defending the top pick, which previously produced a confident clinical
+      // narrative for a condition whose defining symptoms were absent.
       finalDisease = mlEnsemble.disease;
       predictionSource = 'ml_primary';
-      explanation = await llmService.generateExplanation(
-        finalDisease,
+      explanation = await llmService.generateDifferentialExplanation(
+        differential.map(c => ({
+          disease: c.disease,
+          strength: c.strength,
+          matched: c.matched_symptoms,
+          missingCore: c.missing_core_symptoms,
+        })),
         processedSymptoms,
         EXPLANATION_TIMEOUT_MS
       );
@@ -446,7 +548,13 @@ Common causes of these symptoms can vary widely, and professional medical evalua
         final_confidence,
         confidence_label,
         confidence_color,
+        strength: getStrengthBand(final_confidence),
+        missing_defining_evidence: differential[0]?.missing_defining_evidence ?? false,
+        missing_core_symptoms: differential[0]?.missing_core_symptoms ?? [],
       },
+      // Ranked shortlist. Top-1 accuracy is ~45% but top-5 is ~64%, so clients
+      // should present this list rather than the single top_result.
+      differential,
       ml_breakdown,
       rag_breakdown,
       hybrid_weights_used: { ml_weight, rag_weight },
